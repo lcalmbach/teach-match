@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="info-container">
+  <div class="col-md-6 offset-md-3"></div>  
+    <h2>Informationen zur Stellvertretung</h2><br>
+    <table class="table table-striped">
+      <tbody>
+        
+        <tr>
+          <th>Vertretene Lehrperson</th>
+          <td>{{ substitution.teacher.fullname }}</td>
+        </tr>
+        <tr>
+          <th>Von</th>
+          <td>{{ substitution.start_date }}</td>
+        </tr>
+        <tr>
+          <th>Bis</th>
+          <td>{{ substitution.end_date }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <a href="{% url 'substitution_list' %}" class="btn btn-primary">Zurück</a>
+  </div>
+</div>
+  
+{% endblock content %}

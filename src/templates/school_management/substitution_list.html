@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+teach_match/templates/school_management/school_list.html
+{% block title %}Lehrkraft-Stellvertretung{% endblock title %}
+
+{% block content %}
+<div class="table-container">
+    <h1>Stellvertretungen</h2>
+    <br>
+    <table class="table table-striped">
+      <thead>
+          <tr>
+              <th>Lehrkraft</th>
+              <th>Fällt aus von</th>
+              <th>Fällt aus bis</th>
+              <th>Offene Lektionen</th>
+              <th><i class="fas fa-edit"></i></th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for substitution in substitutions %}
+          <tr>
+              <td><a href="{% url 'substitution_detail' pk=substitution.pk %}">{{ substitution.teacher.fullname }}</a></td>
+              <td>{{ substitution.start_date }}</td> 
+              <td>{{ substitution.end_date }}</td> 
+              <td>{{ substitution.end_date }}</td> 
+              <td><a href="{% url 'substitution_edit' pk=substitution.pk %}" class="btn btn-primary">Edit</a></td>
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+  </div>  
+  {% endblock %}
+

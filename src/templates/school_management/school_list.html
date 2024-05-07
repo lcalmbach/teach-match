@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+teach_match/templates/school_management/school_list.html
+{% block title %}Lehrkraft-Stellvertretung{% endblock title %}
+
+{% block content %}
+<div class="table-container">
+    <h1>Schulen des Kantons Basel-Stadt</h1>
+    <br>
+    <table class="table table-striped">
+      <thead>
+          <tr>
+              <th>Name</th>
+              <th>Stufe</th>
+              <th>Ort</th>
+              <th>Editieren</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for school in schools %}
+          <tr>
+              <td><a href="{% url 'school_detail' pk=school.pk %}">{{ school.name }}</a></td>
+              <td>{{ school.level.name }}</td> 
+              <td>{{ school.location }}</td> 
+              <td><a href="{% url 'school_edit' pk=school.pk %}" class="btn btn-primary">Edit</a></td>
+              
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+  </div>  
+  {% endblock %}
+

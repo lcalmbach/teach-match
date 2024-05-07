@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row p-5">
+  <div class="col-4 mx-auto">
+    <h1 class="text-center">Konto eröffnen</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% crispy form %}
+        <button type="submit">Konto erstellen</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

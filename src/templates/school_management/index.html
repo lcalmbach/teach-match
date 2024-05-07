@@ -1,0 +1,27 @@
+{% extends "base.html" %} 
+{% load static %} 
+
+{% block title%}
+Lehrkraft-Stellvertretung
+{% endblock title %} 
+
+{% block content %}
+<div class="table-container">
+  <br>
+  <h1>TeachMatch</h1>
+  <img
+    src="{% static 'images/classroom1.jpg' %}"
+    alt="Classroom"
+    class="img-fluid"
+  />
+
+  <div class="info-text">
+    <p>
+      Willkommen bei TeachMatch, Ihrer Plattform, um schnell und einfach
+      Ersatzlehrkräfte zu finden. Wir vernetzen Schulen mit qualifizierten
+      Lehrkräften, um Ausfallzeiten zu minimieren und die Kontinuität des
+      Unterrichts zu gewährleisten.
+    </p>
+  </div>
+</div>
+{% endblock content%}

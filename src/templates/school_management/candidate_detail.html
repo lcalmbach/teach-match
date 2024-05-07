@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+  <div class="info-container">
+    <table class="info-table">
+        <tr>
+            <th>Nachname:</th>
+            <td>{{ candidate.last_name }}</td>
+        </tr>
+        <tr>
+            <th>Vorname:</th>
+            <td>{{ candidate.first_name }}</td>
+        </tr>
+        <tr>
+            <th>Jahrgang:</th>
+            <td>{{ candidate.year_of_birth }}</td>
+        </tr>
+        <tr>
+            <th>Email:</th>
+            <td>{{ candidate.email }}</td>
+        </tr>
+        <tr>
+            <th>Telefon:</th>
+            <td>{{ candidate.phone_number }}</td>
+        </tr>
+        <tr>
+          <th>Anstellung:</th>
+          <td>{{ candidate.is_teacher|yesno:"Ja,Nein" }}</td>
+        </tr>
+    </table>
+  </div>
+
+  <br><br>
+  <div class="container mt-5">
+    <!-- Tab links -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <a class="nav-link active" id="availabilities-tab" data-bs-toggle="tab" href="#availabilities" role="tab" aria-controls="availabilities" aria-selected="true">Verfügbarkeit</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="certificates-tab" data-bs-toggle="tab" href="#certificates" role="tab" aria-controls="certificates" aria-selected="true">Abschlüsse</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="substitution-tab" data-bs-toggle="tab" href="#substitutions" role="tab" aria-controls="substitutions" aria-selected="false">Stellvertretungen</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="cv-tab" data-bs-toggle="tab" href="#cv" role="tab" aria-controls="cv" aria-selected="false">Curriculum Vitae</a>
+        </li>
+    </ul>
+    <!-- Tab content -->
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="availabilities" role="tabpanel" aria-labelledby="availabilities-tab">
+        <table class="table table-striped">
+          <thead>
+              <tr>
+                  <th>Von</th>
+                  <th>Bis</th>
+                  <th>Tag</th>
+                  <th>Zeit</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for a in availabilities.all %}
+              <tr>
+                  <td>{{ a.date_from }}</td>
+                  <td>{{ a.date_to }}</td>
+                  <td>{{ a.day_of_week }}</td>
+                  <td>{{ a.time_of_day }}</td>
+              </tr>
+              {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tab-pane fade" id="certificates" role="tabpanel" aria-labelledby="certificates-tab">
+        <table class="table table-striped">
+          <thead>
+              <tr>
+                  <th>Year</th>
+                  <th>Certificate</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for certificate in candidate.certificates.all %}
+              <tr>
+                  <td>{{ certificate.year }}</td>
+                  <td>{{ certificate.certificate.name }}</td>
+              </tr>
+              {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="tab-pane fade" id="substitutions" role="tabpanel" aria-labelledby="substitution-tab">
+        <p>{{candidate.fullname}} hat folgende Stellvertretungen durchgeführt:</p>
+        <table class="table table-striped">
+          <thead>
+              <tr>
+                  <th>Schule</th>
+                  <th>Von</th>
+                  <th>Bis</th>
+                  <th>Vertretung von</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for s in candidate.candidate_substitutions.all %}
+              <tr>
+                  <td>{{ s.school.name }}</td>  
+                  <td>{{ s.start_date }}</td>
+                  <td>{{ s.end_date }}</td>
+                  <td>{{ s.teacher.name }}</td>
+              </tr>
+              {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tab-pane fade" id="cv" role="tabpanel" aria-labelledby="cv-tab">
+          <h3>Curriculum Vitae von {{ candidate.fullname }}</h3>
+          <p>{{ candidate.cv_text }}</p>
+          <a href="{{ candidate.cv_file.url }}" target="_blank">Curriculum ansehen</a>
+      </div>
+      <a href="{% url 'candidate_list' %}" class="btn btn-primary">Zurück</a>
+    </div>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock content %}

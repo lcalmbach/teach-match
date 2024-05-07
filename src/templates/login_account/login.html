@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block title %}Log in{% endblock %}
+
+{% block content %}
+<div class="row p-5">
+  <div class="col-4 mx-auto">
+      <h1 class="text-center">Log in</h1>
+      <form method="post" class="w-100">
+           <div class="mb-3">
+              {{ form.username.errors }}
+              <label class="mb-1" for="{{ form.username.id_for_label }}">Username</label>
+              {{ form.username|add_class:"form-control" }}
+           </div>
+
+           <div class="mb-3">
+              {{ form.password.errors }}
+              <label class="mb-1" for="{{ form.password.id_for_label }}">Password</label>
+              {{ form.password|add_class:"form-control" }}
+           </div>
+
+          {% csrf_token %}
+          <div class="row">
+              <div class="col">
+                  <button type="submit" class="btn btn-primary w-100">Log In</button>
+              </div>
+              <div class="col">
+                  <a href="{% url 'index' %}" class="btn btn-secondary w-100">Zurück</a>
+              </div>
+          </div>
+      </form>
+  </div>
+</div>
+
+{% endblock %}

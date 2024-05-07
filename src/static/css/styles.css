@@ -1,0 +1,81 @@
+
+.info-text {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f0f0f0; /* Light grey background */
+    border: 1px solid #ddd; /* Light grey border */
+    border-radius: 10px; /* Rounded borders */
+    padding: 20px; /* Some padding */
+    margin-top: 20px; /* Margin to the top */
+}
+
+.table-container {
+    margin-left: 150px;
+    margin-right: 150px;
+    /* Ensure this block is properly closed with a curly brace */
+}
+
+.bg-darkblue {
+    background-color: #00008B; /* Adjust the color code to your preferred shade of dark blue */
+}
+
+.form-container {
+    width: 100%;            /* Makes the form take up half the width of its parent */
+    margin: 20px auto;     /* Adds 20px margin on all sides and centers it horizontally */
+    border: 2px solid #ccc; /* Adds a light grey border */
+    padding: 20px;         /* Adds padding inside the div for some spacing around the form */
+    border-radius: 10px;   /* Optional: Adds rounded corners to the div */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional: Adds a subtle shadow for depth */
+}
+
+.info-container {
+    border: 1px solid #ccc; /* Light grey border */
+    border-radius: 15px; /* Rounded corners */
+    padding: 20px; /* Space inside the div */
+    margin-top: 20px; /* Space outside the div */
+    background-color: #f9f9f9; /* Light background color */
+    max-width: 600px; /* Maximum width */
+    margin-left: auto; /* Center the div horizontally */
+    margin-right: auto;
+}
+
+.info-table {
+    width: 100%; /* Make the table take the full width of the div */
+    border-collapse: collapse; /* Collapse the borders */
+}
+
+.info-table th, .info-table td {
+    text-align: left; /* Align text to the left */
+    padding: 8px; /* Padding in cells for space */
+}
+
+.info-table th {
+    background-color: #e9e9e9; /* Slightly different background for headers */
+}
+
+#primary-nav {
+    background-color: skyblue;
+  }
+
+/* Custom Navbar Styles */
+.navbar-custom {
+    background-color: #004d40; /* Dark green background for the entire navbar */
+    color: silver; /* White text color */
+}
+
+.navbar-custom .navbar-brand,
+.navbar-custom .nav-link {
+    color: silver; /* White text color for brand and links */
+}
+
+.navbar-custom .hover,
+.navbar-custom .active {
+    background-color: #81c784; /* Light green background */
+    color: #004d40; /* Dark green text color */
+}
+
+.toast-success {
+    background-color: var(--bs-success);
+    color: whitesmoke;
+    padding: 1cap; 
+    margin: 5px; 
+  }

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Lehrkraft-Stellvertretung{% endblock title %}
+
+{% block content %}
+<div class="table-container">
+    <h1>Kandidaten für Stellvertretungen</h1>
+    <br>
+    <form method="get" action="">
+        <table id="teachers" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Telefon</th>
+                    <th>Editieren</th>
+                </tr>
+                <tr> <!-- Filter inputs row -->
+                    <th><input type="text" name="full_name_filter" value="{{ request.GET.name_filter }}"></th>
+                    <th><input type="text" name="email_filter" value="{{ request.GET.email_filter }}"></th>
+                    <th><input type="text" name="phone_filter" value="{{ request.GET.phone_filter }}"></th>
+                    <th><input type="submit" value="Filter"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for teacher in teachers %}
+                <tr>
+                  <td><a href="{% url 'teacher_detail' pk=teacher.pk %}">{{ teacher.fullname }}</a></td>
+                    <td>{{ teacher.email }}</td>
+                    <td>{{ teacher.phone_number }}</td>
+                    <td><a href="{% url 'teacher_edit' pk=teacher.pk %}" class="btn btn-primary">Edit</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+</div>  
+{% endblock %}
+

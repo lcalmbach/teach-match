@@ -1,0 +1,5 @@
+id;name;address;url;plz;level_id;location_id
+1;ZBA Clara;Claragraben 59;http://test.bs.ch;4000;1;1
+2; ZBA Gundeldingen;Thiersteinerallee 57;http://test.bs.ch;4000;1;1
+3; ZBA Lysbüchel;Elsässerstrasse 209;http://test.bs.ch;4000;1;1
+4;ZBA Niederholz;Niederholzstrasse 95;http://test.bs.ch;4025;1;2
