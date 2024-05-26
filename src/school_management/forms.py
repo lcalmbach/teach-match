@@ -1,5 +1,5 @@
 from django import forms
-from .models import School, Person, Substitution
+from .models import School, Person, Substitution, SubstitutionPeriod
 import fitz  # PyMuPDF
 
 
@@ -51,3 +51,9 @@ class TeacherForm(forms.ModelForm):
     class Meta:
         model = Person
         fields = "__all__"
+
+
+class SubstitutionPeriodForm(forms.ModelForm):
+    class Meta:
+        model = SubstitutionPeriod
+        fields = ['deputy']

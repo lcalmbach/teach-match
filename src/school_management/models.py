@@ -1,7 +1,15 @@
 from django.db import models
+from datetime import datetime
 
+class SchoolYear(models.Model):
+    year_start = models.SmallIntegerField(verbose_name="Jahr", default=datetime.now().year),
+    start_date = models.DateField(verbose_name="Erster Schultag"),
+    end_date = models.DateField(verbose_name="Letzter Schultag")
 
+    def __str__(self):
+        return self.year_start
     
+
 class SubstitutionCause(models.Model):
     """cause for a teacher substitution"""
 
@@ -73,9 +81,9 @@ class Period(models.Model):
     time_of_day = models.ForeignKey(
         TimeOfDay, on_delete=models.CASCADE, verbose_name="Tageszeit"
     )
-    day_of_week = models.ForeignKey(
-        DayOfWeek, on_delete=models.CASCADE, verbose_name="Wochentag"
-    )
+    #day_of_week = models.ForeignKey(
+    #    DayOfWeek, on_delete=models.CASCADE, verbose_name="Wochentag"
+    #)
     
     def __str__(self):
         return f"{self.start_time} - {self.end_time}"
@@ -172,7 +180,7 @@ class Person(models.Model):
         return f"{self.last_name} {self.first_name}"
     
     def __str__(self):
-        return f"{self.last_name}{self.first_name} {self.year_of_birth}"
+        return f"{self.last_name} {self.first_name} {self.year_of_birth}"
 
 
 class SchoolPerson(models.Model):
@@ -221,7 +229,7 @@ class PersonSubject(models.Model):
         Subject, on_delete=models.CASCADE, related_name="personsubject_subjects"
     )
     experience = models.IntegerField(verbose_name="Erfahrung", blank=True, default=1)
-    description = models.TextField(verbose_name="Description", blank=True)
+    description = models.TextField(verbose_name="Description", blank=True, max_length=500)
 
     def __str__(self):
         return f"{self.person.fullname} - {self.subject.name} - {self.experience}"
@@ -236,12 +244,13 @@ class Substitution(models.Model):
     start_date = models.DateField(verbose_name="Fällt aus von")
     end_date = models.DateField(verbose_name="Fällt aus bis")
     start_period = models.ForeignKey(
-        Period, on_delete=models.CASCADE, related_name="start_periods", verbose_name="Von Lektion",default=Period.objects.get(id=1)
+        Period, on_delete=models.CASCADE, related_name="start_periods", verbose_name="Von Lektion"
     )
     end_period = models.ForeignKey(
-        Period, on_delete=models.CASCADE, related_name="end_periods", verbose_name="Bis Lektion",default=Period.objects.get(id=9)
+        Period, on_delete=models.CASCADE, related_name="end_periods", verbose_name="Bis Lektion"
     )
     cause = models.ForeignKey(SubstitutionCause(), on_delete=models.CASCADE, related_name="substitution_causes", verbose_name="Begründung")
+    description = models.TextField(verbose_name="Beschreibung", blank=True, max_length=500)
     
     def __str__(self):
         return f"{self.teacher.fullname} - {self.start_period.start_time} - {self.end_period.end_time}"
@@ -358,7 +367,7 @@ class VacationTemplate(models.Model):
     description = models.TextField(verbose_name="Bemerkungen", blank=True)
 
     def __str__(self):
-        return f"{self.teacher.name} - {self.date_from} - {self.date_to}"
+        return f"{self.date_from} - {self.date_to}"
 
 
 class VacationDay(models.Model):

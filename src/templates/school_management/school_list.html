@@ -4,8 +4,9 @@ teach_match/templates/school_management/school_list.html
 
 {% block content %}
 <div class="table-container">
-    <h1>Schulen des Kantons Basel-Stadt</h1>
+    <h2>ZBA Standorte Basel-Stadt</h1>
     <br>
+    <form method="get" action=""></form>
     <table class="table table-striped">
       <thead>
           <tr>
@@ -15,6 +16,12 @@ teach_match/templates/school_management/school_list.html
               <th>Editieren</th>
           </tr>
       </thead>
+      <tr> <!-- Filter inputs row -->
+        <th><input type="text" name="name_filter" value="{{ request.GET.name_filter }}"></th>
+        <th><input type="text" name="level_filter" value="{{ request.GET.level_filter }}"></th>
+        <th><input type="text" name="location_filter" value="{{ request.GET.location_filter }}"></th>
+        <th><input type="submit" value="Filter"></th>
+    </tr>
       <tbody>
           {% for school in schools %}
           <tr>
@@ -27,6 +34,7 @@ teach_match/templates/school_management/school_list.html
           {% endfor %}
       </tbody>
   </table>
+  </form> 
   </div>  
   {% endblock %}
 

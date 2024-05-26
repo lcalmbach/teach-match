@@ -4,3 +4,6 @@ Faker
 crispy-bootstrap5
 django_widget_tweaks
 django-crispy-forms
+django_bootstrap5
+PyMuPDF
+pandas

@@ -36,9 +36,8 @@ from django.conf import settings
 
 today = datetime.now()
 end_of_year = datetime(today.year, 12, 31)
-all_days = list(DayOfWeek.objects.all())
-all_periods = list(Period.objects.all())
-
+all_days, all_periods = [],[]
+        
 
 def generate_date_list(year):
     start_date = datetime(year, 1, 1)
@@ -345,7 +344,6 @@ class Command(BaseCommand):
                     start_time=row['start_time'], 
                     end_time=row['end_time'], 
                     time_of_day=random.choice(list(TimeOfDay.objects.all())),
-                    day_of_week=random.choice(list(DayOfWeek.objects.all())),
                 )
         except Exception as e:
             print(e)
@@ -514,10 +512,16 @@ class Command(BaseCommand):
     
 
     def handle(self, *args, **kwargs):
+        global all_days
+        global all_periods
         faker = Faker("de_DE")
         ok = True
         ok = False
         force_reset = True
+        if ok:
+            ok = self.school_year('./data/schoolyear.csv', force_reset)
+        if ok:
+            ok = self.vacation('./data/vacation.csv', force_reset)
         if ok:
             ok = self.fill_code(SubstitutionCause, './data/substitutioncause.csv', force_reset)
         if ok:
@@ -537,6 +541,9 @@ class Command(BaseCommand):
         if ok:
             ok = self.fill_code(Location,'./data/location.csv', force_reset)
         
+        all_days = list(DayOfWeek.objects.all())
+        all_periods = list(Period.objects.all())
+
         # tables with dependencies
         if ok:
             ok = self.fill_subjects()
@@ -558,14 +565,15 @@ class Command(BaseCommand):
             ok = self.assign_teachers_to_schools(faker)
         if ok:
             ok = self.fill_classes()
+        ok = True
         if ok:
             ok = self.fill_timetable_template(force_reset)
         if ok:
             ok = self.fill_person_subject(force_reset)
-        ok = True
+        #ok = True
         if ok:
             ok = self.fill_timetable(force_reset)
-        ok = False
+        #ok = False
         if ok:
             ok = self.assign_cvs_to_candidates()
         if ok:

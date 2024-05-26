@@ -1,3 +1,51 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import (SubstitutionCause, 
+                     SchoolPersonRole,
+                     Location,
+                     Gender,
+                     Certificate,
+                     TimeOfDay,
+                     DayOfWeek,
+                     Period,
+                     Course,
+                     Level,
+                     Subject,
+                     School,
+                     Person,
+                     SchoolPerson,
+                     PersonCertificate,
+                     PersonSubject,
+                     Substitution,
+                     Availability,
+                     SchoolClass,
+                     LessonTemplate,
+                     Lesson,
+                     SubstitutionPeriod,
+                     VacationTemplate,
+                     VacationDay
+)
+
+admin.site.register(SubstitutionCause)
+admin.site.register(SchoolPersonRole)
+admin.site.register(Location)
+admin.site.register(Gender)
+admin.site.register(Certificate)
+admin.site.register(TimeOfDay)
+admin.site.register(DayOfWeek)
+admin.site.register(Period)
+admin.site.register(Course)
+admin.site.register(Level)
+admin.site.register(Subject)
+admin.site.register(School)
+admin.site.register(Person)
+admin.site.register(SchoolPerson)
+admin.site.register(PersonCertificate)
+admin.site.register(Substitution)
+admin.site.register(Availability)
+admin.site.register(SchoolClass)
+admin.site.register(LessonTemplate)
+admin.site.register(Lesson)
+admin.site.register(SubstitutionPeriod)
+admin.site.register(VacationTemplate)
+admin.site.register(VacationDay)
