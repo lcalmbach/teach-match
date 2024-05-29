@@ -56,8 +56,8 @@
         </li>
         <li class="nav-item">
           <a
-            class="nav-link {% if request.resolver_match.url_name == 'substitution_new' %}active{% endif %}"
-            href="{% url 'substitution_new' %}"
+            class="nav-link {% if request.resolver_match.url_name == 'substitution_create' %}active{% endif %}"
+            href="{% url 'substitution_create' %}"
             >Stellvertretung finden</a
           >
         </li>
@@ -81,6 +81,7 @@
       </ul>
     </div>
   </nav>
+  <br>
   {% if messages %}
     {% for message in messages %}
     <div id="toastMessage" class="toast toast-success" role="alert" aria-live="assertive" aria-atomic="true">

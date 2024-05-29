@@ -1,10 +1,22 @@
 from django.db import models
 from datetime import datetime
+from django.utils import timezone
+
+def get_default_time_of_day():
+    try:
+        return TimeOfDay.objects.get(pk=3).pk
+    except TimeOfDay.DoesNotExist:
+        return None
 
 class SchoolYear(models.Model):
-    year_start = models.SmallIntegerField(verbose_name="Jahr", default=datetime.now().year),
-    start_date = models.DateField(verbose_name="Erster Schultag"),
+    year_start = models.SmallIntegerField(verbose_name="Jahr", default=datetime.now().year)
+    start_date = models.DateField(verbose_name="Erster Schultag")
     end_date = models.DateField(verbose_name="Letzter Schultag")
+
+    class Meta:
+        verbose_name = "Schuljahr"
+        verbose_name_plural = "Schuljahre"
+        ordering = ['year_start']
 
     def __str__(self):
         return self.year_start
@@ -15,6 +27,11 @@ class SubstitutionCause(models.Model):
 
     name = models.CharField(max_length=255, verbose_name="Name")
 
+    class Meta:
+        verbose_name = "Code für Abwesenheitsgrund"
+        verbose_name_plural = "Codes für Abwesenheitsgrund"
+        ordering = ['name']
+
     def __str__(self):
         return self.name
 
@@ -23,15 +40,24 @@ class SchoolPersonRole(models.Model):
 
     name = models.CharField(max_length=255, verbose_name="Name")
 
+    class Meta:
+        verbose_name = "Rolle in Schule"
+        verbose_name_plural = "Rollen in Schule"
+        ordering = ['name']
+    
     def __str__(self):
         return self.name
-
 
 class Location(models.Model):
     """Basel, Riehen, Bettingen"""
 
     name = models.CharField(max_length=255, verbose_name="Name")
 
+    class Meta:
+        verbose_name = "Ort"
+        verbose_name_plural = "Orte"
+        ordering = ['name']
+    
     def __str__(self):
         return f"{self.name}"
 
@@ -40,6 +66,11 @@ class Gender(models.Model):
     """not sure if needed, not used yet for person model"""
 
     name = models.CharField(max_length=255, verbose_name="Geschlecht")
+
+    class Meta:
+        verbose_name = "Geschlecht"
+        verbose_name_plural = "Geschlechter"
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -50,6 +81,11 @@ class Certificate(models.Model):
 
     name = models.CharField(max_length=255, verbose_name="Name")
 
+    class Meta:
+        verbose_name = "Abschluss"
+        verbose_name_plural = "Abschlüsse"
+        ordering = ['name']
+
     def __str__(self):
         return self.name
 
@@ -58,6 +94,11 @@ class TimeOfDay(models.Model):
     """AM PM"""
 
     name = models.CharField(max_length=255, verbose_name="Tageszeit")
+
+    class Meta:
+        verbose_name = "Vormittag/Nachmittag"
+        verbose_name_plural = "Vormittag/Nachmittag"
+        ordering = ['-name']
 
     def __str__(self):
         return self.name
@@ -68,6 +109,11 @@ class DayOfWeek(models.Model):
 
     name = models.CharField(max_length=255, verbose_name="Wochentag")
     short_name = models.CharField(max_length=255, verbose_name="Kürzel")
+
+    class Meta:
+        verbose_name = "Wochentag"
+        verbose_name_plural = "Wochentage"
+        ordering = ['id']
 
     def __str__(self):
         return self.name
@@ -85,6 +131,11 @@ class Period(models.Model):
     #    DayOfWeek, on_delete=models.CASCADE, verbose_name="Wochentag"
     #)
     
+    class Meta:
+        verbose_name = "Periode"
+        verbose_name_plural = "Perioden"
+        ordering = ['start_time']
+    
     def __str__(self):
         return f"{self.start_time} - {self.end_time}"
 
@@ -95,6 +146,11 @@ class Course(models.Model):
     name = models.CharField(max_length=255, verbose_name="Kursname")
     description = models.TextField(verbose_name="Description", blank=True)
 
+    class Meta:
+        verbose_name = "Profil"
+        verbose_name_plural = "Profile"
+        ordering = ['name']
+
     def __str__(self):
         return self.name
 
@@ -103,6 +159,11 @@ class Level(models.Model):
     """Sek1, Sek2, Kindergarten, Primarschule, etc.. used in school model"""
 
     name = models.CharField(max_length=255, verbose_name="Stufen-Name")
+    
+    class Meta:
+        verbose_name = "Stufe"
+        verbose_name_plural = "Stufen"
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -117,6 +178,11 @@ class Subject(models.Model):
     description = models.TextField(verbose_name="Description", blank=True)
     school_year = models.IntegerField(verbose_name="Schuljahr", default=1)
 
+    class Meta:
+        verbose_name = "Fach"
+        verbose_name_plural = "Fächer"
+        ordering = ['name']
+
     def __str__(self):
         return self.name
 
@@ -124,7 +190,7 @@ class Subject(models.Model):
 class School(models.Model):
     """Schule, Schulhaus, etc."""
 
-    name = models.CharField(max_length=255, verbose_name="Schule")
+    name = models.CharField(max_length=255, verbose_name="Standort")
     level = models.ForeignKey(
         Level,
         on_delete=models.CASCADE,
@@ -142,6 +208,11 @@ class School(models.Model):
         default=1,
     )
     plz = models.IntegerField(verbose_name="Postleitzahl", default=4000)
+
+    class Meta:
+        verbose_name = "Standort"
+        verbose_name_plural = "Standorte"
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -179,6 +250,11 @@ class Person(models.Model):
     def fullname(self):
         return f"{self.last_name} {self.first_name}"
     
+    class Meta:
+        verbose_name = "Person"
+        verbose_name_plural = "Personen"
+        ordering = ['last_name', 'first_name']
+
     def __str__(self):
         return f"{self.last_name} {self.first_name} {self.year_of_birth}"
 
@@ -197,8 +273,12 @@ class SchoolPerson(models.Model):
     )
     description = models.TextField(verbose_name="Bemerkungen", blank=True)
 
+    class Meta:
+        verbose_name = "Zuordnung Person zu Schule"
+        verbose_name_plural = "Zuordnung Person zu Schule"
+
     def __str__(self):
-        return f"{self.person.last_name} {self.person.first_name} {self.role.name}"
+        return f"{self.school.name}, {self.person.fullname}, {self.role.name}"
 
 
 class PersonCertificate(models.Model):
@@ -212,8 +292,12 @@ class PersonCertificate(models.Model):
     )
     year = models.CharField(max_length=255, verbose_name="Jahr", blank=True, null=True)
     
+    class Meta:
+        verbose_name = "Zuordnung Abschluss zu Person"
+        verbose_name_plural = "Zuordnung Abschluss zu Person"
+
     def __str__(self):
-        return f"{self.person.name} - {self.certificate.name} - {self.year}"
+        return f"{self.person.fullname} - {self.certificate.name} - {self.year} - {self.person.is_teacher}"
 
 
 class PersonSubject(models.Model):
@@ -230,6 +314,10 @@ class PersonSubject(models.Model):
     )
     experience = models.IntegerField(verbose_name="Erfahrung", blank=True, default=1)
     description = models.TextField(verbose_name="Description", blank=True, max_length=500)
+
+    class Meta:
+        verbose_name = "Zuordnung Fach zu Person"
+        verbose_name_plural = "Zuordnung Fach zu Person"
 
     def __str__(self):
         return f"{self.person.fullname} - {self.subject.name} - {self.experience}"
@@ -252,6 +340,45 @@ class Substitution(models.Model):
     cause = models.ForeignKey(SubstitutionCause(), on_delete=models.CASCADE, related_name="substitution_causes", verbose_name="Begründung")
     description = models.TextField(verbose_name="Beschreibung", blank=True, max_length=500)
     
+    class Meta:
+        verbose_name = "Stellvertretung"
+        verbose_name_plural = "Stellvertretungen"
+
+    def find_candidate(self, lesson):
+        """returns a dummy candidate. in the real app, there will be a set of rules that are applied to find a deputy teacher.
+        this will be the heart of the app and should go to a seperate class.
+
+        Args:
+            lesson (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        candidate = Person.objects.filter(is_candidate=True).first()
+        return candidate
+
+    def get_lessons(self):
+        """
+        Returns all lessons for the teacher in the given time frame. 
+        These will be saved as items in the substitiue period table for which a deputy must be found
+        """
+        lessons = Lesson.objects.filter(
+            teacher = self.teacher,
+            date__range=(self.start_date, self.end_date)
+        )
+        print(lessons)
+        return lessons
+
+    def create_substitution_items(self):
+        lessons=self.get_lessons()
+        for lesson in lessons:
+            candidate = self.find_candidate(lesson)
+            SubstitutionPeriod.objects.create(
+                substitution=self,
+                lesson=lesson,
+                deputy=candidate
+            )
+
     def __str__(self):
         return f"{self.teacher.fullname} - {self.start_period.start_time} - {self.end_period.end_time}"
 
@@ -267,6 +394,10 @@ class Availability(models.Model):
     day_of_week = models.ForeignKey(DayOfWeek, on_delete=models.CASCADE, related_name="availabilities_days", blank=True, null=True)
     time_of_day = models.ForeignKey(TimeOfDay, on_delete=models.CASCADE, related_name="availabilities_time_of_day")
     
+    class Meta:
+        verbose_name = "Verfügbarkeit der Kandidaten"
+        verbose_name_plural = "Verfügbarkeit der Kandidaten"
+
     def __str__(self):
         return f"{self.candidate.fullname} - {self.date_from} - {self.date_to}"
 
@@ -282,8 +413,12 @@ class SchoolClass(models.Model):
     contact_person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="class_persons")
     school_year = models.IntegerField(verbose_name="Schuljahr", default=1)
     
+    class Meta:
+        verbose_name = "Klasse"
+        verbose_name_plural = "Klassen"
+
     def __str__(self):
-        return self.name
+        return f"{self.school.name}, Klasse {self.name}"
 
 
 class LessonTemplate(models.Model):
@@ -305,9 +440,12 @@ class LessonTemplate(models.Model):
         Subject, on_delete=models.CASCADE, related_name="lesson_template_subjects"
     )
 
+    class Meta:
+        verbose_name = "Lektion-Template"
+        verbose_name_plural = "Lektion-Templates"
+
     def __str__(self):
         return F"{self.day.short_name} {self.period} {self.subject.name}"
-
 
 
 class Lesson(models.Model):
@@ -328,8 +466,12 @@ class Lesson(models.Model):
         Subject, on_delete=models.CASCADE, related_name="subjects"
     )
 
+    class Meta:
+        verbose_name = "Lektion"
+        verbose_name_plural = "Lektionen"
+
     def __str__(self):
-        return f"{self.teacher.name} - {self.day} - {self.period.start_time} - {self.period.end_time}"
+        return f"{self.teacher.fullname} - {self.date} - {self.period.start_time} - {self.period.end_time}"
 
 
 class SubstitutionPeriod(models.Model):
@@ -353,7 +495,11 @@ class SubstitutionPeriod(models.Model):
             substitution_period = cls(substitution=substitution, lesson=lesson)
             substitution_periods.append(substitution_period)
         cls.objects.bulk_create(substitution_periods)
-        
+    
+    class Meta:
+        verbose_name = "Vertretung-Periode"
+        verbose_name_plural = "Vertretung-Perioden"
+
     def __str__(self):
         return f"{self.lesson.subject.name}"
 
@@ -361,20 +507,25 @@ class SubstitutionPeriod(models.Model):
 class VacationTemplate(models.Model):
     """Teacher vacation"""
 
-    date_from = models.DateField(verbose_name="Von")
-    date_to = models.DateField(verbose_name="Bis")
-    timeofday = models.ForeignKey(TimeOfDay, on_delete=models.CASCADE, related_name="vacation_time_of_day")
-    description = models.TextField(verbose_name="Bemerkungen", blank=True)
+    name = models.CharField(max_length=100, verbose_name="Bezeichnung")
+    date_from = models.DateField(verbose_name="Von", default=timezone.now)
+    date_to = models.DateField(verbose_name="Bis", default=timezone.now)
+    timeofday = models.ForeignKey(TimeOfDay, on_delete=models.CASCADE, related_name="vacation_template_time_of_day", default=get_default_time_of_day)
+
+    class Meta:
+        verbose_name = "Ferien"
+        verbose_name_plural = "Ferien"
 
     def __str__(self):
-        return f"{self.date_from} - {self.date_to}"
+        return f"{self.name} {self.date_from} - {self.date_to}"
 
 
 class VacationDay(models.Model):
     """Teacher vacation"""
 
-    date = models.DateField(verbose_name="Datum")
+    date = models.DateField(verbose_name="Datum", default=timezone.now)
+    timeofday = models.ForeignKey(TimeOfDay, on_delete=models.CASCADE, related_name="vacation_time_of_day", default=get_default_time_of_day)
     vacation = models.ForeignKey(VacationTemplate, on_delete=models.CASCADE, related_name="vacation_templates")
 
     def __str__(self):
-        return f"{self.date} - {self.vacation.description}"
+        return f"{self.date} - {self.vacation.name}"

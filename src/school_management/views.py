@@ -1,19 +1,17 @@
 from django.forms import modelformset_factory
-from django.shortcuts import redirect
-from django.views.generic import DetailView, UpdateView
-from .models import School, Person, Substitution, SubstitutionPeriod, Lesson
+from django.shortcuts import redirect, get_object_or_404
+from django.views.generic import DetailView, UpdateView, CreateView
+from .models import School, Person, Substitution, SubstitutionPeriod, Lesson, Location, Level
 from .forms import SchoolForm, CandidateForm, SubstitutionForm, TeacherForm, SubstitutionPeriodForm
 from django.views.generic import ListView  # Import the necessary module
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
-
+# from django.views.generic.edit import CreateView
 
 class SchoolListView(ListView):
     model = School
-    context_object_name = (
-        "schools"  # The name of the variable to be used in the template
-    )
+    context_object_name = "schools"  # The name of the variable to be used in the template
     template_name = "school_management/school_list.html"  # Path to the template
 
     def get_queryset(self):
@@ -24,13 +22,20 @@ class SchoolListView(ListView):
 
         # Apply filters if present
         if name_filter:
-            queryset = queryset.filter(last_name__icontains=name_filter)
+            queryset = queryset.filter(name__icontains=name_filter)
         if level_filter:
-            queryset = queryset.filter(email__icontains=level_filter)
+            queryset = queryset.filter(level__id=level_filter)
         if location_filter:
-            queryset = queryset.filter(phone_number__icontains=location_filter)
+            queryset = queryset.filter(location__id=location_filter)
 
         return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['locations'] = Location.objects.all()  # Pass all locations to the template
+        context['levels'] = Level.objects.all()  # Pass all locations to the template
+        return context
+
 
 class SchoolDetailView(DetailView):
     model = School
@@ -170,53 +175,35 @@ class SubstitutionListView(ListView):
         queryset = queryset.order_by('-start_date')
         return queryset
 
+
 class SubstitutionDetailView(DetailView):
     model = Substitution
     template_name = "school_management/substitution_detail.html"
     context_object_name = "substitution"
 
 
+class SubstitutionCreateView(CreateView):
+    model = Substitution
+    form_class = SubstitutionForm
+    template_name = "school_management/substitution_create.html"
+    success_url = reverse_lazy("substitution_list")
+
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.create_substitution_items()  # Call the method after saving the form
+        return redirect('substitution_edit', pk=self.object.pk)
+    
+    
 class SubstitutionEditView(UpdateView):
     model = Substitution
     form_class = SubstitutionForm
     template_name = "school_management/substitution_edit.html"
     success_url = reverse_lazy("substitution_list")
 
-    def find_candidate(self, lesson):
-        """returns a dummy candidate. in the real app, there will be a set of rules that are applied to find a deputy teacher.
-        this will be the heart of the app and should go to a seperate class.
-
-        Args:
-            lesson (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        candidate = Person.objects.filter(is_candidate=True).first()
-        return candidate
-
-    def get_lessons(self):
-        lessons = Lesson.objects.filter(
-            teacher = self.object.teacher,
-            date__range=(self.object.start_date, self.object.end_date)
-        )
-        print(lessons)
-        return lessons
-
-    def create_substitution_items(self, lessons):
-        for lesson in lessons:
-            candidate = self.find_candidate(lesson)
-            SubstitutionPeriod.objects.create(
-                substitution = self.object,
-                lesson = lesson,
-                deputy = candidate
-            )
-
-
     def get_object(self, queryset=None):
         pk = self.kwargs.get('pk')
         if pk:
-            return super().get_object(queryset)
+            return get_object_or_404(Substitution, pk=pk)
         return None
 
     def get_context_data(self, **kwargs):
@@ -231,28 +218,33 @@ class SubstitutionEditView(UpdateView):
         return context
 
     def post(self, request, *args, **kwargs):
+        print(f'KWARGS: {kwargs}')  # Debugging line
         form = self.get_form()
         self.object = self.get_object()
+        print(f'Object: {self.object}')  # Debugging line
         SubstitutionPeriodFormSet = modelformset_factory(SubstitutionPeriod, form=SubstitutionPeriodForm, extra=0)
         formset = SubstitutionPeriodFormSet(self.request.POST, queryset=SubstitutionPeriod.objects.filter(substitution=self.object))
-        if form.is_valid(): #  and formset.is_valid():
-            self.object = self.get_object()
-            print('yes')
-            print(self.object.id)
-            lessons = self.get_lessons()
-            print(lessons)
-            self.create_substitution_items(lessons)
-            return self.form_valid(form, formset)
         
+        if form.is_valid() and formset.is_valid():
+            self.object = form.save()
+            try:
+                self.object.create_substitution_items()
+            except AttributeError as e:
+                print(f'Error: {e}')
+                return self.form_invalid(form, formset, error=str(e))
+            formset.save()
+            return self.form_valid(form, formset)
         else:
-            print('nope')
+            print('Form or formset invalid')
             return self.form_invalid(form, formset)
 
     def form_valid(self, form, formset):
         form.save()
-        # formset.save()
+        formset.save()
         return redirect(self.success_url)
 
-    def form_invalid(self, form, formset):
-        return self.render_to_response(self.get_context_data(form=form, formset=formset))
-
+    def form_invalid(self, form, formset, error=None):
+        context = self.get_context_data(form=form, formset=formset)
+        if error:
+            context['error'] = error
+        return self.render_to_response(context)

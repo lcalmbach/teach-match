@@ -1,4 +1,5 @@
 import traceback
+from django.db import transaction
 from django.core.management.base import BaseCommand
 from datetime import timedelta, date, datetime
 from faker import Faker
@@ -26,6 +27,7 @@ from school_management.models import (
     Availability,
     SubstitutionCause,
     Lesson,
+    VacationTemplate
 )
 from django.db import connection
 import random
@@ -510,7 +512,27 @@ class Command(BaseCommand):
         print("Lessons have been assigned to teachers.")
         return True
     
-
+    def fill_vacation(self, force: bool=False):
+        try:
+            if force:
+                VacationTemplate.objects.all().delete()
+            filename = './data/vacation.csv'
+            df = pd.read_csv(filename, sep=';')
+            with transaction.atomic():
+                for index, row in df.iterrows():
+                    VacationTemplate.objects.create(
+                        name = row['name'],
+                        date_from = row['date_from'],
+                        date_to = row['date_to'],
+                        timeofday = TimeOfDay.objects.get(pk=row['time_of_day']),
+                    )
+            print(VacationTemplate.objects.all())
+            print(f"vacation created.")
+        except Exception as e:
+            print(e)
+            return False
+        return True
+    
     def handle(self, *args, **kwargs):
         global all_days
         global all_periods
@@ -520,8 +542,10 @@ class Command(BaseCommand):
         force_reset = True
         if ok:
             ok = self.school_year('./data/schoolyear.csv', force_reset)
+        ok = True
         if ok:
-            ok = self.vacation('./data/vacation.csv', force_reset)
+            ok = self.fill_vacation(force_reset)
+        ok = False
         if ok:
             ok = self.fill_code(SubstitutionCause, './data/substitutioncause.csv', force_reset)
         if ok:
@@ -565,15 +589,12 @@ class Command(BaseCommand):
             ok = self.assign_teachers_to_schools(faker)
         if ok:
             ok = self.fill_classes()
-        ok = True
         if ok:
             ok = self.fill_timetable_template(force_reset)
         if ok:
             ok = self.fill_person_subject(force_reset)
-        #ok = True
         if ok:
             ok = self.fill_timetable(force_reset)
-        #ok = False
         if ok:
             ok = self.assign_cvs_to_candidates()
         if ok:

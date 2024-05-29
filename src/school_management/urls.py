@@ -7,6 +7,7 @@ from .views import (
     SubstitutionListView,
     SubstitutionDetailView,
     SubstitutionEditView,
+    SubstitutionCreateView,
     TeacherListView,
     TeacherDetailView,
     TeacherEditView,
@@ -34,7 +35,7 @@ urlpatterns = [
         name="substitution_detail",
     ),
     path('substitution/<int:pk>/', SubstitutionEditView.as_view(), name='substitution_edit'),  # For editing
-    path('substitution/new/', SubstitutionEditView.as_view(), name='substitution_new'),  # For creating new
+    path('substitution/new/', SubstitutionCreateView.as_view(), name='substitution_create'),  # For creating new
 
     path("find_match/", SubstitutionListView.as_view(), name="find_match"),
     path("login/", SubstitutionEditView.as_view(), name="login"),

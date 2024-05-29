@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="col-md-6 offset-md-3">
+  <div class="form-container">
+    <h2>Stellvertretung erfassen</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">Neu</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

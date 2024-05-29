@@ -4,37 +4,52 @@ teach_match/templates/school_management/school_list.html
 
 {% block content %}
 <div class="table-container">
-    <h2>ZBA Standorte Basel-Stadt</h1>
-    <br>
-    <form method="get" action=""></form>
-    <table class="table table-striped">
-      <thead>
-          <tr>
-              <th>Name</th>
-              <th>Stufe</th>
-              <th>Ort</th>
-              <th>Editieren</th>
-          </tr>
-      </thead>
-      <tr> <!-- Filter inputs row -->
-        <th><input type="text" name="name_filter" value="{{ request.GET.name_filter }}"></th>
-        <th><input type="text" name="level_filter" value="{{ request.GET.level_filter }}"></th>
-        <th><input type="text" name="location_filter" value="{{ request.GET.location_filter }}"></th>
-        <th><input type="submit" value="Filter"></th>
-    </tr>
-      <tbody>
-          {% for school in schools %}
-          <tr>
-              <td><a href="{% url 'school_detail' pk=school.pk %}">{{ school.name }}</a></td>
-              <td>{{ school.level.name }}</td> 
-              <td>{{ school.location }}</td> 
-              <td><a href="{% url 'school_edit' pk=school.pk %}" class="btn btn-primary">Edit</a></td>
-              
-          </tr>
-          {% endfor %}
-      </tbody>
-  </table>
+    <h2>Standorte</h2>
+    <form method="get" action="">
+      <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Stufe</th>
+                <th>Ort</th>
+            </tr>
+        </thead>
+        <tr> <!-- Filter inputs row -->
+          <th><input type="text" name="name_filter" value="{{ request.GET.name_filter }}"></th>
+          <th>
+            <select name="level_filter">
+              <option value="">Alle Stufen</option>
+              {% for level in levels %}
+                  <option value="{{ level.id }}" {% if request.GET.level_filter == level.id|stringformat:"s" %}selected{% endif %}>
+                      {{ level.name }}
+                  </option>
+              {% endfor %}
+            </select>
+            <input type="submit" value="Filter">
+          </th>
+          <th>
+            <select name="location_filter">
+              <option value="">Alle Orte</option>
+              {% for location in locations %}
+                  <option value="{{ location.id }}" {% if request.GET.location_filter == location.id|stringformat:"s" %}selected{% endif %}>
+                      {{ location.name }}
+                  </option>
+              {% endfor %}
+            </select>
+            <input type="submit" value="Filter">
+          </th>
+      </tr>
+        <tbody>
+            {% for school in schools %}
+            <tr>
+                <td><a href="{% url 'school_detail' pk=school.pk %}">{{ school.name }}</a></td>
+                <td>{{ school.level.name }}</td> 
+                <td>{{ school.location }}</td> 
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
   </form> 
-  </div>  
-  {% endblock %}
+</div>  
+{% endblock %}
 

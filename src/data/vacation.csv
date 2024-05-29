@@ -1,5 +1,7 @@
-name;start_date;end_date
-Frühlingsferien;2024-25-03;2024-04-05
-Sommerferien;2024-07-01;2024-08-09
-Herbstferien;2024-10-02;2024-10-13
-Weihnachtsferien;2024-12-25;2025-01-05
+name;date_from;date_to;time_of_day
+Frühlingsferien;2024-03-25;2024-04-05;3
+1. Mai;2024-05-01;2024-05-01;3
+Sommerferien;2024-07-01;2024-08-09;3
+1. August;2024-08-01;2024-08-01;3
+Herbstferien;2024-10-02;2024-10-13;3
+Weihnachtsferien;2024-12-25;2025-01-05;3

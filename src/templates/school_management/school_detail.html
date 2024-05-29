@@ -1,15 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="info-container">
-  <h2>{{ school.name }}</h2>
+  <b><p>{{ school.name }}</p></b>
   <p>{{ school.level }}</p>
   <p>{{ school.address }}</p>
   <p>{{ school.location }}</p>
-  <p>{{ school.email }}</p>
-  <p>{{ school.phone_number }}</p>
   <a href="{% url 'school_list' %}" class="btn btn-primary">Zurück</a>
 </div>
-  <br /><br />
+<br /><br />
 <div class="container mt-5">
   <!-- Tab links -->
   <ul class="nav nav-tabs" id="myTab" role="tablist">
