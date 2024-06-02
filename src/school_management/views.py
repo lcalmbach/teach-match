@@ -97,7 +97,7 @@ class CandidateListView(ListView):
 
 class CandidateDetailView(DetailView):
     model = Candidate
-    template_name = "school_management/Candidate_detail.html"
+    template_name = "school_management/candidate_detail.html"
     context_object_name = "candidate"
 
     def get_context_data(self, **kwargs):
@@ -148,7 +148,7 @@ class TeacherListView(ListView):
 
 class TeacherDetailView(DetailView):
     model = Teacher
-    template_name = "school_management/Teacher_detail.html"
+    template_name = "school_management/teacher_detail.html"
     context_object_name = "teacher"
 
     def get_context_data(self, **kwargs):
