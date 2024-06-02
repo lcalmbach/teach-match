@@ -7,3 +7,5 @@ django-crispy-forms
 django_bootstrap5
 PyMuPDF
 pandas
+gunicorn
+django-heroku
