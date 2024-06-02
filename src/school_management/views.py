@@ -193,6 +193,13 @@ class SubstitutionCreateView(CreateView):
     template_name = "school_management/substitution_create.html"
     success_url = reverse_lazy("substitution_list")
 
+    def get_initial(self):
+        initial = super().get_initial()
+        teacher_id = self.kwargs.get('teacher_id')
+        if teacher_id:
+            initial['teacher'] = teacher_id
+        return initial
+    
     def form_valid(self, form):
         self.object = form.save()
         self.object.create_substitution_items()  # Call the method after saving the form
