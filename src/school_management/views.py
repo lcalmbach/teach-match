@@ -1,7 +1,7 @@
 from django.forms import modelformset_factory
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import DetailView, UpdateView, CreateView
-from .models import School, Person, Substitution, SubstitutionPeriod, Lesson, Location, Level
+from .models import School, Person, Teacher, Candidate, Substitution, SubstitutionPeriod, Lesson, Location, Level
 from .forms import SchoolForm, CandidateForm, SubstitutionForm, TeacherForm, SubstitutionPeriodForm
 from django.views.generic import ListView  # Import the necessary module
 from django.urls import reverse_lazy
@@ -63,14 +63,14 @@ class SchoolEditView(LoginRequiredMixin, UpdateView):
 
 
 class CandidateListView(ListView):
-    model = Person
+    model = Candidate
     context_object_name = (
         "candidates"  # The name of the variable to be used in the template
     )
     template_name = "school_management/candidate_list.html"  # Path to the template
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(is_candidate=True)
+        queryset = super().get_queryset()  # Get the original queryset
         first_name_filter = self.request.GET.get("first_name_filter", "")
         last_name_filter = self.request.GET.get("last_name_filter", "")
         gender_filter = self.request.GET.get("gender_filter", "")
@@ -96,27 +96,32 @@ class CandidateListView(ListView):
 
 
 class CandidateDetailView(DetailView):
-    model = Person
+    model = Candidate
     template_name = "school_management/Candidate_detail.html"
     context_object_name = "candidate"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         candidate = context["candidate"]
-        context['availabilities'] = candidate.availabilities.all()
+        context['availabilities'] = candidate.availability_templates_candidate.all()
         context['subjects'] = candidate.personsubject_persons.all()
+        context['certificates'] = candidate.certificates.all()
+        context['substitutions'] = candidate.substitution_deputies.all()
+        print(context['substitutions'])
+        print(candidate.id)
+        
         return context
 
 
 class CandidateEditView(LoginRequiredMixin, UpdateView):
-    model = Person
+    model = Candidate
     form_class = CandidateForm
     template_name = "school_management/candidate_edit.html"
     success_url = reverse_lazy("candidate_list")
 
 
 class TeacherListView(ListView):
-    model = Person
+    model = Teacher
     context_object_name = (
         "teachers"  # The name of the variable to be used in the template
     )
@@ -142,7 +147,7 @@ class TeacherListView(ListView):
 
 
 class TeacherDetailView(DetailView):
-    model = Person
+    model = Teacher
     template_name = "school_management/Teacher_detail.html"
     context_object_name = "teacher"
 
@@ -155,7 +160,7 @@ class TeacherDetailView(DetailView):
 
 
 class TeacherEditView(LoginRequiredMixin, UpdateView):
-    model = Person
+    model = Teacher
     form_class = TeacherForm
     template_name = "school_management/teacher_edit.html"
     success_url = reverse_lazy("teacher_list")
@@ -213,15 +218,13 @@ class SubstitutionEditView(UpdateView):
         if self.request.POST:
             formset = SubstitutionPeriodFormSet(self.request.POST, queryset=SubstitutionPeriod.objects.filter(substitution=substitution))
         else:
-            formset = SubstitutionPeriodFormSet(queryset=SubstitutionPeriod.objects.filter(substitution=substitution))
+            formset = SubstitutionPeriodFormSet(queryset=SubstitutionPeriod.objects.filter(substitution=substitution).order_by('lesson__date', 'lesson__period__start_time'))
         context['formset'] = formset
         return context
 
     def post(self, request, *args, **kwargs):
-        print(f'KWARGS: {kwargs}')  # Debugging line
         form = self.get_form()
         self.object = self.get_object()
-        print(f'Object: {self.object}')  # Debugging line
         SubstitutionPeriodFormSet = modelformset_factory(SubstitutionPeriod, form=SubstitutionPeriodForm, extra=0)
         formset = SubstitutionPeriodFormSet(self.request.POST, queryset=SubstitutionPeriod.objects.filter(substitution=self.object))
         

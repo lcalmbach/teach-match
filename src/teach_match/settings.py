@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-(mm=-tr1g8w2x&+ch5%ykfpgo7mvti#4fcfy6t!%v8$7f7r4jo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -135,3 +135,6 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = 'login' 
+
+import django_heroku
+django_heroku.settings(locals())

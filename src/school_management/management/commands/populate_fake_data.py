@@ -10,6 +10,8 @@ from school_management.models import (
     Location,
     Certificate,
     Person,
+    Candidate,
+    Teacher,
     PersonCertificate,
     PersonSubject,
     Substitution,
@@ -24,6 +26,7 @@ from school_management.models import (
     SchoolPerson,
     SchoolClass,
     LessonTemplate,
+    AvailabilityTemplate,
     Availability,
     SubstitutionCause,
     Lesson,
@@ -455,11 +458,12 @@ class Command(BaseCommand):
                 no_of_subjects = random.randint(1, 4)
                 for _ in range(1, no_of_subjects):
                     subject = random.choice(Subject.objects.all())
-                    PersonSubject.objects.create(
+                    a = PersonSubject.objects.create(
                         person=person,
                         subject=subject,
                         experience=random.randint(1, 5),
                     )
+                    print(a)
             print("Subjects have been assigned to teachers.")
         except Exception as e:
             print(e)
@@ -470,18 +474,18 @@ class Command(BaseCommand):
         day_ids = DayOfWeek.objects.values_list('id', flat=True)
         try:
             if force:
-                Availability.objects.all().delete()
-            for candidate in Person.objects.filter(is_candidate=True):
+                AvailabilityTemplate.objects.all().delete()
+            for candidate in Candidate.objects.all():
                 from_date = today + timedelta(days=random.randint(1, (end_of_year - today).days))
                 weeks_range = random.randint(1, 10)
-                Availability.objects.create(
+                AvailabilityTemplate.objects.create(
                     candidate=candidate,
                     date_from = from_date,
                     date_to = from_date + + timedelta(weeks=weeks_range),
-                    day_of_week = random.choice(DayOfWeek.objects.all()),
-                    time_of_day = random.choice(TimeOfDay.objects.all())
+                    day_of_week = DayOfWeek.objects.get(id=8),
+                    time_of_day = TimeOfDay.objects.get(id=3)
                 )
-            print("availabilities have been assigned") 
+            print("availabilities have been assigned")
         except Exception as e:
             print(e)
             return False
@@ -542,10 +546,8 @@ class Command(BaseCommand):
         force_reset = True
         if ok:
             ok = self.school_year('./data/schoolyear.csv', force_reset)
-        ok = True
         if ok:
             ok = self.fill_vacation(force_reset)
-        ok = False
         if ok:
             ok = self.fill_code(SubstitutionCause, './data/substitutioncause.csv', force_reset)
         if ok:
@@ -591,14 +593,16 @@ class Command(BaseCommand):
             ok = self.fill_classes()
         if ok:
             ok = self.fill_timetable_template(force_reset)
+        ok = True
         if ok:
             ok = self.fill_person_subject(force_reset)
+        ok = False
         if ok:
             ok = self.fill_timetable(force_reset)
         if ok:
             ok = self.assign_cvs_to_candidates()
         if ok:
-            ok = self.fill_availabilities(False)
+            ok = self.fill_availabilities(force_reset)
         if not ok:
             print("An error occurred while populating the data.")
 

@@ -16,7 +16,7 @@ from .models import (SubstitutionCause,
                      SchoolPerson,
                      PersonCertificate,
                      PersonSubject,
-                     Availability,
+                     AvailabilityTemplate,
                      SchoolClass,
                      LessonTemplate,
                      Lesson,
@@ -54,7 +54,7 @@ admin.site.register(Person)
 admin.site.register(PersonSubject)
 admin.site.register(SchoolPerson)
 admin.site.register(PersonCertificate)
-admin.site.register(Availability)
+admin.site.register(AvailabilityTemplate)
 admin.site.register(SchoolClass)
 admin.site.register(LessonTemplate)
 admin.site.register(Lesson)

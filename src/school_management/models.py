@@ -1,5 +1,5 @@
 from django.db import models
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.utils import timezone
 
 def get_default_time_of_day():
@@ -231,20 +231,21 @@ class Person(models.Model):
         max_length=255, verbose_name="Geburtsjahr", blank=True
     )
     cv_text = models.TextField(verbose_name="CV Text", blank=True)
-    cv_file = models.FileField(verbose_name="Curriculum", blank=True, upload_to="cv/")
-    is_teacher = models.BooleanField(verbose_name="Lehrer", default=False)
-    is_candidate = models.BooleanField(verbose_name="Kandidat", default=False)
-    is_leitung = models.BooleanField(
+    cv_file = models.FileField(verbose_name="CV Datei", blank=True, upload_to="cv/")
+    is_teacher = models.BooleanField(verbose_name="LehrerIn", default=False)
+    is_candidate = models.BooleanField(verbose_name="KandidatIn für Stellvertretung", default=False)
+    is_manager = models.BooleanField(
         verbose_name="Leitung/Administration",
         default=False
     )
     years_of_experience = models.IntegerField(
-        verbose_name="Erfahrung", blank=True, default=1
+        verbose_name="Erfahrung in Jahren", blank=True, default=1
     )
-    gender = models.ForeignKey(Gender, on_delete=models.CASCADE, verbose_name="Geschlecht", default=1)
+    gender = models.ForeignKey('Gender', on_delete=models.CASCADE, verbose_name="Geschlecht", default=1)
     description = models.TextField(
         max_length=500, verbose_name="Bemerkungen", blank=True
     )
+    subjects = models.ManyToManyField('Subject', related_name='person_subjects', blank=True)  # Many-to-many relationship
 
     @property
     def fullname(self):
@@ -257,6 +258,30 @@ class Person(models.Model):
 
     def __str__(self):
         return f"{self.last_name} {self.first_name} {self.year_of_birth}"
+
+
+class TeacherManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_teacher=True)
+
+
+class Teacher(Person):
+    objects = TeacherManager()
+
+    class Meta:
+        proxy = True
+
+
+class CandidateManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_candidate=True)
+
+
+class Candidate(Person):
+    objects = CandidateManager()
+
+    class Meta:
+        proxy = True
 
 
 class SchoolPerson(models.Model):
@@ -344,9 +369,31 @@ class Substitution(models.Model):
         verbose_name = "Stellvertretung"
         verbose_name_plural = "Stellvertretungen"
 
+    def summary(self):
+        text = f"Stellvertretung für {self.teacher.fullname} von {self.start_date} bis {self.end_date}<br>"
+        text += f"16 Lektionen in diesem Zeitraum"
+        text += f"""<ul>
+            <li>Geschichte: 10</li>
+            <li>Mathematik: 4</li>
+            <li>Gestalten: 2</li>
+            </ul>"""
+        return text
+    
+    def create_candidates(self):
+        """returns a list of candidates for the given time frame and subject
+
+        Args:
+            _type_: _description_
+
+        Returns:
+            _type_: _description_
+        """
+        candidates = [] # Availability().objects.filter(is_candidate=True)
+
+        return candidates
+
     def find_candidate(self, lesson):
-        """returns a dummy candidate. in the real app, there will be a set of rules that are applied to find a deputy teacher.
-        this will be the heart of the app and should go to a seperate class.
+        """returns the candidate for the given lesson with the highest rating
 
         Args:
             lesson (_type_): _description_
@@ -366,7 +413,6 @@ class Substitution(models.Model):
             teacher = self.teacher,
             date__range=(self.start_date, self.end_date)
         )
-        print(lessons)
         return lessons
 
     def create_substitution_items(self):
@@ -383,23 +429,53 @@ class Substitution(models.Model):
         return f"{self.teacher.fullname} - {self.start_period.start_time} - {self.end_period.end_time}"
 
 
-class Availability(models.Model):
-    """Deputy candidate availability"""
+class AvailabilityTemplate(models.Model):
+    """
+    Deputy candidate availability-template is used to generate the availability days. for each day within
+    the time frame, a record is created in the availability table
+    """
 
     candidate = models.ForeignKey(
-        Person, on_delete=models.CASCADE, related_name="availabilities", verbose_name="Kandidat*in"
+        Person, on_delete=models.CASCADE, related_name="availability_templates_candidate", verbose_name="Kandidat*in"
     )
     date_from = models.DateField(verbose_name="Von")
     date_to = models.DateField(verbose_name="Bis")
-    day_of_week = models.ForeignKey(DayOfWeek, on_delete=models.CASCADE, related_name="availabilities_days", blank=True, null=True)
-    time_of_day = models.ForeignKey(TimeOfDay, on_delete=models.CASCADE, related_name="availabilities_time_of_day")
+    day_of_week = models.ForeignKey(DayOfWeek, on_delete=models.CASCADE, related_name="template_availabilities_days", blank=True, null=True)
+    time_of_day = models.ForeignKey(TimeOfDay, on_delete=models.CASCADE, related_name="template_availabilities_time_of_day")
     
     class Meta:
         verbose_name = "Verfügbarkeit der Kandidaten"
         verbose_name_plural = "Verfügbarkeit der Kandidaten"
 
+    def create_availabilities(self):
+        """creates availability records for each day in the time frame"""
+        Availability.objects.filter(availabilityTemplate_id=self.id).delete()
+        current_date = self.date_from
+        while current_date <= self.date_to:
+            # Create an Availability object for each date
+            if (self.day_of_week == 8) or (self.day_of_week == current_date.weekday() + 1): # 0 = Monday
+                Availability.objects.create(
+                    candidate=self.candidate,
+                    date=current_date,
+                    time_of_day=self.time_of_day
+                )
+            current_date += timedelta(days=1)
+            
     def __str__(self):
         return f"{self.candidate.fullname} - {self.date_from} - {self.date_to}"
+
+
+class Availability(models.Model):
+    """Deputy candidate availability, 1 item for each day"""
+    
+    candidate = models.ForeignKey(
+        'Person', on_delete=models.CASCADE, related_name="availabilities", verbose_name="Kandidat*in"
+    )
+    date = models.DateField(verbose_name="Tag")
+    time_of_day = models.ForeignKey(TimeOfDay, on_delete=models.CASCADE, related_name="availabilities_time_of_day")
+
+    def __str__(self):
+        return f"{self.candidate.fullname} - {self.date}"
 
 
 class SchoolClass(models.Model):
@@ -483,26 +559,32 @@ class SubstitutionPeriod(models.Model):
     )
     # deptuty is initialized blank and must be filled in a second step
     deputy = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="substitution_deputies", blank=True, null=True)
+    confirmed = models.BooleanField(default=False, verbose_name="Bestätigt")
 
-    @classmethod
-    def create_substitution_periods(cls, substitution, lesson_qs):
-        """
-        Create SubstitutionPeriod instances for each lesson in the queryset lesson_qs
-        for the given substitution.
-        """
-        substitution_periods = []
-        for lesson in lesson_qs:
-            substitution_period = cls(substitution=substitution, lesson=lesson)
-            substitution_periods.append(substitution_period)
-        cls.objects.bulk_create(substitution_periods)
-    
     class Meta:
         verbose_name = "Vertretung-Periode"
         verbose_name_plural = "Vertretung-Perioden"
 
     def __str__(self):
         return f"{self.lesson.subject.name}"
+    
 
+class SubstitutionCandidate(models.Model):
+    """Candidates with availalbility for a substitution period and proficiency with the subject of the lessons
+    The rating is a number from 1 to 100.
+    """
+
+    substitution = models.ForeignKey('Substitution', on_delete=models.CASCADE, related_name="substitution_candidates")
+    candidate = models.ForeignKey('Person', on_delete=models.CASCADE, related_name="substitution_candidates_persons")
+    rating = models.IntegerField(verbose_name="Bewertung", default=1)
+
+    class Meta:
+        verbose_name = "Vertretung-KandidatIn"
+        verbose_name_plural = "Vertretung-Kandidaten"
+    
+    def __str__(self):
+        return f"{self.candidate.fullname} - {self.rating}"
+    
 
 class VacationTemplate(models.Model):
     """Teacher vacation"""

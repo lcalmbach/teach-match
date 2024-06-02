@@ -56,4 +56,4 @@ class TeacherForm(forms.ModelForm):
 class SubstitutionPeriodForm(forms.ModelForm):
     class Meta:
         model = SubstitutionPeriod
-        fields = ['deputy']
+        fields = ['deputy', 'confirmed']
