@@ -12,22 +12,25 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Telefon</th>
+                    <th>Schule</th>
                     <th>Editieren</th>
                 </tr>
                 <tr> <!-- Filter inputs row -->
                     <th><input type="text" name="name_filter" value="{{ request.GET.name_filter }}"></th>
                     <th><input type="text" name="email_filter" value="{{ request.GET.email_filter }}"></th>
                     <th><input type="text" name="phone_filter" value="{{ request.GET.phone_filter }}"></th>
+                    <th><input type="text" name="school_filter" value="{{ request.GET.school_filter }}"></th>
                     <th><input type="submit" value="Filter"></th>
                 </tr>
             </thead>
             <tbody>
-                {% for teacher in teachers %}
+                {% for school_person in teachers %}
                 <tr>
-                  <td><a href="{% url 'teacher_detail' pk=teacher.pk %}">{{ teacher.fullname }}</a></td>
-                    <td>{{ teacher.email }}</td>
-                    <td>{{ teacher.phone_number }}</td>
-                    <td><a href="{% url 'teacher_edit' pk=teacher.pk %}" class="btn btn-primary">Edit</a></td>
+                  <td><a href="{% url 'teacher_detail' pk=school_person.pk %}">{{ school_person.person.fullname }}</a></td>
+                    <td>{{ school_person.person.email }}</td>
+                    <td>{{ school_person.person.phone_number }}</td>
+                    <td>{{ school_person.school.name }}</td>
+                    <td><a href="{% url 'teacher_edit' pk=school_person.pk %}" class="btn btn-primary">Edit</a></td>
                 </tr>
                 {% endfor %}
             </tbody>

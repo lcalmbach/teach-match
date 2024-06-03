@@ -1,12 +1,14 @@
 from django.forms import modelformset_factory
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import DetailView, UpdateView, CreateView
-from .models import School, Person, Teacher, Candidate, Substitution, SubstitutionPeriod, Lesson, Location, Level
+from .models import School, Person, Teacher, SchoolPerson, Candidate, Substitution, SubstitutionPeriod, Lesson, Location, Level
 from .forms import SchoolForm, CandidateForm, SubstitutionForm, TeacherForm, SubstitutionPeriodForm
 from django.views.generic import ListView  # Import the necessary module
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
+from django.db.models.functions import Concat
+from django.db.models import F, Value
 # from django.views.generic.edit import CreateView
 
 class SchoolListView(ListView):
@@ -121,28 +123,30 @@ class CandidateEditView(LoginRequiredMixin, UpdateView):
 
 
 class TeacherListView(ListView):
-    model = Teacher
-    context_object_name = (
-        "teachers"  # The name of the variable to be used in the template
-    )
+    model = SchoolPerson
     template_name = "school_management/teacher_list.html"  # Path to the template
+    context_object_name = "teachers"
 
     def get_queryset(self):
-        queryset = super().get_queryset()  # Get the original queryset
+        queryset = super().get_queryset().filter(role__id=4).annotate(
+            teacher=Concat(F('person__first_name'), Value(' '), F('person__last_name'))
+        )
         name_filter = self.request.GET.get("name_filter", "")
-        gender_filter = self.request.GET.get("gender_filter", "")
-        year_filter = self.request.GET.get("year_filter", "")
         email_filter = self.request.GET.get("email_filter", "")
         phone_filter = self.request.GET.get("phone_filter", "")
+        school_filter = self.request.GET.get("school_filter", "")
 
         # Apply filters if present
         if name_filter:
-            queryset = queryset.filter(last_name__icontains=name_filter)
+            queryset = queryset.filter(person__last_name__icontains=name_filter)
         if email_filter:
-            queryset = queryset.filter(email__icontains=email_filter)
+            queryset = queryset.filter(person__email__icontains=email_filter)
         if phone_filter:
-            queryset = queryset.filter(phone_number__icontains=phone_filter)
+            queryset = queryset.filter(person__phone_number__icontains=phone_filter)
+        if school_filter:
+            queryset = queryset.filter(school__name__icontains=school_filter)
 
+        queryset = queryset.order_by('school__name', 'teacher')
         return queryset
 
 

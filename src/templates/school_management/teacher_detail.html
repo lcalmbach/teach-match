@@ -39,18 +39,6 @@
   <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
       <a
-        class="nav-link active"
-        id="certificates-tab"
-        data-bs-toggle="tab"
-        href="#certificates"
-        role="tab"
-        aria-controls="certificates"
-        aria-selected="true"
-        >Abschlüsse</a
-      >
-    </li>
-    <li class="nav-item" role="presentation">
-      <a
         class="nav-link"
         id="substitution-tab"
         data-bs-toggle="tab"
@@ -89,32 +77,8 @@
 
   <!-- Tab content -->
   <div class="tab-content" id="myTabContent">
-    <div
-      class="tab-pane fade show active"
-      id="certificates"
-      role="tabpanel"
-      aria-labelledby="certificates-tab"
-    >
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Jahr</th>
-            <th>Abschluss</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for certificate in teacher.certificates.all %}
-          <tr>
-            <td>{{ certificate.year }}</td>
-            <td>{{ certificate.certificate.name }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-  </div>
-  
   <div
-      class="tab-pane fade"
+      class="tab-pane fade show active"
       id="substitutions"
       role="tabpanel"
       aria-labelledby="substitution-tab"
@@ -122,19 +86,17 @@
     <table class="table table-striped">
       <thead>
         <tr>
-          <th>Schule</th>
           <th>Von</th>
           <th>Bis</th>
-          <th>Vertretung von</th>
+          <th>Grund</th>
         </tr>
       </thead>
       <tbody>
         {% for substitution in teacher.teacher_substitutions.all %}
         <tr>
-          <td>{{ substitution.school.name }}</td>
-          <td>{{ substitution.start_date }}</td>
+          <td><a href="{% url 'substitution_detail' pk=substitution.pk %}">{{ substitution.start_date }}</a></td>
           <td>{{ substitution.end_date }}</td>
-          <td>{{ substitution.teacher.name }}</td>
+          <td>{{ substitution.cause.name }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -164,9 +126,8 @@
         </tbody>
       </table>
   </div>
-
   <div
-    class="tab-pane fade"
+    class="tab-pane"
     id="timetable"
     role="tabpanel"
     aria-labelledby="timetable-tab"
@@ -197,7 +158,7 @@
 
     
     <a href="{% url 'teacher_list' %}" class="btn btn-primary">Zurück</a>
-    <a href="{% url 'substitution_create_with_teacher' teacher.pk %}" class="btn btn-primary">Stellvertretung Suchen</a>
+    <a href="{% url 'substitution_create_with_teacher' teacher.pk %}" class="btn btn-primary">🔎Stellvertretung</a>
   </div>
 </div>
 

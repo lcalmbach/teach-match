@@ -30,7 +30,8 @@ from school_management.models import (
     Availability,
     SubstitutionCause,
     Lesson,
-    VacationTemplate
+    VacationTemplate,
+    SubstitutionStatus
 )
 from django.db import connection
 import random
@@ -330,7 +331,11 @@ class Command(BaseCommand):
                 model.objects.all().delete()
             df = pd.read_csv(filename, sep=';')
             for index, row in df.iterrows():
-                model.objects.create(id=row['id'], name=row['name'])
+                model.objects.create(
+                    id=row['id'],
+                    name=row['name'],
+                    description=row['description']
+            )
             print(f"codes for {filename} created.")
         except Exception as e:
             print(e)
@@ -542,8 +547,12 @@ class Command(BaseCommand):
         global all_periods
         faker = Faker("de_DE")
         ok = True
-        ok = False
+        
         force_reset = True
+        if ok:
+            ok = self.fill_code(SubstitutionStatus, './data/substitutionstatus.csv', force_reset)
+        ok = False
+        
         if ok:
             ok = self.school_year('./data/schoolyear.csv', force_reset)
         if ok:

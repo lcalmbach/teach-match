@@ -8,6 +8,21 @@ def get_default_time_of_day():
     except TimeOfDay.DoesNotExist:
         return None
 
+class SubstitutionStatus(models.Model):
+    """Status of a teacher substitution"""
+
+    name = models.CharField(max_length=255, verbose_name="Name")
+    description = models.TextField(verbose_name="Beschreibung", blank=True)
+
+    class Meta:
+        verbose_name = "Status der Stellvertretung"
+        verbose_name_plural = "Status der Stellvertretungen"
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
 class SchoolYear(models.Model):
     year_start = models.SmallIntegerField(verbose_name="Jahr", default=datetime.now().year)
     start_date = models.DateField(verbose_name="Erster Schultag")
@@ -363,11 +378,29 @@ class Substitution(models.Model):
         Period, on_delete=models.CASCADE, related_name="end_periods", verbose_name="Bis Lektion"
     )
     cause = models.ForeignKey(SubstitutionCause(), on_delete=models.CASCADE, related_name="substitution_causes", verbose_name="Begründung")
+    status = models.ForeignKey(
+        SubstitutionStatus,
+        on_delete=models.SET_DEFAULT,
+        default=3,
+        related_name="substitution_status"
+    )
+
     description = models.TextField(verbose_name="Beschreibung", blank=True, max_length=500)
-    
+
+    @property
+    def calculated_status(self):
+        today = timezone.now().date()
+        if self.date_to < today:
+            return SubstitutionStatus.objects.get(code='geschlossen')
+        elif self.date_from <= today <= self.date_to:
+            return SubstitutionStatus.objects.get(code='aktiv')
+        else:
+            return SubstitutionStatus.objects.get(code='geplant')
+            
     class Meta:
         verbose_name = "Stellvertretung"
         verbose_name_plural = "Stellvertretungen"
+
 
     def summary(self):
         text = f"Stellvertretung für {self.teacher.fullname} von {self.start_date} bis {self.end_date}<br>"
@@ -425,6 +458,10 @@ class Substitution(models.Model):
                 deputy=candidate
             )
 
+    def save(self, *args, **kwargs):
+        self.status = self.calculated_status
+        super().save(*args, **kwargs)
+        
     def __str__(self):
         return f"{self.teacher.fullname} - {self.start_period.start_time} - {self.end_period.end_time}"
 
