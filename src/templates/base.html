@@ -1,59 +1,32 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="de">
-  <head>
+<head>
     <title>{% block title %}{% endblock %}</title>
     {% load django_bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+</head>
+<body>
   <nav class="navbar navbar-expand-sm navbar-custom">
     <div class="container-fluid">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a
-            class="nav-link {% if request.path == '/' %}active{% endif %}"
-            href="/"
-            >Home</a
-          >
+          <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">Home</a>
         </li>
         <li class="nav-item">
-          <a 
-            class="nav-link {% if request.resolver_match.url_name == 'school_list' %}active{% endif %}"
-            href="{% url 'school_list' %}"
-            >Schulen</a
-          >
+          <a class="nav-link {% if request.resolver_match.url_name == 'school_list' %}active{% endif %}" href="{% url 'school_list' %}">Schulen</a>
         </li>
         <li class="nav-item">
-          <a
-            class="nav-link {% if request.resolver_match.url_name == 'teacher_list' %}active{% endif %}"
-            href="{% url 'teacher_list' %}"
-            >Lehrkräfte</a
-          >
+          <a class="nav-link {% if request.resolver_match.url_name == 'teacher_list' %}active{% endif %}" href="{% url 'teacher_list' %}">Lehrkräfte</a>
         </li>
         <li class="nav-item">
-          <a
-            class="nav-link {% if request.resolver_match.url_name == 'candidate_list' %}active{% endif %}"
-            href="{% url 'candidate_list' %}"
-            >Ersatzlehrkräfte</a
-          >
+          <a class="nav-link {% if request.resolver_match.url_name == 'candidate_list' %}active{% endif %}" href="{% url 'candidate_list' %}">Ersatzlehrkräfte</a>
         </li>
         <li class="nav-item">
-          <a
-            class="nav-link {% if request.resolver_match.url_name == 'substitution_list' %}active{% endif %}"
-            href="{% url 'substitution_list' %}"
-            >Stellvertretungen</a
-          >
+          <a class="nav-link {% if request.resolver_match.url_name == 'substitution_list' %}active{% endif %}" href="{% url 'substitution_list' %}">Stellvertretungen</a>
         </li>
       </ul>
       <!-- Right-aligned items -->
@@ -83,9 +56,14 @@
     </div>
     {% endfor %}
   {% endif %}
+  {% block content %}{% endblock %}
 
-    {% block content %}{% endblock %}
-  </body>
+  <!-- Footer with version number -->
+  <footer class="footer mt-auto py-3 bg-light">
+    <div class="container text-center">
+      <span class="text-muted">&copy; Statistisches Amt Basel-Stadt <span style="float:right; font-size: smaller;">v0.0.1 (5.6.24)</span></span>
+    </div>
+  </footer>
 
   <script>
     document.addEventListener('DOMContentLoaded', (event) => {
@@ -94,5 +72,6 @@
         return new bootstrap.Toast(toastEl).show();
       });
     });
-    </script>
+  </script>
+</body>
 </html>
