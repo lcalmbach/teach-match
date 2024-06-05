@@ -94,9 +94,8 @@
         <tbody>
           {% for contact in school_teachers %}
           <tr>
-            <td>{{ contact.person.fullname }}</td>
+            <td><a href="{% url 'teacher_detail' pk=contact.person.pk %}">{{ contact.person.fullname }}</a></td>
             <td>{{ contact.person.phone_number }}</td>
-            <td>{{ contact.person.email }}</td>
             <td>{{ contact.person.email }}</td>
           </tr>
           {% endfor %}

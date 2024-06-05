@@ -54,7 +54,24 @@
       <div class="tab-pane fade" id="kandidaten" role="tabpanel" aria-labelledby="kandidaten-tab">
           <div class="mt-3">
               <!-- Content for Kandidaten -->
-              <p>Hier gibt es eine Liste von Kandidatinnen. Sie kann durch entfernen und anfügen von Kandidatinnen editiert werden. Für alle Kandidatinnen können die Fächer gewählt werden, die sie vertreten werden. zudem kann bei einer Kandidatin ein Flag "volle Stellvertretung gesetzt werden, damit wird sie automatisch überall gesetzt."</p>
+              <table class="table table-striped">
+                  <thead>
+                      <tr>
+                          <th>Kandidat</th>
+                          <th>Fächer</th>
+                          <th>Rating</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for x in candidates.all %}
+                      <tr>
+                          <td><a href="{% url 'candidate_detail' pk=x.candidate.pk %}">{{ x.candidate.fullname }}</a></td>
+                          <td>{{ x.candidate.subjects.all|join:", " }}</td>
+                          <td>{{ x.rating }}</td>
+                      </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
           </div>
       </div>
       <div class="tab-pane fade" id="lektionen" role="tabpanel" aria-labelledby="lektionen-tab">

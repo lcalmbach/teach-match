@@ -190,6 +190,13 @@ class SubstitutionDetailView(DetailView):
     template_name = "school_management/substitution_detail.html"
     context_object_name = "substitution"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        substitution = self.get_object()
+        context['candidates'] = substitution.substitution_candidates
+
+        return context
+    
 
 class SubstitutionCreateView(CreateView):
     model = Substitution

@@ -31,7 +31,8 @@ from school_management.models import (
     SubstitutionCause,
     Lesson,
     VacationTemplate,
-    SubstitutionStatus
+    SubstitutionStatus,
+    SubstitutionCandidate
 )
 from django.db import connection
 import random
@@ -468,7 +469,6 @@ class Command(BaseCommand):
                         subject=subject,
                         experience=random.randint(1, 5),
                     )
-                    print(a)
             print("Subjects have been assigned to teachers.")
         except Exception as e:
             print(e)
@@ -542,17 +542,36 @@ class Command(BaseCommand):
             return False
         return True
     
+    def fill_substitution_candidates(self, force: bool=False):
+        """
+        Fill substitution candidates.
+        """
+        try:
+            if force:
+                SubstitutionCandidate.objects.all().delete()
+            for substitution in Substitution.objects.all():
+                for _ in range(random.randint(1, 10)):
+                    candidate = random.choice(Candidate.objects.all())
+                    SubstitutionCandidate.objects.create(
+                        substitution=substitution,
+                        candidate=candidate,
+                        rating=random.randint(1, 100)
+                    )
+            print("substitution candidates created.")
+        except Exception as e:
+            print(e)
+            return False
+        return True
+
     def handle(self, *args, **kwargs):
         global all_days
         global all_periods
         faker = Faker("de_DE")
         ok = True
-        
+        ok = False
         force_reset = True
         if ok:
             ok = self.fill_code(SubstitutionStatus, './data/substitutionstatus.csv', force_reset)
-        ok = False
-        
         if ok:
             ok = self.school_year('./data/schoolyear.csv', force_reset)
         if ok:
@@ -602,16 +621,18 @@ class Command(BaseCommand):
             ok = self.fill_classes()
         if ok:
             ok = self.fill_timetable_template(force_reset)
-        ok = True
         if ok:
             ok = self.fill_person_subject(force_reset)
-        ok = False
         if ok:
             ok = self.fill_timetable(force_reset)
         if ok:
             ok = self.assign_cvs_to_candidates()
         if ok:
             ok = self.fill_availabilities(force_reset)
+        ok = True
+        if ok:
+            ok = self.fill_substitution_candidates(force_reset)
+
         if not ok:
             print("An error occurred while populating the data.")
 

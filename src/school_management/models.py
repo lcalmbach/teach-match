@@ -1,6 +1,8 @@
 from django.db import models
+from django.urls import reverse
 from datetime import datetime, timedelta
 from django.utils import timezone
+import random
 
 def get_default_time_of_day():
     try:
@@ -236,14 +238,14 @@ class School(models.Model):
 class Person(models.Model):
     """teacher, deputies and managers of the school"""
 
-    first_name = models.CharField(max_length=255, verbose_name="Vorame")
+    first_name = models.CharField(max_length=255, verbose_name="Vorname")
     last_name = models.CharField(max_length=255, verbose_name="Nachname")
     email = models.EmailField(verbose_name="Email", blank=True)
     phone_number = models.CharField(
-        max_length=20, verbose_name="Phone Number", blank=True
+        max_length=20, verbose_name="Telefonnummer", blank=True
     )
     year_of_birth = models.CharField(
-        max_length=255, verbose_name="Geburtsjahr", blank=True
+        max_length=255, verbose_name="Jahrgang", blank=True
     )
     cv_text = models.TextField(verbose_name="CV Text", blank=True)
     cv_file = models.FileField(verbose_name="CV Datei", blank=True, upload_to="cv/")
@@ -387,6 +389,17 @@ class Substitution(models.Model):
 
     description = models.TextField(verbose_name="Beschreibung", blank=True, max_length=500)
 
+    def count_substitution_periods(self):
+        return self.substitution_subjects.count()
+    
+    def get_distinct_subjects(self):
+        periods = self.substitution_subjects.all()
+        subjects =  [p.lesson.subject.name for p in periods]
+        return list(set(subjects))
+        #return Subject.objects.filter(    
+        #    lesson_template_subjects__lesson__substitution_lessons__substitution=self
+        #).distinct()
+    
     @property
     def calculated_status(self):
         today = timezone.now().date()
@@ -403,13 +416,13 @@ class Substitution(models.Model):
 
 
     def summary(self):
-        text = f"Stellvertretung für {self.teacher.fullname} von {self.start_date} bis {self.end_date}<br>"
-        text += f"16 Lektionen in diesem Zeitraum"
-        text += f"""<ul>
-            <li>Geschichte: 10</li>
-            <li>Mathematik: 4</li>
-            <li>Gestalten: 2</li>
-            </ul>"""
+        teacher_detail_url = reverse('teacher_detail', kwargs={'pk': self.teacher.pk})
+        text = f'Stellvertretung für <a href="{teacher_detail_url}">{self.teacher.fullname}</a> von {self.start_date} bis {self.end_date}<br>'
+        text += f"{self.count_substitution_periods()} Lektionen in diesem Zeitraum.<br>"
+        text += "Fächer:<br><ul>"
+        for s in self.get_distinct_subjects():
+            text += f"<li>{s}</li>"
+        text += "</ul>"
         return text
     
     def create_candidates(self):
@@ -421,9 +434,24 @@ class Substitution(models.Model):
         Returns:
             _type_: _description_
         """
-        candidates = [] # Availability().objects.filter(is_candidate=True)
+        candidates = list(Candidate.objects.all())
+        if len(candidates) < 5:
+            raise ValueError("Not enough candidates to select from.")
 
-        return candidates
+        selected_candidates = random.sample(candidates, 5)
+        
+        substitution_candidates = []
+        for candidate in selected_candidates:
+            person, created = Person.objects.get_or_create(name=candidate.name)
+            substitution_candidate = SubstitutionCandidate(
+                substitution=self,
+                candidate=person,
+                rating=random.randint(1, 100),
+                comments=""
+            )
+            substitution_candidates.append(substitution_candidate)
+        SubstitutionCandidate.objects.bulk_create(substitution_candidates)
+        
 
     def find_candidate(self, lesson):
         """returns the candidate for the given lesson with the highest rating
@@ -460,6 +488,8 @@ class Substitution(models.Model):
 
     def save(self, *args, **kwargs):
         self.status = self.calculated_status
+        if not self.substitution_candidates.exists():
+            self.create_candidates()
         super().save(*args, **kwargs)
         
     def __str__(self):
@@ -607,13 +637,14 @@ class SubstitutionPeriod(models.Model):
     
 
 class SubstitutionCandidate(models.Model):
-    """Candidates with availalbility for a substitution period and proficiency with the subject of the lessons
+    """Candidates with available for a substitution period and proficiency with the subject of the lessons
     The rating is a number from 1 to 100.
     """
 
     substitution = models.ForeignKey('Substitution', on_delete=models.CASCADE, related_name="substitution_candidates")
     candidate = models.ForeignKey('Person', on_delete=models.CASCADE, related_name="substitution_candidates_persons")
     rating = models.IntegerField(verbose_name="Bewertung", default=1)
+    comments = models.TextField(verbose_name="Bemerkungen", blank=True)
 
     class Meta:
         verbose_name = "Vertretung-KandidatIn"
