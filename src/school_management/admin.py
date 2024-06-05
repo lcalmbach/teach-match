@@ -21,6 +21,9 @@ from .models import (SubstitutionCause,
                      LessonTemplate,
                      Lesson,
                      VacationTemplate,
+                     Substitution,
+                     SubstitutionCandidate,
+                     SubstitutionPeriod
 )
 
 # ist ein Versuch, die Admin-Oberfläche zu verbessern, im Moment erscheint der description Text aber noch nicht. Das scheint
@@ -59,3 +62,6 @@ admin.site.register(SchoolClass)
 admin.site.register(LessonTemplate)
 admin.site.register(Lesson)
 admin.site.register(VacationTemplate)
+admin.site.register(Substitution)
+admin.site.register(SubstitutionCandidate)
+admin.site.register(SubstitutionPeriod)
