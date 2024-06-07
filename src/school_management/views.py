@@ -51,6 +51,7 @@ class SchoolDetailView(DetailView):
         context['school_contacts'] = school.school_person_schools.filter(role__id=1)
         context['school_teachers'] = school.school_person_schools.filter(role__id=4)
         context['school_classes'] = school.class_schools.filter(school=school)
+        context['substitutions'] = school.substitution_schools.filter(school=school)
 
         return context
 

@@ -368,6 +368,7 @@ class PersonSubject(models.Model):
 class Substitution(models.Model):
     """Time frame for a teacher substitution"""
 
+    school = models.ForeignKey(School, on_delete=models.CASCADE, related_name="substitution_schools", verbose_name="Schule")
     teacher = models.ForeignKey(
         Person, on_delete=models.CASCADE, related_name="teacher_substitutions", verbose_name="Lehrkraft"
     )
