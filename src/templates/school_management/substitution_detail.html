@@ -49,11 +49,12 @@
         <div class="mt-3">
           <!-- Content for Lektionen verteilen -->
           <p>{{ substitution.summary|safe }}</p>
-      </div>
+        </div>
       </div>
       <div class="tab-pane fade" id="kandidaten" role="tabpanel" aria-labelledby="kandidaten-tab">
           <div class="mt-3">
               <!-- Content for Kandidaten -->
+              Diese KandidatInnen sind in der Stellvertretumgsperiode verfügbar und unterrichten mindestens eines der benötigten Fächer:
               <table class="table table-striped">
                   <thead>
                       <tr>
@@ -77,6 +78,7 @@
       <div class="tab-pane fade" id="lektionen" role="tabpanel" aria-labelledby="lektionen-tab">
         <div class="tab-pane fade show active" id="zusammenfassung" role="tabpanel" aria-labelledby="zusammenfassung-tab">
           <div class="mt-3">
+              Für jede Lektion können Sie eine Stellvertretung auswählen. Die Person ist anschliessend zu kontaktieren. Hat die Person zugesagt, so können sie den Eintrag bestätigen:
               <form method="post">
                   {% csrf_token %}
                   <table class="table table-striped">

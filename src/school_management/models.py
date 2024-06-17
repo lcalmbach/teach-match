@@ -1,8 +1,12 @@
+import random
+
 from django.db import models
 from django.urls import reverse
 from datetime import datetime, timedelta
 from django.utils import timezone
-import random
+
+from .helpers import SubstitutionHelper
+
 
 def get_default_time_of_day():
     try:
@@ -24,6 +28,20 @@ class SubstitutionStatus(models.Model):
     def __str__(self):
         return self.name
 
+
+class Qualification(models.Model):
+    """Abschluss, z.B. Lehrer, Sek1, Sek2, Matura, etc."""
+
+    name = models.CharField(max_length=255, verbose_name="Qualifikation")
+
+    class Meta:
+        verbose_name = "Abschluss"
+        verbose_name_plural = "Abschlüsse"
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+    
 
 class SchoolYear(models.Model):
     year_start = models.SmallIntegerField(verbose_name="Jahr", default=datetime.now().year)
@@ -374,127 +392,41 @@ class Substitution(models.Model):
     )
     start_date = models.DateField(verbose_name="Fällt aus von")
     end_date = models.DateField(verbose_name="Fällt aus bis")
-    start_period = models.ForeignKey(
-        Period, on_delete=models.CASCADE, related_name="start_periods", verbose_name="Von Lektion"
-    )
-    end_period = models.ForeignKey(
-        Period, on_delete=models.CASCADE, related_name="end_periods", verbose_name="Bis Lektion"
-    )
     cause = models.ForeignKey(SubstitutionCause(), on_delete=models.CASCADE, related_name="substitution_causes", verbose_name="Begründung")
+    partial_substitution_possible = models.BooleanField(verbose_name="Teilübernahme", default=False)
+    comment_subsitution = models.TextField(verbose_name="Anmerkung zum Vikariat", blank=True, max_length=500)
+    comment_class = models.TextField(verbose_name="Anmerkung zur Klasse", blank=True, max_length=500)
+    minimum_qualification = models.ForeignKey(Qualification, on_delete=models.CASCADE, related_name="substitution_certificates", verbose_name="Mindestabschluss", default=1)
+    classes = models.TextField(verbose_name="Klassen", blank=True, max_length=500)
+    mo_morning = models.BooleanField(verbose_name="Montag Vormittag", default=False)
+    mo_afternoon = models.BooleanField(verbose_name="Montag Nachmittag", default=False)
+    tu_morning = models.BooleanField(verbose_name="Dienstag Vormittag", default=False)
+    tu_afternoon = models.BooleanField(verbose_name="Dienstag Nachmittag", default=False)
+    we_morning = models.BooleanField(verbose_name="Mittwoch Vormittag", default=False)
+    we_afternoon = models.BooleanField(verbose_name="Mittwoch Nachmittag", default=False)
+    th_morning = models.BooleanField(verbose_name="Donnerstag Vormittag", default=False)
+    th_afternoon = models.BooleanField(verbose_name="Donnerstag Nachmittag", default=False)
+    fr_morning = models.BooleanField(verbose_name="Freitag Vormittag", default=False)
+    fr_afternoon = models.BooleanField(verbose_name="Freitag Nachmittag", default=False)
+
     status = models.ForeignKey(
         SubstitutionStatus,
         on_delete=models.SET_DEFAULT,
         default=3,
-        related_name="substitution_status"
+        related_name="substitution_status",
+        verbose_name="Status Besetzung Vikariat"
     )
+    created_timestamp = models.DateTimeField(auto_now_add=True, null=True)
 
-    description = models.TextField(verbose_name="Beschreibung", blank=True, max_length=500)
-
-    def count_substitution_periods(self):
-        return self.substitution_subjects.count()
     
-    def get_distinct_subjects(self):
-        periods = self.substitution_subjects.all()
-        subjects =  [p.lesson.subject.name for p in periods]
-        return list(set(subjects))
-        #return Subject.objects.filter(    
-        #    lesson_template_subjects__lesson__substitution_lessons__substitution=self
-        #).distinct()
-    
-    @property
-    def calculated_status(self):
-        today = timezone.now().date()
-        if self.date_to < today:
-            return SubstitutionStatus.objects.get(code='geschlossen')
-        elif self.date_from <= today <= self.date_to:
-            return SubstitutionStatus.objects.get(code='aktiv')
-        else:
-            return SubstitutionStatus.objects.get(code='geplant')
-            
     class Meta:
         verbose_name = "Stellvertretung"
         verbose_name_plural = "Stellvertretungen"
 
-
-    def summary(self):
-        teacher_detail_url = reverse('teacher_detail', kwargs={'pk': self.teacher.pk})
-        text = f'Stellvertretung für <a href="{teacher_detail_url}">{self.teacher.fullname}</a> von {self.start_date} bis {self.end_date}<br>'
-        text += f"{self.count_substitution_periods()} Lektionen in diesem Zeitraum.<br>"
-        text += "Fächer:<br><ul>"
-        for s in self.get_distinct_subjects():
-            text += f"<li>{s}</li>"
-        text += "</ul>"
-        return text
     
-    def create_candidates(self):
-        """returns a list of candidates for the given time frame and subject
 
-        Args:
-            _type_: _description_
-
-        Returns:
-            _type_: _description_
-        """
-        candidates = list(Candidate.objects.all())
-        if len(candidates) < 5:
-            raise ValueError("Not enough candidates to select from.")
-
-        selected_candidates = random.sample(candidates, 5)
-        
-        substitution_candidates = []
-        for candidate in selected_candidates:
-            person, created = Person.objects.get_or_create(name=candidate.name)
-            substitution_candidate = SubstitutionCandidate(
-                substitution=self,
-                candidate=person,
-                rating=random.randint(1, 100),
-                comments=""
-            )
-            substitution_candidates.append(substitution_candidate)
-        SubstitutionCandidate.objects.bulk_create(substitution_candidates)
-        
-
-    def find_candidate(self, lesson):
-        """returns the candidate for the given lesson with the highest rating
-
-        Args:
-            lesson (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        candidate = Person.objects.filter(is_candidate=True).first()
-        return candidate
-
-    def get_lessons(self):
-        """
-        Returns all lessons for the teacher in the given time frame. 
-        These will be saved as items in the substitiue period table for which a deputy must be found
-        """
-        lessons = Lesson.objects.filter(
-            teacher = self.teacher,
-            date__range=(self.start_date, self.end_date)
-        )
-        return lessons
-
-    def create_substitution_items(self):
-        lessons=self.get_lessons()
-        for lesson in lessons:
-            candidate = self.find_candidate(lesson)
-            SubstitutionPeriod.objects.create(
-                substitution=self,
-                lesson=lesson,
-                deputy=candidate
-            )
-
-    def save(self, *args, **kwargs):
-        self.status = self.calculated_status
-        if not self.substitution_candidates.exists():
-            self.create_candidates()
-        super().save(*args, **kwargs)
-        
     def __str__(self):
-        return f"{self.teacher.fullname} - {self.start_period.start_time} - {self.end_period.end_time}"
+        return f"{self.teacher.fullname} - {self.start_date} - {self.end_date}"
 
 
 class AvailabilityTemplate(models.Model):

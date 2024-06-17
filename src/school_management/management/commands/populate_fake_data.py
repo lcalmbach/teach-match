@@ -16,6 +16,7 @@ from school_management.models import (
     PersonSubject,
     Substitution,
     SubstitutionPeriod,
+    Qualification,
     Subject,
     DayOfWeek,
     Course,
@@ -332,11 +333,13 @@ class Command(BaseCommand):
                 model.objects.all().delete()
             df = pd.read_csv(filename, sep=';')
             for index, row in df.iterrows():
-                model.objects.create(
-                    id=row['id'],
-                    name=row['name'],
-                    description=row['description']
-            )
+                data = {
+                    'id': row['id'],
+                    'name': row['name']
+                }
+                if 'description' in [field.name for field in model._meta.get_fields()]:
+                    data['description'] = row['description']
+                model.objects.create(**data)
             print(f"codes for {filename} created.")
         except Exception as e:
             print(e)
@@ -568,8 +571,11 @@ class Command(BaseCommand):
         global all_periods
         faker = Faker("de_DE")
         ok = True
-        ok = False
+        
         force_reset = True
+        if ok:
+            ok = self.fill_code(Qualification, './data/qualification.csv', force_reset)
+        ok = False
         if ok:
             ok = self.fill_code(SubstitutionStatus, './data/substitutionstatus.csv', force_reset)
         if ok:
@@ -629,10 +635,8 @@ class Command(BaseCommand):
             ok = self.assign_cvs_to_candidates()
         if ok:
             ok = self.fill_availabilities(force_reset)
-        ok = True
         if ok:
             ok = self.fill_substitution_candidates(force_reset)
-
         if not ok:
             print("An error occurred while populating the data.")
 

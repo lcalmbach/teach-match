@@ -12,9 +12,10 @@ teach_match/templates/school_management/school_list.html
       <thead>
           <tr>
               <th>ID</th>  
+              <th>Schule</th>
               <th>Lehrkraft</th>
-              <th>Fällt aus von</th>
-              <th>Fällt aus bis</th>
+              <th>Von/Bis</th>
+              <th>Pensum</th>
               <th>Status</th>
               <th><i class="fas fa-edit"></i></th>
           </tr>
@@ -22,10 +23,34 @@ teach_match/templates/school_management/school_list.html
       <tbody>
           {% for substitution in substitutions %}
           <tr>
-             <td><a href="{% url 'substitution_detail' pk=substitution.pk %}">{{ substitution.pk }}</a></td>
+            <td>
+              <a href="{% url 'substitution_detail' pk=substitution.pk %}" >
+              <i class="fas fa-eye"></i>
+              </a>
+            </td>
+             <td>
+              <a href="{% url 'school_detail' pk=substitution.school.pk %}">{{ substitution.school.name }}</a>
+            </td>
               <td><a href="{% url 'teacher_detail' pk=substitution.pk %}">{{ substitution.teacher.fullname }}</a></td>
-              <td>{{ substitution.start_date }}</td> 
-              <td>{{ substitution.end_date }}</td> 
+              <td>{{ substitution.start_date }} - {{ substitution.end_date }}</td> 
+              <td>
+                <table>
+                  <tr>
+                      <td>{% if substitution.mo_morning %}◉{% else %}○{% endif %}</td>
+                      <td>{% if substitution.tu_morning %}◉{% else %}○{% endif %}</td>
+                      <td>{% if substitution.we_morning %}◉{% else %}○{% endif %}</td>
+                      <td>{% if substitution.th_morning %}◉{% else %}○{% endif %}</td>
+                      <td>{% if substitution.fr_morning %}◉{% else %}○{% endif %}</td>
+                  </tr>
+                  <tr>
+                    <td>{% if substitution.mo_afternoon %}◉{% else %}○{% endif %}</td>
+                    <td>{% if substitution.tu_afternoon %}◉{% else %}○{% endif %}</td>
+                    <td>{% if substitution.we_afternoon %}◉{% else %}○{% endif %}</td>
+                    <td>{% if substitution.th_afternoon %}◉{% else %}○{% endif %}</td>
+                    <td>{% if substitution.fr_afternoon %}◉{% else %}○{% endif %}</td>
+                </tr>
+              </table>
+              </td>
               <td>{{ substitution.status.name }}</td> 
               <td><a href="{% url 'substitution_edit' pk=substitution.pk %}" class="btn btn-primary">Edit</a></td>
           </tr>

@@ -1,2 +1,13 @@
 id;name
-1;Brückenangebote
+1;Brückenangebote (ZBA)
+2;Kindergarten
+3;Primarschule
+4;Sekundar A-Zug
+5;Sekundar E-Zug
+6;Sekundar P-Zug
+7;Eidg. Berufsattest (EBA)
+8;Eidg. Fähigkeitszeugnis (EFZ)
+9;Wirtschaftsmittelschule (WMS
+10;Informatikmittelschule (IMS)
+11;Fachmaturitätsschule (FMS)
+12;Gymnasium

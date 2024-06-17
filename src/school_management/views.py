@@ -9,6 +9,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.db.models.functions import Concat
 from django.db.models import F, Value
+
+from .helpers import SubstitutionHelper
 # from django.views.generic.edit import CreateView
 
 class SchoolListView(ListView):
@@ -241,32 +243,47 @@ class SubstitutionEditView(UpdateView):
         context['formset'] = formset
         return context
 
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        self.object = self.get_object()
-        SubstitutionPeriodFormSet = modelformset_factory(SubstitutionPeriod, form=SubstitutionPeriodForm, extra=0)
-        formset = SubstitutionPeriodFormSet(self.request.POST, queryset=SubstitutionPeriod.objects.filter(substitution=self.object))
-        
-        if form.is_valid() and formset.is_valid():
-            self.object = form.save()
-            try:
-                self.object.create_substitution_items()
-            except AttributeError as e:
-                print(f'Error: {e}')
-                return self.form_invalid(form, formset, error=str(e))
-            formset.save()
-            return self.form_valid(form, formset)
-        else:
-            print('Form or formset invalid')
-            return self.form_invalid(form, formset)
 
-    def form_valid(self, form, formset):
+class SubstitutionEditView(UpdateView):
+    model = Substitution
+    form_class = SubstitutionForm
+    template_name = "school_management/substitution_edit.html"
+    success_url = reverse_lazy("substitution_list")
+
+    def get_object(self, queryset=None):
+        pk = self.kwargs.get('pk')
+        if pk:
+            return get_object_or_404(Substitution, pk=pk)
+        return None
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Removing formset related code
+        substitution = self.get_object()
+        # If any additional context is needed, add it here
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        
+        if form.is_valid():
+            self.object = form.save(commit=False)
+            classes_str = SubstitutionHelper.get_classes(self.object)
+            print(classes_str)
+            self.object.classes = classes_str
+            self.object.save()
+            return self.form_valid(form)
+        else:
+            print('Form invalid')
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
         form.save()
-        formset.save()
         return redirect(self.success_url)
 
-    def form_invalid(self, form, formset, error=None):
-        context = self.get_context_data(form=form, formset=formset)
+    def form_invalid(self, form, error=None):
+        context = self.get_context_data(form=form)
         if error:
             context['error'] = error
         return self.render_to_response(context)
