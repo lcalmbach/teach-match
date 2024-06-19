@@ -12,7 +12,9 @@
                 <tr>
                     <th>Name</th>
                     <th>Jahrgang</th>
-                    <th>Anstellung</th>
+                    <th>Verfügbarkeit</th>
+                    <th>Von</th>
+                    <th>Bis</th>
                     <th>Email</th>
                     <th>Telefon</th>
                     <th></th>
@@ -20,7 +22,9 @@
                 <tr> <!-- Filter inputs row -->
                     <th><input type="text" name="name_filter" value="{{ request.GET.name_filter }}"></th>
                     <th><input type="text" name="year_filter" value="{{ request.GET.year_filter }}"></th>
-                    <th><input type="text" name="is_teacher_filter" value="{{ request.GET.is_teacher_filter }}"></th>
+                    <th></th>
+                    <th><input type="text" name="available_from_filter" value="{{ request.GET.email_filter }}"></th>
+                    <th><input type="text" name="avaialable_to_filter" value="{{ request.GET.email_filter }}"></th>
                     <th><input type="text" name="email_filter" value="{{ request.GET.email_filter }}"></th>
                     <th><input type="text" name="phone_filter" value="{{ request.GET.phone_filter }}"></th>
                     <th></th>
@@ -31,7 +35,26 @@
                 <tr>
                   <td><a href="{% url 'candidate_detail' pk=candidate.pk %}">{{ candidate.fullname }}</a></td>
                     <td>{{ candidate.year_of_birth }}</td>
-                    <td>{{ candidate.is_teacher|boolean_to_ja_nein }}</td>
+                    <td>
+                      <table>
+                        <tr>
+                            <td>{% if candidate.availability_mo_am %}◉{% else %}○{% endif %}</td>
+                            <td>{% if candidate.availability_tu_am %}◉{% else %}○{% endif %}</td>
+                            <td>{% if candidate.availability_we_am %}◉{% else %}○{% endif %}</td>
+                            <td>{% if candidate.availability_th_am %}◉{% else %}○{% endif %}</td>
+                            <td>{% if candidate.availability_fr_am %}◉{% else %}○{% endif %}</td>
+                        </tr>
+                        <tr>
+                          <td>{% if candidate.availability_mo_pm %}◉{% else %}○{% endif %}</td>
+                          <td>{% if candidate.availability_tu_pm %}◉{% else %}○{% endif %}</td>
+                          <td>{% if candidate.availability_we_pm %}◉{% else %}○{% endif %}</td>
+                          <td>{% if candidate.availability_th_pm %}◉{% else %}○{% endif %}</td>
+                          <td>{% if candidate.availability_fr_pm %}◉{% else %}○{% endif %}</td>
+                      </tr>
+                    </table>
+                    </td>
+                    <td>{{ candidate.available_from_date }}</td>
+                    <td>{{ candidate.available_to_date }}</td>
                     <td>{{ candidate.email }}</td>
                     <td>{{ candidate.phone_number }}</td>
                     <td><a href="{% url 'candidate_edit' pk=candidate.pk %}" class="btn btn-primary">Edit</a></td>

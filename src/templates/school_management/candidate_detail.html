@@ -24,9 +24,34 @@
             <td>{{ candidate.phone_number }}</td>
         </tr>
         <tr>
-          <th>Anstellung:</th>
-          <td>{{ candidate.is_teacher|yesno:"Ja,Nein" }}</td>
+          <th>Verfügbar von :</th>
+          <td>{{ candidate.available_from_date }}</td>
         </tr>
+        <tr>
+          <th>Verfügbar von :</th>
+          <td>{{ candidate.available_to_date }}</td>
+        </tr>
+        <tr>
+          <th>Wochentage:</th>
+        <td>
+          <table>
+            <tr>
+                <td>{% if candidate.availability_mo_am %}◉{% else %}○{% endif %}</td>
+                <td>{% if candidate.availability_tu_am %}◉{% else %}○{% endif %}</td>
+                <td>{% if candidate.availability_we_am %}◉{% else %}○{% endif %}</td>
+                <td>{% if candidate.availability_th_am %}◉{% else %}○{% endif %}</td>
+                <td>{% if candidate.availability_fr_am %}◉{% else %}○{% endif %}</td>
+            </tr>
+            <tr>
+              <td>{% if candidate.availability_mo_pm %}◉{% else %}○{% endif %}</td>
+              <td>{% if candidate.availability_tu_pm %}◉{% else %}○{% endif %}</td>
+              <td>{% if candidate.availability_we_pm %}◉{% else %}○{% endif %}</td>
+              <td>{% if candidate.availability_th_pm %}◉{% else %}○{% endif %}</td>
+              <td>{% if candidate.availability_fr_pm %}◉{% else %}○{% endif %}</td>
+          </tr>
+        </table>
+        </td>
+      </tr>
     </table>
   </div>
 
@@ -35,48 +60,24 @@
     <!-- Tab links -->
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
-          <a class="nav-link active" id="availabilities-tab" data-bs-toggle="tab" href="#availabilities" role="tab" aria-controls="availabilities" aria-selected="true">Verfügbarkeit</a>
-        </li>
-        <li class="nav-item" role="presentation">
           <a class="nav-link" id="subjects-tab" data-bs-toggle="tab" href="#subjects" role="tab" aria-controls="subjects" aria-selected="true">Fächer</a>
         </li>
         <li class="nav-item" role="presentation">
-            <a class="nav-link" id="certificates-tab" data-bs-toggle="tab" href="#certificates" role="tab" aria-controls="certificates" aria-selected="true">Abschlüsse</a>
+            <a class="nav-link" id="certificates-tab" data-bs-toggle="tab" href="#certificates" role="tab" aria-controls="certificates" aria-selected="false">Abschlüsse</a>
         </li>
         <li class="nav-item" role="presentation">
             <a class="nav-link" id="substitutions-tab" data-bs-toggle="tab" href="#substitutions" role="tab" aria-controls="substitutions" aria-selected="false">Stellvertretungen</a>
-        </li>
+       </li>
+       <!--
         <li class="nav-item" role="presentation">
             <a class="nav-link" id="cv-tab" data-bs-toggle="tab" href="#cv" role="tab" aria-controls="cv" aria-selected="false">Curriculum Vitae</a>
         </li>
+        -->
     </ul>
 
     <!-- Tab content -->
     <div class="tab-content" id="myTabContent">
-      <div class="tab-pane fade show active" id="availabilities" role="tabpanel" aria-labelledby="availabilities-tab">
-        <table class="table table-striped">
-          <thead>
-              <tr>
-                  <th>Von</th>
-                  <th>Bis</th>
-                  <th>Tag</th>
-                  <th>Zeit</th>
-              </tr>
-          </thead>
-          <tbody>
-              {% for a in availabilities.all %}
-              <tr>
-                  <td>{{ a.date_from }}</td>
-                  <td>{{ a.date_to }}</td>
-                  <td>{{ a.day_of_week }}</td>
-                  <td>{{ a.time_of_day }}</td>
-              </tr>
-              {% endfor %}
-          </tbody>
-        </table>
-      </div>
-
-      <div class="tab-pane fade" id="subjects" role="tabpanel" aria-labelledby="subjects-tab">
+      <div class="tab-pane fade show active" id="subjects" role="tabpanel" aria-labelledby="subjects-tab">
         <br><p>{{candidate.fullname}} unterrichtet folgende Fächer:</p>
         <table class="table table-striped">
           <thead>
@@ -142,13 +143,13 @@
           </tbody>
         </table>
       </div>
-
+      <!--
       <div class="tab-pane fade" id="cv" role="tabpanel" aria-labelledby="cv-tab">
           <h3>Curriculum Vitae von {{ candidate.fullname }}</h3>
           <p>{{ candidate.cv_text }}</p>
           <a href="{{ candidate.cv_file.url }}" target="_blank">Curriculum ansehen</a>
       </div></br>
-      
+      -->
       <a href="{% url 'candidate_list' %}" class="btn btn-primary">Zurück</a>
 </div>
 

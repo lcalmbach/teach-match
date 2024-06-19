@@ -1,4 +1,5 @@
 import random
+import os
 
 from django.db import models
 from django.urls import reverse
@@ -7,6 +8,9 @@ from django.utils import timezone
 
 from .helpers import SubstitutionHelper
 
+
+def get_cv_upload_path(instance, filename):
+    return os.path.join('cv', filename)
 
 def get_default_time_of_day():
     try:
@@ -255,7 +259,7 @@ class School(models.Model):
 
 class Person(models.Model):
     """teacher, deputies and managers of the school"""
-
+    school = models.ForeignKey(School, on_delete=models.CASCADE, related_name="person_schools", default=1)
     first_name = models.CharField(max_length=255, verbose_name="Vorname")
     last_name = models.CharField(max_length=255, verbose_name="Nachname")
     email = models.EmailField(verbose_name="Email", blank=True)
@@ -265,21 +269,43 @@ class Person(models.Model):
     year_of_birth = models.CharField(
         max_length=255, verbose_name="Jahrgang", blank=True
     )
-    cv_text = models.TextField(verbose_name="CV Text", blank=True)
-    cv_file = models.FileField(verbose_name="CV Datei", blank=True, upload_to="cv/")
+    # cv_text = models.TextField(verbose_name="CV Text", blank=True)
+    # cv_file = models.FileField(verbose_name="CV Datei", blank=True, upload_to=get_cv_upload_path)
     is_teacher = models.BooleanField(verbose_name="LehrerIn", default=False)
     is_candidate = models.BooleanField(verbose_name="KandidatIn für Stellvertretung", default=False)
     is_manager = models.BooleanField(
         verbose_name="Leitung/Administration",
         default=False
     )
-    years_of_experience = models.IntegerField(
-        verbose_name="Erfahrung in Jahren", blank=True, default=1
+    #years_of_experience = models.IntegerField(
+    #    verbose_name="Erfahrung in Jahren", blank=True, default=1
+    #)
+    available_from_date = models.DateField(
+        verbose_name="Verfügbar ab", blank=True, null=True
     )
+    available_to_date = models.DateField(
+        verbose_name="Verfügbar ab", blank=True, null=True
+    )
+    availability_mo_am = models.BooleanField(verbose_name="Montag Vormittag", default=False)
+    availability_tu_am = models.BooleanField(verbose_name="Dienstag Vormittag", default=False)
+    availability_we_am = models.BooleanField(verbose_name="Mittwoch Vormittag", default=False)
+    availability_th_am = models.BooleanField(verbose_name="Donnerstag Vormittag", default=False)
+    availability_fr_am = models.BooleanField(verbose_name="Freitag Vormittag", default=False)
+    availability_mo_pm = models.BooleanField(verbose_name="Montag Nachmittag", default=False)
+    availability_tu_pm = models.BooleanField(verbose_name="Dienstag Nachmittag", default=False)
+    availability_we_pm = models.BooleanField(verbose_name="Mittwoch Nachmittag", default=False)
+    availability_th_pm = models.BooleanField(verbose_name="Donnerstag Nachmittag", default=False)
+    availability_fr_pm = models.BooleanField(verbose_name="Freitag Nachmittag", default=False)
+    availability_comment = models.TextField(
+        max_length=500, verbose_name="Bemerkungen zur Verfügbarkeit", blank=True
+    )
+
     gender = models.ForeignKey('Gender', on_delete=models.CASCADE, verbose_name="Geschlecht", default=1)
     description = models.TextField(
         max_length=500, verbose_name="Bemerkungen", blank=True
     )
+
+
     subjects = models.ManyToManyField('Subject', related_name='person_subjects', blank=True)  # Many-to-many relationship
 
     @property
@@ -398,16 +424,16 @@ class Substitution(models.Model):
     comment_class = models.TextField(verbose_name="Anmerkung zur Klasse", blank=True, max_length=500)
     minimum_qualification = models.ForeignKey(Qualification, on_delete=models.CASCADE, related_name="substitution_certificates", verbose_name="Mindestabschluss", default=1)
     classes = models.TextField(verbose_name="Klassen", blank=True, max_length=500)
-    mo_morning = models.BooleanField(verbose_name="Montag Vormittag", default=False)
-    mo_afternoon = models.BooleanField(verbose_name="Montag Nachmittag", default=False)
-    tu_morning = models.BooleanField(verbose_name="Dienstag Vormittag", default=False)
-    tu_afternoon = models.BooleanField(verbose_name="Dienstag Nachmittag", default=False)
-    we_morning = models.BooleanField(verbose_name="Mittwoch Vormittag", default=False)
-    we_afternoon = models.BooleanField(verbose_name="Mittwoch Nachmittag", default=False)
-    th_morning = models.BooleanField(verbose_name="Donnerstag Vormittag", default=False)
-    th_afternoon = models.BooleanField(verbose_name="Donnerstag Nachmittag", default=False)
-    fr_morning = models.BooleanField(verbose_name="Freitag Vormittag", default=False)
-    fr_afternoon = models.BooleanField(verbose_name="Freitag Nachmittag", default=False)
+    mo_am = models.BooleanField(verbose_name="Montag Vormittag", default=False)
+    mo_pm = models.BooleanField(verbose_name="Montag Nachmittag", default=False)
+    tu_am = models.BooleanField(verbose_name="Dienstag Vormittag", default=False)
+    tu_pm = models.BooleanField(verbose_name="Dienstag Nachmittag", default=False)
+    we_am = models.BooleanField(verbose_name="Mittwoch Vormittag", default=False)
+    we_pm = models.BooleanField(verbose_name="Mittwoch Nachmittag", default=False)
+    th_am = models.BooleanField(verbose_name="Donnerstag Vormittag", default=False)
+    th_pm = models.BooleanField(verbose_name="Donnerstag Nachmittag", default=False)
+    fr_am = models.BooleanField(verbose_name="Freitag Vormittag", default=False)
+    fr_pm = models.BooleanField(verbose_name="Freitag Nachmittag", default=False)
 
     status = models.ForeignKey(
         SubstitutionStatus,
@@ -418,12 +444,9 @@ class Substitution(models.Model):
     )
     created_timestamp = models.DateTimeField(auto_now_add=True, null=True)
 
-    
     class Meta:
         verbose_name = "Stellvertretung"
         verbose_name_plural = "Stellvertretungen"
-
-    
 
     def __str__(self):
         return f"{self.teacher.fullname} - {self.start_date} - {self.end_date}"
