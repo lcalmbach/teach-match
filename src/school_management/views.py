@@ -1,8 +1,26 @@
 from django.forms import modelformset_factory
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import DetailView, UpdateView, CreateView
-from .models import School, Person, Teacher, SchoolPerson, Candidate, Substitution, SubstitutionPeriod, Lesson, Location, Level
-from .forms import SchoolForm, CandidateForm, SubstitutionForm, TeacherForm, SubstitutionPeriodForm
+from .models import (
+    School,
+    Person,
+    Teacher,
+    SchoolPerson,
+    Candidate,
+    Substitution,
+    SubstitutionPeriod,
+    Lesson,
+    Location,
+    Level,
+    SubstitutionStatus,
+)
+from .forms import (
+    SchoolForm,
+    CandidateForm,
+    SubstitutionForm,
+    TeacherForm,
+    SubstitutionPeriodForm,
+)
 from django.views.generic import ListView  # Import the necessary module
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -11,11 +29,15 @@ from django.db.models.functions import Concat
 from django.db.models import F, Value
 
 from .helpers import SubstitutionHelper
+
 # from django.views.generic.edit import CreateView
+
 
 class SchoolListView(ListView):
     model = School
-    context_object_name = "schools"  # The name of the variable to be used in the template
+    context_object_name = (
+        "schools"  # The name of the variable to be used in the template
+    )
     template_name = "school_management/school_list.html"  # Path to the template
 
     def get_queryset(self):
@@ -33,11 +55,13 @@ class SchoolListView(ListView):
             queryset = queryset.filter(location__id=location_filter)
 
         return queryset
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['locations'] = Location.objects.all()  # Pass all locations to the template
-        context['levels'] = Level.objects.all()  # Pass all locations to the template
+        context["locations"] = (
+            Location.objects.all()
+        )  # Pass all locations to the template
+        context["levels"] = Level.objects.all()  # Pass all locations to the template
         return context
 
 
@@ -48,12 +72,12 @@ class SchoolDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        school = context['school']
+        school = context["school"]
         # Filter SchoolPerson by school and role ID
-        context['school_contacts'] = school.school_person_schools.filter(role__id=1)
-        context['school_teachers'] = school.school_person_schools.filter(role__id=4)
-        context['school_classes'] = school.class_schools.filter(school=school)
-        context['substitutions'] = school.substitution_schools.filter(school=school)
+        context["school_contacts"] = school.school_person_schools.filter(role__id=1)
+        context["school_teachers"] = school.school_person_schools.filter(role__id=4)
+        context["school_classes"] = school.class_schools.filter(school=school)
+        context["substitutions"] = school.substitution_schools.filter(school=school)
 
         return context
 
@@ -108,13 +132,13 @@ class CandidateDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         candidate = context["candidate"]
-        context['availabilities'] = candidate.availability_templates_candidate.all()
-        context['subjects'] = candidate.personsubject_persons.all()
-        context['certificates'] = candidate.certificates.all()
-        context['substitutions'] = candidate.substitution_deputies.all()
-        print(context['substitutions'])
+        context["availabilities"] = candidate.availability_templates_candidate.all()
+        context["subjects"] = candidate.personsubject_persons.all()
+        context["certificates"] = candidate.certificates.all()
+        context["substitutions"] = candidate.substitution_deputies.all()
+        print(context["substitutions"])
         print(candidate.id)
-        
+
         return context
 
 
@@ -131,8 +155,15 @@ class TeacherListView(ListView):
     context_object_name = "teachers"
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(role__id=4).annotate(
-            teacher=Concat(F('person__first_name'), Value(' '), F('person__last_name'))
+        queryset = (
+            super()
+            .get_queryset()
+            .filter(role__id=4)
+            .annotate(
+                teacher=Concat(
+                    F("person__first_name"), Value(" "), F("person__last_name")
+                )
+            )
         )
         name_filter = self.request.GET.get("name_filter", "")
         email_filter = self.request.GET.get("email_filter", "")
@@ -149,7 +180,7 @@ class TeacherListView(ListView):
         if school_filter:
             queryset = queryset.filter(school__name__icontains=school_filter)
 
-        queryset = queryset.order_by('school__name', 'teacher')
+        queryset = queryset.order_by("school__name", "teacher")
         return queryset
 
 
@@ -161,8 +192,10 @@ class TeacherDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         teacher = context["teacher"]
-        context['teacher_subjects'] = teacher.personsubject_persons.all()
-        context['lessons'] = teacher.lessons_template_teachers.all().order_by('day_id', 'period_id')
+        context["teacher_subjects"] = teacher.personsubject_persons.all()
+        context["lessons"] = teacher.lessons_template_teachers.all().order_by(
+            "day_id", "period_id"
+        )
         return context
 
 
@@ -180,11 +213,55 @@ class SubstitutionListView(ListView):
     )
     template_name = "school_management/substitution_list.html"  # Path to the template
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["status"] = (
+            SubstitutionStatus.objects.all()
+        )  # Pass all locations to the template
+        context["schools"] = School.objects.all()  # Pass all locations to the template
+        return context
+
     def get_queryset(self):
-        # Get the default queryset
         queryset = super().get_queryset()
-        # Order queryset by start_date in descending order
-        queryset = queryset.order_by('-start_date')
+        school_filter = self.request.GET.get("school_filter", "")
+        teacher_filter = self.request.GET.get("teacher_filter", "")
+        date_from_filter = self.request.GET.get("date_from_filter", "")
+        date_to_filter = self.request.GET.get("date_to_filter", "")
+        status_filter = self.request.GET.get("status_filter", "")
+        day_filters = {
+            'mo_am_filter': self.request.GET.get('mo_am_filter'),
+            'tu_am_filter': self.request.GET.get('tu_am_filter'),
+            'we_am_filter': self.request.GET.get('we_am_filter'),
+            'th_am_filter': self.request.GET.get('th_am_filter'),
+            'fr_am_filter': self.request.GET.get('fr_am_filter'),
+            'mo_pm_filter': self.request.GET.get('mo_pm_filter'),
+            'tu_pm_filter': self.request.GET.get('tu_pm_filter'),
+            'we_pm_filter': self.request.GET.get('we_pm_filter'),
+            'th_pm_filter': self.request.GET.get('th_pm_filter'),
+            'fr_pm_filter': self.request.GET.get('fr_pm_filter'),
+        }
+        
+
+        # Apply filters if present
+        print(school_filter)
+        if school_filter:
+            queryset = queryset.filter(school_id=school_filter)
+        if teacher_filter:
+            queryset = queryset.filter(
+                teacher__name__icontains=teacher_filter
+            )
+        if date_from_filter:
+            queryset = queryset.filter(start_date__gt=date_from_filter)
+        if date_to_filter:
+            queryset = queryset.filter(end_date__lt=date_to_filter)
+        if status_filter:
+            queryset = queryset.filter(status_id=status_filter)
+        for key, value in day_filters.items():
+            if value == '1':
+                field_name = key.replace('_filter', '')
+                queryset = queryset.filter(**{field_name: True})
+
+        queryset = queryset.order_by("-start_date")
         return queryset
 
 
@@ -196,10 +273,10 @@ class SubstitutionDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         substitution = self.get_object()
-        context['candidates'] = substitution.substitution_candidates
+        context["candidates"] = substitution.substitution_candidates
 
         return context
-    
+
 
 class SubstitutionCreateView(CreateView):
     model = Substitution
@@ -209,39 +286,18 @@ class SubstitutionCreateView(CreateView):
 
     def get_initial(self):
         initial = super().get_initial()
-        teacher_id = self.kwargs.get('teacher_id')
+        teacher_id = self.kwargs.get("teacher_id")
         if teacher_id:
-            initial['teacher'] = teacher_id
+            initial["teacher"] = teacher_id
         return initial
-    
+
     def form_valid(self, form):
         self.object = form.save()
         self.object.create_substitution_items()  # Call the method after saving the form
-        return redirect('substitution_edit', pk=self.object.pk)
-    
-    
-class SubstitutionEditView(UpdateView):
-    model = Substitution
-    form_class = SubstitutionForm
-    template_name = "school_management/substitution_edit.html"
-    success_url = reverse_lazy("substitution_list")
+        return redirect("substitution_edit", pk=self.object.pk)
 
-    def get_object(self, queryset=None):
-        pk = self.kwargs.get('pk')
-        if pk:
-            return get_object_or_404(Substitution, pk=pk)
-        return None
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        substitution = self.get_object()
-        SubstitutionPeriodFormSet = modelformset_factory(SubstitutionPeriod, form=SubstitutionPeriodForm, extra=0)
-        if self.request.POST:
-            formset = SubstitutionPeriodFormSet(self.request.POST, queryset=SubstitutionPeriod.objects.filter(substitution=substitution))
-        else:
-            formset = SubstitutionPeriodFormSet(queryset=SubstitutionPeriod.objects.filter(substitution=substitution).order_by('lesson__date', 'lesson__period__start_time'))
-        context['formset'] = formset
-        return context
+
 
 
 class SubstitutionEditView(UpdateView):
@@ -251,7 +307,7 @@ class SubstitutionEditView(UpdateView):
     success_url = reverse_lazy("substitution_list")
 
     def get_object(self, queryset=None):
-        pk = self.kwargs.get('pk')
+        pk = self.kwargs.get("pk")
         if pk:
             return get_object_or_404(Substitution, pk=pk)
         return None
@@ -266,7 +322,7 @@ class SubstitutionEditView(UpdateView):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_form()
-        
+
         if form.is_valid():
             self.object = form.save(commit=False)
             classes_str = SubstitutionHelper.get_classes(self.object)
@@ -275,7 +331,7 @@ class SubstitutionEditView(UpdateView):
             self.object.save()
             return self.form_valid(form)
         else:
-            print('Form invalid')
+            print("Form invalid")
             return self.form_invalid(form)
 
     def form_valid(self, form):
@@ -285,5 +341,5 @@ class SubstitutionEditView(UpdateView):
     def form_invalid(self, form, error=None):
         context = self.get_context_data(form=form)
         if error:
-            context['error'] = error
+            context["error"] = error
         return self.render_to_response(context)

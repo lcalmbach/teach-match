@@ -8,55 +8,104 @@ teach_match/templates/school_management/school_list.html
     <br>
     <a href="{% url 'substitution_create' %}" class="btn btn-success">Neu</a>
     <br><br>
-    <table class="table table-striped">
-      <thead>
-          <tr>
-              <th>ID</th>  
-              <th>Schule</th>
-              <th>Lehrkraft</th>
-              <th>Von/Bis</th>
-              <th>Pensum</th>
-              <th>Status</th>
-              <th><i class="fas fa-edit"></i></th>
-          </tr>
-      </thead>
-      <tbody>
-          {% for substitution in substitutions %}
-          <tr>
-            <td>
-              <a href="{% url 'substitution_detail' pk=substitution.pk %}" >
-              <i class="fas fa-eye"></i>
-              </a>
-            </td>
-             <td>
-              <a href="{% url 'school_detail' pk=substitution.school.pk %}">{{ substitution.school.name }}</a>
-            </td>
-              <td><a href="{% url 'teacher_detail' pk=substitution.pk %}">{{ substitution.teacher.fullname }}</a></td>
-              <td>{{ substitution.start_date }} - {{ substitution.end_date }}</td> 
-              <td>
+    <form method="get" action="">
+      <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Schule</th>
+                <th>Lehrkraft</th>
+                <th>Von</th>
+                <th>Bis</th>
+                <th>Pensum</th>
+                <th>Status</th>
+                <th></th>
+                <th></th>
+            </tr>
+
+            <tr> <!-- Filter inputs row -->
+              <th>
+                <select name="school_filter">
+                  <option value="">---</option>
+                  {% for x in schools %}
+                      <option value="{{ x.id }}" {% if request.GET.schools_filter == x.id|stringformat:"s" %}selected{% endif %}>
+                          {{ x.name }}
+                      </option>
+                  {% endfor %}
+                </select>
+              </th>
+              <th><input type="text" name="teacher_filter" value="{{ request.GET.teacher_filter }}"></th>
+              <th>
+                <input type="date" name="date_from_filter" value="{{ request.GET.date_from_filter }}"></th>
+              <th>
+                <input type="date" name="date_to_filter" value="{{ request.GET.date_to_filter }}">
+              </th>
+              <th>
                 <table>
                   <tr>
-                      <td>{% if substitution.mo_morning %}◉{% else %}○{% endif %}</td>
-                      <td>{% if substitution.tu_morning %}◉{% else %}○{% endif %}</td>
-                      <td>{% if substitution.we_morning %}◉{% else %}○{% endif %}</td>
-                      <td>{% if substitution.th_morning %}◉{% else %}○{% endif %}</td>
-                      <td>{% if substitution.fr_morning %}◉{% else %}○{% endif %}</td>
+                      <td><input type="checkbox" name="mo_am_filter" value="1" {% if request.GET.mo_am_filter %}checked{% endif %}></td>
+                      <td><input type="checkbox" name="tu_am_filter" value="1" {% if request.GET.tu_am_filter %}checked{% endif %}></td>
+                      <td><input type="checkbox" name="we_am_filter" value="1" {% if request.GET.we_am_filter %}checked{% endif %}></td>
+                      <td><input type="checkbox" name="th_am" value="1" {% if request.GET.th_am_filter %}checked{% endif %}></td>
+                      <td><input type="checkbox" name="fr_am_filter" value="1" {% if request.GET.fr_am_filter %}checked{% endif %}></td>
                   </tr>
                   <tr>
-                    <td>{% if substitution.mo_afternoon %}◉{% else %}○{% endif %}</td>
-                    <td>{% if substitution.tu_afternoon %}◉{% else %}○{% endif %}</td>
-                    <td>{% if substitution.we_afternoon %}◉{% else %}○{% endif %}</td>
-                    <td>{% if substitution.th_afternoon %}◉{% else %}○{% endif %}</td>
-                    <td>{% if substitution.fr_afternoon %}◉{% else %}○{% endif %}</td>
+                    <td><input type="checkbox" name="mo_pm_filter" value="1" {% if request.GET.mo_pm_filter %}checked{% endif %}></td>
+                    <td><input type="checkbox" name="tu_pm_filter" value="1" {% if request.GET.tu_pm_filter %}checked{% endif %}></td>
+                    <td><input type="checkbox" name="we_pm_filter" value="1" {% if request.GET.we_pm_filter %}checked{% endif %}></td>
+                    <td><input type="checkbox" name="th_pm_filter" value="1" {% if request.GET.th_pm_filter %}checked{% endif %}></td>
+                    <td><input type="checkbox" name="fr_pm_filter" value="1" {% if request.GET.fr_pm_filter %}checked{% endif %}></td>
                 </tr>
               </table>
-              </td>
-              <td>{{ substitution.status.name }}</td> 
-              <td><a href="{% url 'substitution_edit' pk=substitution.pk %}" class="btn btn-primary">Edit</a></td>
+              </th>
+              <th>
+              <select name="status_filter">
+                <option value="">---</option>
+                {% for x in status %}
+                    <option value="{{ x.id }}" {% if request.GET.status_filter == x.id|stringformat:"s" %}selected{% endif %}>
+                        {{ x.name }}
+                    </option>
+                {% endfor %}
+              </select>
+            </th>
+              <th><input type="submit" value="Suchen"></th>
           </tr>
-          {% endfor %}
-      </tbody>
-  </table>
+        
+          </thead>
+        <tbody>
+            {% for substitution in substitutions %}
+            <tr>
+              <td>
+                <a href="{% url 'school_detail' pk=substitution.school.pk %}">{{ substitution.school.name }}</a>
+              </td>
+                <td><a href="{% url 'teacher_detail' pk=substitution.pk %}">{{ substitution.teacher.fullname }}</a></td>
+                <td>{{ substitution.start_date }}</td> 
+                <td>{{ substitution.end_date }}</td>
+                <td>
+                  <table>
+                    <tr>
+                        <td>{% if substitution.mo_am %}◉{% else %}○{% endif %}</td>
+                        <td>{% if substitution.tu_am %}◉{% else %}○{% endif %}</td>
+                        <td>{% if substitution.we_am %}◉{% else %}○{% endif %}</td>
+                        <td>{% if substitution.th_am %}◉{% else %}○{% endif %}</td>
+                        <td>{% if substitution.fr_am %}◉{% else %}○{% endif %}</td>
+                    </tr>
+                    <tr>
+                      <td>{% if substitution.mo_pm %}◉{% else %}○{% endif %}</td>
+                      <td>{% if substitution.tu_pm %}◉{% else %}○{% endif %}</td>
+                      <td>{% if substitution.we_pm %}◉{% else %}○{% endif %}</td>
+                      <td>{% if substitution.th_pm %}◉{% else %}○{% endif %}</td>
+                      <td>{% if substitution.fr_pm %}◉{% else %}○{% endif %}</td>
+                  </tr>
+                </table>
+                </td>
+                <td>{{ substitution.status.name }}</td> 
+                <td><a href="{% url 'substitution_detail' pk=substitution.pk %}" title="Stellvertretung ansehen"><i class="fas fa-eye"></i></a></td>
+                <td><a href="{% url 'substitution_edit' pk=substitution.pk %}" title="Stellvertretung editieren"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </form>
   </div>  
   {% endblock %}
 
