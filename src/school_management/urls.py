@@ -4,10 +4,13 @@ from .views import (
     CandidateListView,
     CandidateEditView,
     CandidateDetailView,
-    SubstitutionListView,
+    
+    SubstitutionAdminListView,
     SubstitutionDetailView,
     SubstitutionEditView,
     SubstitutionCreateView,
+    SubstitutionCandidatesListView,
+
     TeacherListView,
     TeacherDetailView,
     TeacherEditView,
@@ -27,17 +30,29 @@ urlpatterns = [
     path("teachers/", TeacherListView.as_view(), name="teacher_list"),
     path("teachers/<int:pk>/", TeacherDetailView.as_view(), name="teacher_detail"),
     path("teachers/<int:pk>/edit/", TeacherEditView.as_view(), name="teacher_edit"),
-    
-    path("substitutions/", SubstitutionListView.as_view(), name="substitution_list"),
+    path("substitutions_admin/", SubstitutionAdminListView.as_view(), name="substitution_admin_list"),
     path(
         "substitutions/<int:pk>/",
         SubstitutionDetailView.as_view(),
         name="substitution_detail",
     ),
-    path('substitution/<int:pk>/', SubstitutionEditView.as_view(), name='substitution_edit'),  # For editing
-    path('substitution/new/', SubstitutionCreateView.as_view(), name='substitution_create'),  # For creating new
-    path('substitution/new/<int:teacher_id>/', SubstitutionCreateView.as_view(), name='substitution_create_with_teacher'),
+    path(
+        "substitution/<int:pk>/",
+        SubstitutionEditView.as_view(),
+        name="substitution_edit",
+    ),  # For editing
+    path(
+        "substitution/new/",
+        SubstitutionCreateView.as_view(),
+        name="substitution_create",
+    ),  # For creating new
+    path(
+        "substitution/new/<int:teacher_id>/",
+        SubstitutionCreateView.as_view(),
+        name="substitution_create_with_teacher",
+    ),
+    path("substitutions_candidates/", SubstitutionCandidatesListView.as_view(), name="substitution_candidates_list"),
 
-    path("find_match/", SubstitutionListView.as_view(), name="find_match"),
+    path("find_match/", SubstitutionAdminListView.as_view(), name="find_match"),
     path("login/", SubstitutionEditView.as_view(), name="login"),
 ]

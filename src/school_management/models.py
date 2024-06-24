@@ -10,13 +10,15 @@ from .helpers import SubstitutionHelper
 
 
 def get_cv_upload_path(instance, filename):
-    return os.path.join('cv', filename)
+    return os.path.join("cv", filename)
+
 
 def get_default_time_of_day():
     try:
         return TimeOfDay.objects.get(pk=3).pk
     except TimeOfDay.DoesNotExist:
         return None
+
 
 class SubstitutionStatus(models.Model):
     """Status of a teacher substitution"""
@@ -27,7 +29,7 @@ class SubstitutionStatus(models.Model):
     class Meta:
         verbose_name = "Status der Stellvertretung"
         verbose_name_plural = "Status der Stellvertretungen"
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -41,25 +43,27 @@ class Qualification(models.Model):
     class Meta:
         verbose_name = "Abschluss"
         verbose_name_plural = "Abschlüsse"
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
-    
+
 
 class SchoolYear(models.Model):
-    year_start = models.SmallIntegerField(verbose_name="Jahr", default=datetime.now().year)
+    year_start = models.SmallIntegerField(
+        verbose_name="Jahr", default=datetime.now().year
+    )
     start_date = models.DateField(verbose_name="Erster Schultag")
     end_date = models.DateField(verbose_name="Letzter Schultag")
 
     class Meta:
         verbose_name = "Schuljahr"
         verbose_name_plural = "Schuljahre"
-        ordering = ['year_start']
+        ordering = ["year_start"]
 
     def __str__(self):
         return self.year_start
-    
+
 
 class SubstitutionCause(models.Model):
     """cause for a teacher substitution"""
@@ -69,10 +73,11 @@ class SubstitutionCause(models.Model):
     class Meta:
         verbose_name = "Code für Abwesenheitsgrund"
         verbose_name_plural = "Codes für Abwesenheitsgrund"
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
+
 
 class SchoolPersonRole(models.Model):
     """Schulleitung, Lehrer, etc."""
@@ -82,10 +87,11 @@ class SchoolPersonRole(models.Model):
     class Meta:
         verbose_name = "Rolle in Schule"
         verbose_name_plural = "Rollen in Schule"
-        ordering = ['name']
-    
+        ordering = ["name"]
+
     def __str__(self):
         return self.name
+
 
 class Location(models.Model):
     """Basel, Riehen, Bettingen"""
@@ -95,8 +101,8 @@ class Location(models.Model):
     class Meta:
         verbose_name = "Ort"
         verbose_name_plural = "Orte"
-        ordering = ['name']
-    
+        ordering = ["name"]
+
     def __str__(self):
         return f"{self.name}"
 
@@ -109,7 +115,7 @@ class Gender(models.Model):
     class Meta:
         verbose_name = "Geschlecht"
         verbose_name_plural = "Geschlechter"
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -123,7 +129,7 @@ class Certificate(models.Model):
     class Meta:
         verbose_name = "Abschluss"
         verbose_name_plural = "Abschlüsse"
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -137,7 +143,7 @@ class TimeOfDay(models.Model):
     class Meta:
         verbose_name = "Vormittag/Nachmittag"
         verbose_name_plural = "Vormittag/Nachmittag"
-        ordering = ['-name']
+        ordering = ["-name"]
 
     def __str__(self):
         return self.name
@@ -147,12 +153,12 @@ class DayOfWeek(models.Model):
     """Monday, Tuesday, etc."""
 
     name = models.CharField(max_length=255, verbose_name="Wochentag")
-    short_name = models.CharField(max_length=255, verbose_name="Kürzel")
+    name_short = models.CharField(max_length=255, verbose_name="Kürzel")
 
     class Meta:
         verbose_name = "Wochentag"
         verbose_name_plural = "Wochentage"
-        ordering = ['id']
+        ordering = ["id"]
 
     def __str__(self):
         return self.name
@@ -166,15 +172,15 @@ class Period(models.Model):
     time_of_day = models.ForeignKey(
         TimeOfDay, on_delete=models.CASCADE, verbose_name="Tageszeit"
     )
-    #day_of_week = models.ForeignKey(
+    # day_of_week = models.ForeignKey(
     #    DayOfWeek, on_delete=models.CASCADE, verbose_name="Wochentag"
-    #)
-    
+    # )
+
     class Meta:
         verbose_name = "Periode"
         verbose_name_plural = "Perioden"
-        ordering = ['start_time']
-    
+        ordering = ["start_time"]
+
     def __str__(self):
         return f"{self.start_time} - {self.end_time}"
 
@@ -188,7 +194,7 @@ class Course(models.Model):
     class Meta:
         verbose_name = "Profil"
         verbose_name_plural = "Profile"
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -198,11 +204,20 @@ class Level(models.Model):
     """Sek1, Sek2, Kindergarten, Primarschule, etc.. used in school model"""
 
     name = models.CharField(max_length=255, verbose_name="Stufen-Name")
-    
+    name_short = models.CharField(max_length=255, verbose_name="Kurz-Name", blank=True)
+    cycle = models.IntegerChoices("Zyklus", "1 2 3 4")
+    cycle_name = models.CharField(
+        max_length=255, verbose_name="Zyklus-Name", blank=True
+    )
+    cycle_name_short = models.CharField(
+        max_length=255, verbose_name="Kurz-Zyklus-Name", blank=True
+    )
+    order = models.IntegerField(verbose_name="Reihenfolge", default=1)
+
     class Meta:
         verbose_name = "Stufe"
         verbose_name_plural = "Stufen"
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -213,14 +228,13 @@ class Subject(models.Model):
     """Mathematik, Deutsch, Englisch, etc."""
 
     name = models.CharField(max_length=255, verbose_name="Name")
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Kurs")
+    name_short = models.CharField(max_length=255, verbose_name="Kürzel", blank=True)
     description = models.TextField(verbose_name="Description", blank=True)
-    school_year = models.IntegerField(verbose_name="Schuljahr", default=1)
 
     class Meta:
         verbose_name = "Fach"
         verbose_name_plural = "Fächer"
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -251,7 +265,7 @@ class School(models.Model):
     class Meta:
         verbose_name = "Standort"
         verbose_name_plural = "Standorte"
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -259,7 +273,10 @@ class School(models.Model):
 
 class Person(models.Model):
     """teacher, deputies and managers of the school"""
-    school = models.ForeignKey(School, on_delete=models.CASCADE, related_name="person_schools", default=1)
+
+    school = models.ForeignKey(
+        School, on_delete=models.CASCADE, related_name="person_schools", default=1
+    )
     first_name = models.CharField(max_length=255, verbose_name="Vorname")
     last_name = models.CharField(max_length=255, verbose_name="Nachname")
     email = models.EmailField(verbose_name="Email", blank=True)
@@ -272,50 +289,74 @@ class Person(models.Model):
     # cv_text = models.TextField(verbose_name="CV Text", blank=True)
     # cv_file = models.FileField(verbose_name="CV Datei", blank=True, upload_to=get_cv_upload_path)
     is_teacher = models.BooleanField(verbose_name="LehrerIn", default=False)
-    is_candidate = models.BooleanField(verbose_name="KandidatIn für Stellvertretung", default=False)
-    is_manager = models.BooleanField(
-        verbose_name="Leitung/Administration",
-        default=False
+    is_candidate = models.BooleanField(
+        verbose_name="KandidatIn für Stellvertretung", default=False
     )
-    #years_of_experience = models.IntegerField(
+    is_manager = models.BooleanField(
+        verbose_name="Leitung/Administration", default=False
+    )
+    # years_of_experience = models.IntegerField(
     #    verbose_name="Erfahrung in Jahren", blank=True, default=1
-    #)
+    # )
     available_from_date = models.DateField(
         verbose_name="Verfügbar ab", blank=True, null=True
     )
     available_to_date = models.DateField(
         verbose_name="Verfügbar ab", blank=True, null=True
     )
-    availability_mo_am = models.BooleanField(verbose_name="Montag Vormittag", default=False)
-    availability_tu_am = models.BooleanField(verbose_name="Dienstag Vormittag", default=False)
-    availability_we_am = models.BooleanField(verbose_name="Mittwoch Vormittag", default=False)
-    availability_th_am = models.BooleanField(verbose_name="Donnerstag Vormittag", default=False)
-    availability_fr_am = models.BooleanField(verbose_name="Freitag Vormittag", default=False)
-    availability_mo_pm = models.BooleanField(verbose_name="Montag Nachmittag", default=False)
-    availability_tu_pm = models.BooleanField(verbose_name="Dienstag Nachmittag", default=False)
-    availability_we_pm = models.BooleanField(verbose_name="Mittwoch Nachmittag", default=False)
-    availability_th_pm = models.BooleanField(verbose_name="Donnerstag Nachmittag", default=False)
-    availability_fr_pm = models.BooleanField(verbose_name="Freitag Nachmittag", default=False)
+    availability_mo_am = models.BooleanField(
+        verbose_name="Montag Vormittag", default=False
+    )
+    availability_tu_am = models.BooleanField(
+        verbose_name="Dienstag Vormittag", default=False
+    )
+    availability_we_am = models.BooleanField(
+        verbose_name="Mittwoch Vormittag", default=False
+    )
+    availability_th_am = models.BooleanField(
+        verbose_name="Donnerstag Vormittag", default=False
+    )
+    availability_fr_am = models.BooleanField(
+        verbose_name="Freitag Vormittag", default=False
+    )
+    availability_mo_pm = models.BooleanField(
+        verbose_name="Montag Nachmittag", default=False
+    )
+    availability_tu_pm = models.BooleanField(
+        verbose_name="Dienstag Nachmittag", default=False
+    )
+    availability_we_pm = models.BooleanField(
+        verbose_name="Mittwoch Nachmittag", default=False
+    )
+    availability_th_pm = models.BooleanField(
+        verbose_name="Donnerstag Nachmittag", default=False
+    )
+    availability_fr_pm = models.BooleanField(
+        verbose_name="Freitag Nachmittag", default=False
+    )
     availability_comment = models.TextField(
         max_length=500, verbose_name="Bemerkungen zur Verfügbarkeit", blank=True
     )
 
-    gender = models.ForeignKey('Gender', on_delete=models.CASCADE, verbose_name="Geschlecht", default=1)
+    gender = models.ForeignKey(
+        "Gender", on_delete=models.CASCADE, verbose_name="Geschlecht", default=1
+    )
     description = models.TextField(
         max_length=500, verbose_name="Bemerkungen", blank=True
     )
 
-
-    subjects = models.ManyToManyField('Subject', related_name='person_subjects', blank=True)  # Many-to-many relationship
+    subjects = models.ManyToManyField(
+        "Subject", related_name="person_subjects", blank=True
+    )  # Many-to-many relationship
 
     @property
     def fullname(self):
         return f"{self.last_name} {self.first_name}"
-    
+
     class Meta:
         verbose_name = "Person"
         verbose_name_plural = "Personen"
-        ordering = ['last_name', 'first_name']
+        ordering = ["last_name", "first_name"]
 
     def __str__(self):
         return f"{self.last_name} {self.first_name} {self.year_of_birth}"
@@ -331,6 +372,26 @@ class Teacher(Person):
 
     class Meta:
         proxy = True
+
+    def get_unique_subjects(self):
+        # Get the unique subject objects related to lessons taught by this teacher
+        unique_subject_ids = (
+            LessonTemplate.objects.filter(teacher=self)
+            .values_list("subject", flat=True)
+            .distinct()
+        )
+        unique_subjects = Subject.objects.filter(id__in=unique_subject_ids)
+        return unique_subjects
+
+    def get_unique_classes(self):
+        # Get the unique class objects related to lessons taught by this teacher
+        unique_class_ids = (
+            LessonTemplate.objects.filter(teacher=self)
+            .values_list("school_class", flat=True)
+            .distinct()
+        )
+        unique_classes = SchoolClass.objects.filter(id__in=unique_class_ids)
+        return unique_classes
 
 
 class CandidateManager(models.Manager):
@@ -377,7 +438,7 @@ class PersonCertificate(models.Model):
         Certificate, on_delete=models.CASCADE, related_name="candidates_person"
     )
     year = models.CharField(max_length=255, verbose_name="Jahr", blank=True, null=True)
-    
+
     class Meta:
         verbose_name = "Zuordnung Abschluss zu Person"
         verbose_name_plural = "Zuordnung Abschluss zu Person"
@@ -386,44 +447,50 @@ class PersonCertificate(models.Model):
         return f"{self.person.fullname} - {self.certificate.name} - {self.year} - {self.person.is_teacher}"
 
 
-class PersonSubject(models.Model):
-    """
-    Subjects for deputies and teachers of the school. experience goes from 1: only studied to 5:
-    teaching experience
-    """
-
-    person = models.ForeignKey(
-        Person, on_delete=models.CASCADE, related_name="personsubject_persons"
-    )
-    subject = models.ForeignKey(
-        Subject, on_delete=models.CASCADE, related_name="personsubject_subjects"
-    )
-    experience = models.IntegerField(verbose_name="Erfahrung", blank=True, default=1)
-    description = models.TextField(verbose_name="Description", blank=True, max_length=500)
-
-    class Meta:
-        verbose_name = "Zuordnung Fach zu Person"
-        verbose_name_plural = "Zuordnung Fach zu Person"
-
-    def __str__(self):
-        return f"{self.person.fullname} - {self.subject.name} - {self.experience}"
-
-
 class Substitution(models.Model):
     """Time frame for a teacher substitution"""
 
-    school = models.ForeignKey(School, on_delete=models.CASCADE, related_name="substitution_schools", verbose_name="Schule")
+    school = models.ForeignKey(
+        School,
+        on_delete=models.CASCADE,
+        related_name="substitution_schools",
+        verbose_name="Schule",
+    )
     teacher = models.ForeignKey(
-        Person, on_delete=models.CASCADE, related_name="teacher_substitutions", verbose_name="Lehrkraft"
+        Person,
+        on_delete=models.CASCADE,
+        related_name="teacher_substitutions",
+        verbose_name="Lehrkraft",
     )
     start_date = models.DateField(verbose_name="Fällt aus von")
     end_date = models.DateField(verbose_name="Fällt aus bis")
-    cause = models.ForeignKey(SubstitutionCause(), on_delete=models.CASCADE, related_name="substitution_causes", verbose_name="Begründung")
-    partial_substitution_possible = models.BooleanField(verbose_name="Teilübernahme", default=False)
-    comment_subsitution = models.TextField(verbose_name="Anmerkung zum Vikariat", blank=True, max_length=500)
-    comment_class = models.TextField(verbose_name="Anmerkung zur Klasse", blank=True, max_length=500)
-    minimum_qualification = models.ForeignKey(Qualification, on_delete=models.CASCADE, related_name="substitution_certificates", verbose_name="Mindestabschluss", default=1)
+    cause = models.ForeignKey(
+        SubstitutionCause(),
+        on_delete=models.CASCADE,
+        related_name="substitution_causes",
+        verbose_name="Begründung",
+    )
+    partial_substitution_possible = models.BooleanField(
+        verbose_name="Teilübernahme", default=False
+    )
+    comment_subsitution = models.TextField(
+        verbose_name="Anmerkung zum Vikariat", blank=True, max_length=500
+    )
+    comment_class = models.TextField(
+        verbose_name="Anmerkung zur Klasse", blank=True, max_length=500
+    )
+    minimum_qualification = models.ForeignKey(
+        Qualification,
+        on_delete=models.CASCADE,
+        related_name="substitution_certificates",
+        verbose_name="Mindestabschluss",
+        default=1,
+    )
+    # für die Anzeige
     classes = models.TextField(verbose_name="Klassen", blank=True, max_length=500)
+    levels = models.TextField(verbose_name="Stufen", blank=True, max_length=500)
+    subjects = models.TextField(verbose_name="Fächer", blank=True, max_length=500)
+
     mo_am = models.BooleanField(verbose_name="Montag Vormittag", default=False)
     mo_pm = models.BooleanField(verbose_name="Montag Nachmittag", default=False)
     tu_am = models.BooleanField(verbose_name="Dienstag Vormittag", default=False)
@@ -435,12 +502,13 @@ class Substitution(models.Model):
     fr_am = models.BooleanField(verbose_name="Freitag Vormittag", default=False)
     fr_pm = models.BooleanField(verbose_name="Freitag Nachmittag", default=False)
 
+    selection_comment = models.TextField(verbose_name="Kommentar zur Besetzung", blank=True, max_length=500)
     status = models.ForeignKey(
         SubstitutionStatus,
         on_delete=models.SET_DEFAULT,
         default=3,
         related_name="substitution_status",
-        verbose_name="Status Besetzung Vikariat"
+        verbose_name="Status Besetzung Vikariat",
     )
     created_timestamp = models.DateTimeField(auto_now_add=True, null=True)
 
@@ -452,66 +520,22 @@ class Substitution(models.Model):
         return f"{self.teacher.fullname} - {self.start_date} - {self.end_date}"
 
 
-class AvailabilityTemplate(models.Model):
-    """
-    Deputy candidate availability-template is used to generate the availability days. for each day within
-    the time frame, a record is created in the availability table
-    """
-
-    candidate = models.ForeignKey(
-        Person, on_delete=models.CASCADE, related_name="availability_templates_candidate", verbose_name="Kandidat*in"
-    )
-    date_from = models.DateField(verbose_name="Von")
-    date_to = models.DateField(verbose_name="Bis")
-    day_of_week = models.ForeignKey(DayOfWeek, on_delete=models.CASCADE, related_name="template_availabilities_days", blank=True, null=True)
-    time_of_day = models.ForeignKey(TimeOfDay, on_delete=models.CASCADE, related_name="template_availabilities_time_of_day")
-    
-    class Meta:
-        verbose_name = "Verfügbarkeit der Kandidaten"
-        verbose_name_plural = "Verfügbarkeit der Kandidaten"
-
-    def create_availabilities(self):
-        """creates availability records for each day in the time frame"""
-        Availability.objects.filter(availabilityTemplate_id=self.id).delete()
-        current_date = self.date_from
-        while current_date <= self.date_to:
-            # Create an Availability object for each date
-            if (self.day_of_week == 8) or (self.day_of_week == current_date.weekday() + 1): # 0 = Monday
-                Availability.objects.create(
-                    candidate=self.candidate,
-                    date=current_date,
-                    time_of_day=self.time_of_day
-                )
-            current_date += timedelta(days=1)
-            
-    def __str__(self):
-        return f"{self.candidate.fullname} - {self.date_from} - {self.date_to}"
-
-
-class Availability(models.Model):
-    """Deputy candidate availability, 1 item for each day"""
-    
-    candidate = models.ForeignKey(
-        'Person', on_delete=models.CASCADE, related_name="availabilities", verbose_name="Kandidat*in"
-    )
-    date = models.DateField(verbose_name="Tag")
-    time_of_day = models.ForeignKey(TimeOfDay, on_delete=models.CASCADE, related_name="availabilities_time_of_day")
-
-    def __str__(self):
-        return f"{self.candidate.fullname} - {self.date}"
-
-
 class SchoolClass(models.Model):
     """Klasse, e.g. 1A, 2B, etc."""
-    school = models.ForeignKey(School, on_delete=models.CASCADE, related_name="class_schools", default=1)
+
+    school = models.ForeignKey(
+        School, on_delete=models.CASCADE, related_name="class_schools", default=1
+    )
     name = models.CharField(max_length=255, verbose_name="Name")
     year = models.IntegerField(verbose_name="Jahr", default=1)
     level = models.ForeignKey(
         Level, on_delete=models.CASCADE, related_name="class_levels"
     )
-    contact_person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="class_persons")
+    contact_person = models.ForeignKey(
+        Person, on_delete=models.CASCADE, related_name="class_persons"
+    )
     school_year = models.IntegerField(verbose_name="Schuljahr", default=1)
-    
+
     class Meta:
         verbose_name = "Klasse"
         verbose_name_plural = "Klassen"
@@ -532,8 +556,14 @@ class LessonTemplate(models.Model):
     period = models.ForeignKey(
         Period, on_delete=models.CASCADE, related_name="lesson_template_periods"
     )
-    day = models.ForeignKey(DayOfWeek, on_delete=models.CASCADE, related_name="lesson_template_days")
-    school_class = models.ForeignKey(SchoolClass, on_delete=models.CASCADE, related_name="lesson_template_school_classes")
+    day = models.ForeignKey(
+        DayOfWeek, on_delete=models.CASCADE, related_name="lesson_template_days"
+    )
+    school_class = models.ForeignKey(
+        SchoolClass,
+        on_delete=models.CASCADE,
+        related_name="lesson_template_school_classes",
+    )
     frequency = models.IntegerField(verbose_name="Alle n Wochen", default=1)
     subject = models.ForeignKey(
         Subject, on_delete=models.CASCADE, related_name="lesson_template_subjects"
@@ -544,71 +574,50 @@ class LessonTemplate(models.Model):
         verbose_name_plural = "Lektion-Templates"
 
     def __str__(self):
-        return F"{self.day.short_name} {self.period} {self.subject.name}"
+        return f"{self.day.name_short} {self.period} {self.subject.name}"
 
-
-class Lesson(models.Model):
-    """timetable for a teacher"""
-
-    teacher = models.ForeignKey(
-        Person, on_delete=models.CASCADE, related_name="lesson_teachers"
-    )
-    school = models.ForeignKey(
-        School, on_delete=models.CASCADE, related_name="lesson_schools"
-    )
-    date = models.DateField(verbose_name="Date")
-    period = models.ForeignKey(
-        Period, on_delete=models.CASCADE, related_name="lesson_periods"
-    )
-    school_class = models.ForeignKey(SchoolClass, on_delete=models.CASCADE, related_name="lesson_school_classes", default=1)
-    subject = models.ForeignKey(
-        Subject, on_delete=models.CASCADE, related_name="subjects"
-    )
-
-    class Meta:
-        verbose_name = "Lektion"
-        verbose_name_plural = "Lektionen"
-
-    def __str__(self):
-        return f"{self.teacher.fullname} - {self.date} - {self.period.start_time} - {self.period.end_time}"
-
-
-class SubstitutionPeriod(models.Model):
-    substitution = models.ForeignKey(
-        Substitution, on_delete=models.CASCADE, related_name="substitution_subjects"
-    )
-    lesson = models.ForeignKey(
-        Lesson, on_delete=models.CASCADE, related_name="substitution_lessons"
-    )
-    # deptuty is initialized blank and must be filled in a second step
-    deputy = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="substitution_deputies", blank=True, null=True)
-    confirmed = models.BooleanField(default=False, verbose_name="Bestätigt")
-
-    class Meta:
-        verbose_name = "Vertretung-Periode"
-        verbose_name_plural = "Vertretung-Perioden"
-
-    def __str__(self):
-        return f"{self.lesson.subject.name}"
-    
 
 class SubstitutionCandidate(models.Model):
     """Candidates with available for a substitution period and proficiency with the subject of the lessons
     The rating is a number from 1 to 100.
     """
 
-    substitution = models.ForeignKey('Substitution', on_delete=models.CASCADE, related_name="substitution_candidates")
-    candidate = models.ForeignKey('Person', on_delete=models.CASCADE, related_name="substitution_candidates_persons")
+    substitution = models.ForeignKey(
+        "Substitution", on_delete=models.CASCADE, related_name="substitution_candidates"
+    )
+    candidate = models.ForeignKey(
+        "Person",
+        on_delete=models.CASCADE,
+        related_name="substitution_candidates_persons",
+    )
+    matching_half_days = models.IntegerField(
+        verbose_name="Übereinstimmende Halbtage", default=0
+    )
+    num_experiences = models.IntegerField(verbose_name="Anzahl Erfahrungen", default=0)
+    num_experiences_in_school = models.IntegerField(
+        verbose_name="Anzahl Erfahrungen in Schule", default=0
+    )
+    num_experiences_with_class = models.IntegerField(
+        verbose_name="Anzahl Erfahrungen mit Klasse", default=0
+    )
+    num_experiences_with_subjects = models.IntegerField(
+        verbose_name="Anzahl Erfahrungen mit Fach", default=0
+    )
     rating = models.IntegerField(verbose_name="Bewertung", default=1)
     comments = models.TextField(verbose_name="Bemerkungen", blank=True)
+
+    invited_date = models.DateField(verbose_name="Einladungsdatum", blank=True, null=True)
+    accepted_date = models.DateField(verbose_name="Bestätigung am", blank=True, null=True)
+    selected_date = models.DateField(verbose_name="Zusage", blank=True, null=True)
+    record_created_date = models.DateField(default=timezone.now, verbose_name="Erstellt am")
 
     class Meta:
         verbose_name = "Vertretung-KandidatIn"
         verbose_name_plural = "Vertretung-Kandidaten"
-    
+
     def __str__(self):
         return f"{self.candidate.fullname} - {self.rating}"
-    
+
 
 class VacationTemplate(models.Model):
     """Teacher vacation"""
@@ -616,7 +625,12 @@ class VacationTemplate(models.Model):
     name = models.CharField(max_length=100, verbose_name="Bezeichnung")
     date_from = models.DateField(verbose_name="Von", default=timezone.now)
     date_to = models.DateField(verbose_name="Bis", default=timezone.now)
-    timeofday = models.ForeignKey(TimeOfDay, on_delete=models.CASCADE, related_name="vacation_template_time_of_day", default=get_default_time_of_day)
+    timeofday = models.ForeignKey(
+        TimeOfDay,
+        on_delete=models.CASCADE,
+        related_name="vacation_template_time_of_day",
+        default=get_default_time_of_day,
+    )
 
     class Meta:
         verbose_name = "Ferien"
@@ -630,8 +644,15 @@ class VacationDay(models.Model):
     """Teacher vacation"""
 
     date = models.DateField(verbose_name="Datum", default=timezone.now)
-    timeofday = models.ForeignKey(TimeOfDay, on_delete=models.CASCADE, related_name="vacation_time_of_day", default=get_default_time_of_day)
-    vacation = models.ForeignKey(VacationTemplate, on_delete=models.CASCADE, related_name="vacation_templates")
+    timeofday = models.ForeignKey(
+        TimeOfDay,
+        on_delete=models.CASCADE,
+        related_name="vacation_time_of_day",
+        default=get_default_time_of_day,
+    )
+    vacation = models.ForeignKey(
+        VacationTemplate, on_delete=models.CASCADE, related_name="vacation_templates"
+    )
 
     def __str__(self):
         return f"{self.date} - {self.vacation.name}"

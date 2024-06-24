@@ -1,6 +1,10 @@
 from django.forms import modelformset_factory
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import DetailView, UpdateView, CreateView
+from django.contrib import messages
+from django.utils import timezone
+from datetime import timedelta
+
 from .models import (
     School,
     Person,
@@ -8,18 +12,17 @@ from .models import (
     SchoolPerson,
     Candidate,
     Substitution,
-    SubstitutionPeriod,
-    Lesson,
+    LessonTemplate,
     Location,
     Level,
     SubstitutionStatus,
+    SubstitutionCandidate,
 )
 from .forms import (
     SchoolForm,
     CandidateForm,
     SubstitutionForm,
     TeacherForm,
-    SubstitutionPeriodForm,
 )
 from django.views.generic import ListView  # Import the necessary module
 from django.urls import reverse_lazy
@@ -58,9 +61,9 @@ class SchoolListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["locations"] = (
-            Location.objects.all()
-        )  # Pass all locations to the template
+        context[
+            "locations"
+        ] = Location.objects.all()  # Pass all locations to the template
         context["levels"] = Level.objects.all()  # Pass all locations to the template
         return context
 
@@ -136,8 +139,6 @@ class CandidateDetailView(DetailView):
         context["subjects"] = candidate.personsubject_persons.all()
         context["certificates"] = candidate.certificates.all()
         context["substitutions"] = candidate.substitution_deputies.all()
-        print(context["substitutions"])
-        print(candidate.id)
 
         return context
 
@@ -192,10 +193,11 @@ class TeacherDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         teacher = context["teacher"]
-        context["teacher_subjects"] = teacher.personsubject_persons.all()
         context["lessons"] = teacher.lessons_template_teachers.all().order_by(
             "day_id", "period_id"
         )
+        context["subjects"] = teacher.get_unique_subjects()
+        context["classes"] = teacher.get_unique_classes()
         return context
 
 
@@ -206,18 +208,80 @@ class TeacherEditView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("teacher_list")
 
 
-class SubstitutionListView(ListView):
+class SubstitutionCandidatesListView(ListView):
     model = Substitution
     context_object_name = (
         "substitutions"  # The name of the variable to be used in the template
     )
-    template_name = "school_management/substitution_list.html"  # Path to the template
+    template_name = "school_management/substitution_list_candidates.html"  # Path to the template
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["status"] = (
-            SubstitutionStatus.objects.all()
-        )  # Pass all locations to the template
+        context[
+            "status"
+        ] = SubstitutionStatus.objects.all()
+        
+        context["schools"] = School.objects.all().order_by("name")
+        context[
+            "levels"
+        ] = Level.objects.all().order_by("order")
+        context["schools"] = School.objects.all()
+        return context
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        school_filter = self.request.GET.get("school_filter", "")
+        level_filter = self.request.GET.get("level_filter", "")
+        date_from_filter = self.request.GET.get("date_from_filter", "")
+        date_to_filter = self.request.GET.get("date_to_filter", "")
+        status_filter = self.request.GET.get("status_filter", "")
+        day_filters = {
+            "mo_am_filter": self.request.GET.get("mo_am_filter"),
+            "tu_am_filter": self.request.GET.get("tu_am_filter"),
+            "we_am_filter": self.request.GET.get("we_am_filter"),
+            "th_am_filter": self.request.GET.get("th_am_filter"),
+            "fr_am_filter": self.request.GET.get("fr_am_filter"),
+            "mo_pm_filter": self.request.GET.get("mo_pm_filter"),
+            "tu_pm_filter": self.request.GET.get("tu_pm_filter"),
+            "we_pm_filter": self.request.GET.get("we_pm_filter"),
+            "th_pm_filter": self.request.GET.get("th_pm_filter"),
+            "fr_pm_filter": self.request.GET.get("fr_pm_filter"),
+        }
+
+        # Apply filters if present
+        yesterday = timezone.now() - timedelta(days=1)
+        queryset = queryset.filter(status_id=3, end_date__gt=yesterday)
+        if school_filter:
+            queryset = queryset.filter(school_id=school_filter)
+        if level_filter:
+            queryset = queryset.filter(levels__icontains=level_filter)
+        if date_from_filter:
+            queryset = queryset.filter(start_date__gt=date_from_filter)
+        if date_to_filter:
+            queryset = queryset.filter(end_date__lt=date_to_filter)
+        if status_filter:
+            queryset = queryset.filter(status_id=status_filter)
+        for key, value in day_filters.items():
+            if value == "1":
+                field_name = key.replace("_filter", "")
+                queryset = queryset.filter(**{field_name: True})
+
+        queryset = queryset.order_by("-start_date")
+        return queryset
+
+
+class SubstitutionAdminListView(ListView):
+    model = Substitution
+    context_object_name = (
+        "substitutions"  # The name of the variable to be used in the template
+    )
+    template_name = "school_management/substitution_list_admin.html"  # Path to the template
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context[
+            "status"
+        ] = SubstitutionStatus.objects.all()  # Pass all locations to the template
         context["schools"] = School.objects.all()  # Pass all locations to the template
         return context
 
@@ -229,27 +293,23 @@ class SubstitutionListView(ListView):
         date_to_filter = self.request.GET.get("date_to_filter", "")
         status_filter = self.request.GET.get("status_filter", "")
         day_filters = {
-            'mo_am_filter': self.request.GET.get('mo_am_filter'),
-            'tu_am_filter': self.request.GET.get('tu_am_filter'),
-            'we_am_filter': self.request.GET.get('we_am_filter'),
-            'th_am_filter': self.request.GET.get('th_am_filter'),
-            'fr_am_filter': self.request.GET.get('fr_am_filter'),
-            'mo_pm_filter': self.request.GET.get('mo_pm_filter'),
-            'tu_pm_filter': self.request.GET.get('tu_pm_filter'),
-            'we_pm_filter': self.request.GET.get('we_pm_filter'),
-            'th_pm_filter': self.request.GET.get('th_pm_filter'),
-            'fr_pm_filter': self.request.GET.get('fr_pm_filter'),
+            "mo_am_filter": self.request.GET.get("mo_am_filter"),
+            "tu_am_filter": self.request.GET.get("tu_am_filter"),
+            "we_am_filter": self.request.GET.get("we_am_filter"),
+            "th_am_filter": self.request.GET.get("th_am_filter"),
+            "fr_am_filter": self.request.GET.get("fr_am_filter"),
+            "mo_pm_filter": self.request.GET.get("mo_pm_filter"),
+            "tu_pm_filter": self.request.GET.get("tu_pm_filter"),
+            "we_pm_filter": self.request.GET.get("we_pm_filter"),
+            "th_pm_filter": self.request.GET.get("th_pm_filter"),
+            "fr_pm_filter": self.request.GET.get("fr_pm_filter"),
         }
-        
 
         # Apply filters if present
-        print(school_filter)
         if school_filter:
             queryset = queryset.filter(school_id=school_filter)
         if teacher_filter:
-            queryset = queryset.filter(
-                teacher__name__icontains=teacher_filter
-            )
+            queryset = queryset.filter(teacher__name__icontains=teacher_filter)
         if date_from_filter:
             queryset = queryset.filter(start_date__gt=date_from_filter)
         if date_to_filter:
@@ -257,11 +317,11 @@ class SubstitutionListView(ListView):
         if status_filter:
             queryset = queryset.filter(status_id=status_filter)
         for key, value in day_filters.items():
-            if value == '1':
-                field_name = key.replace('_filter', '')
+            if value == "1":
+                field_name = key.replace("_filter", "")
                 queryset = queryset.filter(**{field_name: True})
 
-        queryset = queryset.order_by("-start_date")
+        queryset = queryset.order_by("start_date")
         return queryset
 
 
@@ -282,7 +342,7 @@ class SubstitutionCreateView(CreateView):
     model = Substitution
     form_class = SubstitutionForm
     template_name = "school_management/substitution_create.html"
-    success_url = reverse_lazy("substitution_list")
+    success_url = reverse_lazy("substitution_admin_list")
 
     def get_initial(self):
         initial = super().get_initial()
@@ -293,18 +353,14 @@ class SubstitutionCreateView(CreateView):
 
     def form_valid(self, form):
         self.object = form.save()
-        self.object.create_substitution_items()  # Call the method after saving the form
         return redirect("substitution_edit", pk=self.object.pk)
-
-
-
 
 
 class SubstitutionEditView(UpdateView):
     model = Substitution
     form_class = SubstitutionForm
     template_name = "school_management/substitution_edit.html"
-    success_url = reverse_lazy("substitution_list")
+    success_url = reverse_lazy("substitution_admin_list")
 
     def get_object(self, queryset=None):
         pk = self.kwargs.get("pk")
@@ -314,8 +370,12 @@ class SubstitutionEditView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Removing formset related code
         substitution = self.get_object()
+        if substitution:
+            context['substitution_candidates'] = substitution.substitution_candidates.all().order_by('-rating')
+        else:
+            context['substitution_candidates'] = []
+
         # If any additional context is needed, add it here
         return context
 
@@ -323,13 +383,30 @@ class SubstitutionEditView(UpdateView):
         self.object = self.get_object()
         form = self.get_form()
 
+        action = request.POST.get('action')
+        
         if form.is_valid():
-            self.object = form.save(commit=False)
-            classes_str = SubstitutionHelper.get_classes(self.object)
-            print(classes_str)
-            self.object.classes = classes_str
-            self.object.save()
-            return self.form_valid(form)
+            if action == 'save':
+                self.object = form.save(commit=False)
+                helper = SubstitutionHelper(self.object)
+                self.object.classes = ",".join([cls.name for cls in helper.classes])
+                self.object.levels = ",".join([lvl.name_short for lvl in helper.levels])
+                self.object.subjects = ",".join([sbj.name_short for sbj in helper.subjects])
+                SubstitutionCandidate.objects.filter(substitution=self.object).delete()
+                candidates = helper.get_candidates()
+                self.object.substitution_candidates.set(candidates) 
+                
+                halfdays = helper.get_halfdays()
+                am_pm_keys = ["mo_am", "tu_am", "we_am", "th_am", "fr_am", "mo_pm", "tu_pm", "we_pm", "th_pm", "fr_pm"]
+                for key in am_pm_keys:
+                    setattr(self.object, key, halfdays.get(key))
+
+                self.object.save()
+                return self.form_valid(form)
+            elif action == 'delete':
+                self.object.delete()
+                messages.success(request, 'Substitution successfully deleted.')
+                return redirect(self.success_url)
         else:
             print("Form invalid")
             return self.form_invalid(form)

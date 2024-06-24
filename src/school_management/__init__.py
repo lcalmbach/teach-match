@@ -1,1 +1,1 @@
-default_app_config = 'school_management.apps.SchoolManagementConfig'
+default_app_config = "school_management.apps.SchoolManagementConfig"

@@ -1,5 +1,5 @@
 from django import forms
-from .models import School, Person, Substitution, SubstitutionPeriod, Teacher, Candidate
+from .models import School, Person, Substitution, Teacher, Candidate
 import fitz  # PyMuPDF
 
 
@@ -13,25 +13,25 @@ class CandidateForm(forms.ModelForm):
     class Meta:
         model = Person
         fields = [
-            'first_name',
-            'last_name',
-            'email',
-            'phone_number',
-            'year_of_birth',
-            'available_from_date',
-            'available_to_date',
-            'availability_mo_am',
-            'availability_mo_pm',
-            'availability_tu_am',
-            'availability_tu_pm',
-            'availability_we_am',
-            'availability_we_pm',
-            'availability_th_am',
-            'availability_th_pm',
-            'availability_fr_am',
-            'availability_fr_pm',
-            'availability_comment',
-            'gender',
+            "first_name",
+            "last_name",
+            "email",
+            "phone_number",
+            "year_of_birth",
+            "available_from_date",
+            "available_to_date",
+            "availability_mo_am",
+            "availability_mo_pm",
+            "availability_tu_am",
+            "availability_tu_pm",
+            "availability_we_am",
+            "availability_we_pm",
+            "availability_th_am",
+            "availability_th_pm",
+            "availability_fr_am",
+            "availability_fr_pm",
+            "availability_comment",
+            "gender",
         ]
 
     def save(self, commit=True):
@@ -39,7 +39,7 @@ class CandidateForm(forms.ModelForm):
         instance = super(CandidateForm, self).save(commit=False)
 
         # Check if a new file was uploaded
-        #if self.cleaned_data["cv_file"]:
+        # if self.cleaned_data["cv_file"]:
         #    pdf_file = self.cleaned_data["cv_file"]
         #    # Extract text from PDF
         #    doc = fitz.open(stream=pdf_file.read(), filetype="pdf")
@@ -60,10 +60,28 @@ class CandidateForm(forms.ModelForm):
 class SubstitutionForm(forms.ModelForm):
     class Meta:
         model = Substitution
-        fields = "__all__"
+        exclude =  [
+            "mo_am",
+            "mo_pm",
+            "tu_am",
+            "tu_pm",
+            "we_am",
+            "we_pm",
+            "th_am",
+            "th_pm",
+            "fr_am",
+            "fr_pm",
+            "classes",
+            "levels",
+            "subjects",
+        ]
         widgets = {
-            'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            "start_date": forms.DateInput(
+                attrs={"type": "date", "class": "form-control"}
+            ),
+            "end_date": forms.DateInput(
+                attrs={"type": "date", "class": "form-control"}
+            ),
         }
 
 
@@ -71,17 +89,11 @@ class TeacherForm(forms.ModelForm):
     class Meta:
         model = Teacher
         fields = [
-            'school',
-            'first_name',
-            'last_name',
-            'email',
-            'phone_number',
-            'year_of_birth',
-            'gender'
+            "school",
+            "first_name",
+            "last_name",
+            "email",
+            "phone_number",
+            "year_of_birth",
+            "gender",
         ]
-
-
-class SubstitutionPeriodForm(forms.ModelForm):
-    class Meta:
-        model = SubstitutionPeriod
-        fields = ['deputy', 'confirmed']

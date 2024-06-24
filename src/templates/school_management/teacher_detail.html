@@ -50,10 +50,11 @@
         href="#substitutions"
         role="tab"
         aria-controls="substitutions"
-        aria-selected="false"
+        aria-selected="true"
         >Abwesenheiten</a
       >
     </li>
+
     <li class="nav-item" role="presentation">
       <a
         class="nav-link"
@@ -66,6 +67,7 @@
         >Fächer</a
       >
     </li>
+    
     <li class="nav-item" role="presentation">
       <a
         class="nav-link"
@@ -114,23 +116,14 @@
     role="tabpanel"
     aria-labelledby="subjects-tab"
     >
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Fach</th>
-            <th>Stufe</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for x in teacher_subjects.all %}
-          <tr>
-            <td>{{ x.subject.name }}</td>
-            <td>{{ x.subject.school_year }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <ul>
+        {% for x in subjects %}
+        <li>
+          {{ x.name }}
+        </li>
+        {% endfor %}
   </div>
+
   <div
     class="tab-pane"
     id="timetable"
@@ -151,7 +144,7 @@
           {% for x in lessons.all %}
           <tr>
             <td>{{ x.school.name }}</td>
-            <td>{{ x.day.short_name }}</td>
+            <td>{{ x.day.name_short }}</td>
             <td>{{ x.period }}</td>
             <td>{{ x.school_class.name }}</td>
             <td>{{ x.subject.name }}</td>
@@ -161,7 +154,6 @@
       </table>
   </div>
 
-    
     <a href="{% url 'teacher_list' %}" class="btn btn-primary">Zurück</a>
     <a href="{% url 'substitution_create_with_teacher' teacher.pk %}" class="btn btn-primary">🔎Stellvertretung</a>
   </div>

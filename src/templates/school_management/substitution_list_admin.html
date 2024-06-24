@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 teach_match/templates/school_management/school_list.html
-{% block title %}Lehrkraft-Stellvertretung{% endblock title %}
+{% block title %}Vikariate{% endblock title %}
 
 {% block content %}
 <div class="table-container">
-    <h1>Stellvertretungen</h2>
+    <h2>Stellvertretungen Admininstration</h2>
     <br>
     <a href="{% url 'substitution_create' %}" class="btn btn-success">Neu</a>
     <br><br>
@@ -77,7 +77,7 @@ teach_match/templates/school_management/school_list.html
               <td>
                 <a href="{% url 'school_detail' pk=substitution.school.pk %}">{{ substitution.school.name }}</a>
               </td>
-                <td><a href="{% url 'teacher_detail' pk=substitution.pk %}">{{ substitution.teacher.fullname }}</a></td>
+                <td><a href="{% url 'teacher_detail' pk=substitution.teacher.pk %}">{{ substitution.teacher.fullname }}</a></td>
                 <td>{{ substitution.start_date }}</td> 
                 <td>{{ substitution.end_date }}</td>
                 <td>

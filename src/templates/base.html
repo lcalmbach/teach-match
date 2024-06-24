@@ -8,6 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">-->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
   <nav class="navbar navbar-expand-sm navbar-custom">
@@ -23,7 +28,10 @@
           <a class="nav-link {% if request.resolver_match.url_name == 'candidate_list' %}active{% endif %}" href="{% url 'candidate_list' %}">Stellensuchende</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'substitution_list' %}active{% endif %}" href="{% url 'substitution_list' %}">Stellvertretungen</a>
+          <a class="nav-link {% if request.resolver_match.url_name == 'substitution_admin_list' %}active{% endif %}" href="{% url 'substitution_admin_list' %}">Stellvertretungen (Admin)</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'substitution_candidates_list' %}active{% endif %}" href="{% url 'substitution_candidates_list' %}">Stellvertretungen</a>
         </li>
       </ul>
       <!-- Right-aligned items -->
@@ -61,6 +69,31 @@
       <span class="text-muted">&copy; Statistisches Amt Basel-Stadt<span style="float:right; font-size: smaller;">v0.0.4 (20.6.24)</span></span>
     </div>
   </footer>
+
+  {% if messages %}
+    <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+        <div style="position: absolute; top: 0; right: 0;">
+            {% for message in messages %}
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
+                <div class="toast-header">
+                    <strong class="mr-auto">Notification</strong>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body">
+                    {{ message }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script>
+      $(document).ready(function(){
+          $('.toast').toast('show');
+      });
+    </script>
+  {% endif %}
 
   <script>
     document.addEventListener('DOMContentLoaded', (event) => {
