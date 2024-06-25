@@ -7,8 +7,8 @@
     
     <form method="get" action="" class="mb-4">
         <div class="row">
-          <div class="col-md-4 mb-3">
-            <label for="school_filter">Schule</label>  
+            <div class="col-md-4 mb-3">
+                <label for="school_filter">Schule</label>  
                 <select class="form-select" name="school_filter">
                     <option value="">Schule</option>
                     {% for x in schools %}
@@ -19,7 +19,7 @@
                 </select>
             </div>
             <div class="col-md-4 mb-3">
-              <label for="level_filter">Zyklus</label>
+                <label for="level_filter">Zyklus</label>
                 <select class="form-select" name="level_filter">
                     <option value="">Stufe</option>
                     {% for l in levels %}
@@ -31,7 +31,7 @@
             </div>
             
             <div class="col-md-4 mb-3">
-              <label for="availability_filter">Wochentage</label>
+                <label for="availability_filter">Wochentage</label>
                 <select class="form-select" name="availability_filter">
                     <option value="">Verfügbarkeit</option>
                     {% for availability in availabilities %}
@@ -42,12 +42,12 @@
                 </select>
             </div>
             <div class="col-md-4 mb-3">
-              <label for="date_from_filter">Von</label>
+                <label for="date_from_filter">Von</label>
                 <input type="date" class="form-control" name="date_from_filter" value="{{ request.GET.date_from_filter }}">
             </div>
             <div class="col-md-4 mb-3">
-              <label for="date_to_filter">Bis</label>
-              <input type="date" class="form-control" name="date_to_filter" label="Bis" value="{{ request.GET.date_to_filter }}">
+                <label for="date_to_filter">Bis</label>
+                <input type="date" class="form-control" name="date_to_filter" value="{{ request.GET.date_to_filter }}">
             </div>
             <div class="col-md-4 mb-3">
                 <label for="subject_filter">Fächer</label>
@@ -75,58 +75,67 @@
             </div>
             <table class="table table-borderless mt-2 mb-0">
                 <tr>
-                    <th scope="row">Stufe:</th>
-                    <td>{{ substitution.levels }}</td>
+                    <th scope="row" style="width: 30%;">Stufe:</th>
+                    <td style="width: 70%;">{{ substitution.levels }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Dauer:</th>
-                    <td>{{ substitution.start_date|date:"d.m" }} - {{ substitution.end_date|date:"d.m.y" }}</td>
+                    <th scope="row" style="width: 30%;">Dauer:</th>
+                    <td style="width: 70%;">{{ substitution.start_date|date:"d.m" }} - {{ substitution.end_date|date:"d.m.y" }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Pensum:</th>
-                    <td>
+                    <th scope="row" style="width: 30%;">Stundenplan:</th>
+                    <td style="width: 70%;">
                         <div class="d-flex">
                             <table>
-                              <tr>
-                            <td>{% if substitution.mo_am %}◉{% else %}○{% endif %}</td>
-                            <td>{% if substitution.tu_am %}◉{% else %}○{% endif %}</td>
-                            <td>{% if substitution.we_am %}◉{% else %}○{% endif %}</td>
-                            <td>{% if substitution.th_am %}◉{% else %}○{% endif %}</td>
-                            <td>{% if substitution.fr_am %}◉{% else %}○{% endif %}</td>
-                          </tr>
-                        <tr>
-                          <td>{% if substitution.mo_pm %}◉{% else %}○{% endif %}</td>
-                          <td>{% if substitution.tu_pm %}◉{% else %}○{% endif %}</td>
-                          <td>{% if substitution.we_pm %}◉{% else %}○{% endif %}</td>
-                          <td>{% if substitution.th_pm %}◉{% else %}○{% endif %}</td>
-                          <td>{% if substitution.fr_pm %}◉{% else %}○{% endif %}</td>
-                        </tr>
-                          </table>
+                                <tr>
+                                    <td>{% if substitution.mo_am %}◉{% else %}○{% endif %}</td>
+                                    <td>{% if substitution.tu_am %}◉{% else %}○{% endif %}</td>
+                                    <td>{% if substitution.we_am %}◉{% else %}○{% endif %}</td>
+                                    <td>{% if substitution.th_am %}◉{% else %}○{% endif %}</td>
+                                    <td>{% if substitution.fr_am %}◉{% else %}○{% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <td>{% if substitution.mo_pm %}◉{% else %}○{% endif %}</td>
+                                    <td>{% if substitution.tu_pm %}◉{% else %}○{% endif %}</td>
+                                    <td>{% if substitution.we_pm %}◉{% else %}○{% endif %}</td>
+                                    <td>{% if substitution.th_pm %}◉{% else %}○{% endif %}</td>
+                                    <td>{% if substitution.fr_pm %}◉{% else %}○{% endif %}</td>
+                                </tr>
+                            </table>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row">Fächer:</th>
-                    <td>{{ substitution.subjects }}</td>
+                    <th scope="row" style="width: 30%;">Fächer:</th>
+                    <td style="width: 70%;">{{ substitution.subjects }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Ort:</th>
-                    <td>{{ substitution.school.location }}</td>
+                    <th scope="row" style="width: 30%;">Ort:</th>
+                    <td style="width: 70%;">{{ substitution.school.location }}</td>
                 </tr>
-            <tr>
-              <th>Bewerben</th>
-              <th>
-            <div class="d-flex mt-2">
-                <button type="button" class="btn btn-outline-primary me-2">
-                    <i class="fas fa-envelope"></i>
-                </button>
-                <button type="button" class="btn btn-outline-success">
-                    <i class="fab fa-whatsapp"></i>
-                </button>
+                <tr>
+                    <th style="width: 30%;">Bewerben</th>
+                    <td style="width: 70%;">
+                        <div class="d-flex mt-2">
+                            <button type="button" class="btn btn-outline-primary me-2">
+                                <i class="fas fa-envelope"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-success">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <button class="btn btn-link mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ substitution.id }}" aria-expanded="false" aria-controls="collapse{{ substitution.id }}">
+                Weitere Infos
+            </button>
+            <div class="collapse" id="collapse{{ substitution.id }}">
+                <div class="card card-body">
+                    <!-- Additional information goes here -->
+                    <p>{{substitution.summary}}</p>
+                </div>
             </div>
-          </th>
-          </tr>
-          </table>
         </div>
         {% endfor %}
     </div>

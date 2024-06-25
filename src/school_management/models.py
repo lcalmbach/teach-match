@@ -490,6 +490,7 @@ class Substitution(models.Model):
     classes = models.TextField(verbose_name="Klassen", blank=True, max_length=500)
     levels = models.TextField(verbose_name="Stufen", blank=True, max_length=500)
     subjects = models.TextField(verbose_name="Fächer", blank=True, max_length=500)
+    summary = models.TextField(verbose_name="Zusammenfassung", blank=True, max_length=1000)
 
     mo_am = models.BooleanField(verbose_name="Montag Vormittag", default=False)
     mo_pm = models.BooleanField(verbose_name="Montag Nachmittag", default=False)
