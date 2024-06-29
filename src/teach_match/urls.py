@@ -19,12 +19,18 @@ from django.urls import path, include
 from . import views  
 from django.conf.urls.static import static
 from django.conf import settings
+from django.shortcuts import redirect
+
+def redirect_to_substitution_candidates(request):
+    return redirect('substitution_candidates_list', permanent=True)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('', views.index, name='index'),
+     path('', redirect_to_substitution_candidates, name='index'),
     path('school_management/', include('school_management.urls')),
     path('login/', include('login_account.urls')),
+    # ... other URL patterns ...
+    path('profile/', views.user_profile, name='user_profile'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

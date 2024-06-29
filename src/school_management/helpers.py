@@ -1,6 +1,10 @@
 from datetime import datetime, timedelta
 from django.apps import apps
+import os
 import random
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 
 def get_week_days(start_date, end_date):
@@ -73,8 +77,12 @@ class SubstitutionHelper:
             current_date += timedelta(days=1)
         return days
 
-    def summary(self):
-        text = f"Von {self.substitution.start_date} bis {self.substitution.end_date}, insgesamt {get_week_days(self.substitution.start_date, self.substitution.end_date)}"
+    def get_summary(self):
+        text = f"Von {self.substitution.start_date.strftime('%d.%m.%y')} bis {self.substitution.start_date.strftime('%d.%m.%y')}, insgesamt {len(self.lessons)} Wochenlektionen. "
+        if not self.substitution.comment_subsitution is None:
+            text += f"\n{self.substitution.comment_subsitution}."
+        if not self.substitution.comment_class is None:
+            text += f"\n{self.substitution.comment_class}."
         return text
 
     def get_halfdays(self):
@@ -135,13 +143,51 @@ class SubstitutionHelper:
             result.append(sc)
         return result
 
+    def send_email(self, subject, body):
+        # Gmail credentials
+        gmail_user = os.getenv('GMAIL_USER')
+        gmail_password = os.getenv('GMAIL_PASSWORD')
+
+        # Create the email
+        to_email = self.substitution.school.email
+        msg = MIMEMultipart()
+        msg['From'] = gmail_user
+        msg['To'] = to_email
+        msg['Subject'] = subject
+
+        msg.attach(MIMEText(body, 'plain'))
+        print(gmail_user, gmail_password)
+        # Connect to the Gmail server
+        try:
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(gmail_user, gmail_password)
+            text = msg.as_string()
+            print(gmail_user, to_email, text)
+            server.sendmail(gmail_user, to_email, text)
+            print('Email sent successfully')
+        except Exception as e:
+            print(f'Failed to send email: {e}')
+        finally:
+            server.quit()
+            
     def assign_values(self):
         self.substitution.classes = ",".join([cls.name for cls in self.classes])
         self.substitution.levels = ",".join([lvl.name_short for lvl in self.levels])
         self.substitution.subjects = ",".join([sbj.name_short for sbj in self.subjects])
+        # if self.substitution.summary is None or self.substitution.summary == "":
+        self.substitution.summary = self.get_summary()
+        self.substitution.subjects = ",".join([sbj.name_short for sbj in self.subjects])
+        
         SubstitutionCandidate = apps.get_model("school_management", "SubstitutionCandidate")
         SubstitutionCandidate.objects.all().filter(substitution=self.substitution).delete()
+
         candidates = self.get_candidates()
         self.substitution.substitution_candidates.set(candidates)
+
+        halfdays = self.get_halfdays()
+        am_pm_keys = ["mo_am", "tu_am", "we_am", "th_am", "fr_am", "mo_pm", "tu_pm", "we_pm", "th_pm", "fr_pm"]
+        for key in am_pm_keys:
+            setattr(self.substitution, key, halfdays.get(key))
 
         return self.substitution

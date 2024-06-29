@@ -1,4 +1,5 @@
 {% load static %}
+{% load user_tags %}
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -17,23 +18,23 @@
 <body>
   <nav class="navbar navbar-expand-sm navbar-custom">
     <div class="container-fluid">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">Info</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'school_list' %}active{% endif %}" href="{% url 'school_list' %}">Schulen</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'candidate_list' %}active{% endif %}" href="{% url 'candidate_list' %}">Stellensuchende</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'substitution_admin_list' %}active{% endif %}" href="{% url 'substitution_admin_list' %}">Stellvertretungen (Admin)</a>
-        </li>
+      <ul class="navbar-nav">        
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'substitution_candidates_list' %}active{% endif %}" href="{% url 'substitution_candidates_list' %}">Stellvertretungen</a>
         </li>
+          {% if request.user|is_in_group:"school-admins" %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'substitution_admin_list' %}active{% endif %}" href="{% url 'substitution_admin_list' %}">Stellvertretungen (Verwaltung)</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'candidate_list' %}active{% endif %}" href="{% url 'candidate_list' %}">Stellensuchende</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'school_list' %}active{% endif %}" href="{% url 'school_list' %}">Schulen</a>
+          </li>
+        {% endif %}
       </ul>
+      
       <!-- Right-aligned items -->
       <ul class="navbar-nav ms-auto">
         {% if not request.user.is_authenticated %}
@@ -46,6 +47,9 @@
         </li>
         {% else %}
         <!-- User is logged in -->
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'user_profile' %}">Profile</a>
+        </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'logout' %}">Logout</a>
         </li>

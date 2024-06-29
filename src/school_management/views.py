@@ -9,10 +9,9 @@ from .models import (
     School,
     Person,
     Teacher,
-    SchoolPerson,
     Candidate,
     Substitution,
-    LessonTemplate,
+    Timetable,
     Location,
     Level,
     SubstitutionStatus,
@@ -151,7 +150,7 @@ class CandidateEditView(LoginRequiredMixin, UpdateView):
 
 
 class TeacherListView(ListView):
-    model = SchoolPerson
+    model = Teacher
     template_name = "school_management/teacher_list.html"  # Path to the template
     context_object_name = "teachers"
 
@@ -214,6 +213,7 @@ class SubstitutionCandidatesListView(ListView):
         "substitutions"  # The name of the variable to be used in the template
     )
     template_name = "school_management/substitution_list_candidates.html"  # Path to the template
+    success_url = reverse_lazy("substitution_candidates_list")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -228,6 +228,19 @@ class SubstitutionCandidatesListView(ListView):
         context["schools"] = School.objects.all()
         return context
     
+    def post(self, request, *args, **kwargs):
+        form = SubstitutionForm(request.POST)
+        action = request.POST.get('action')
+        print(action,form.is_valid())
+        if action == 'send_email':
+            id = request.POST.get('substitution_id')
+            substitution = Substitution.objects.get(pk=id)
+            helper = SubstitutionHelper(substitution)
+            subject = f'Bewerbung für Vertretung {id}'
+            message = f'This is a test email body for substitution {id} sent by {self.request.user.username}'
+            helper.send_email(subject, message)
+        return redirect(self.success_url)
+
     def get_queryset(self):
         queryset = super().get_queryset()
         school_filter = self.request.GET.get("school_filter", "")
@@ -389,17 +402,7 @@ class SubstitutionEditView(UpdateView):
             if action == 'save':
                 self.object = form.save(commit=False)
                 helper = SubstitutionHelper(self.object)
-                self.object.classes = ",".join([cls.name for cls in helper.classes])
-                self.object.levels = ",".join([lvl.name_short for lvl in helper.levels])
-                self.object.subjects = ",".join([sbj.name_short for sbj in helper.subjects])
-                SubstitutionCandidate.objects.filter(substitution=self.object).delete()
-                candidates = helper.get_candidates()
-                self.object.substitution_candidates.set(candidates) 
-                
-                halfdays = helper.get_halfdays()
-                am_pm_keys = ["mo_am", "tu_am", "we_am", "th_am", "fr_am", "mo_pm", "tu_pm", "we_pm", "th_pm", "fr_pm"]
-                for key in am_pm_keys:
-                    setattr(self.object, key, halfdays.get(key))
+                helper.assign_values()
 
                 self.object.save()
                 return self.form_valid(form)

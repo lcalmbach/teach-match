@@ -9,16 +9,14 @@ from .models import (
     TimeOfDay,
     DayOfWeek,
     Period,
-    Course,
     Level,
     Subject,
     School,
     Person,
-    SchoolPerson,
-    PersonCertificate,
+    Candidate,
     SchoolClass,
-    LessonTemplate,
-    VacationTemplate,
+    Timetable,
+    Vacation,
     Substitution,
     SubstitutionCandidate,
 )
@@ -48,15 +46,12 @@ admin.site.register(Certificate)
 admin.site.register(TimeOfDay)
 admin.site.register(DayOfWeek)
 admin.site.register(Period)
-admin.site.register(Course)
 admin.site.register(Level)
 admin.site.register(Subject)
 admin.site.register(School, SchoolAdmin)
-admin.site.register(Person)
-admin.site.register(SchoolPerson)
-admin.site.register(PersonCertificate)
+admin.site.register(Candidate)
 admin.site.register(SchoolClass)
-admin.site.register(LessonTemplate)
-admin.site.register(VacationTemplate)
+admin.site.register(Timetable)
+admin.site.register(Vacation)
 admin.site.register(Substitution)
 admin.site.register(SubstitutionCandidate)

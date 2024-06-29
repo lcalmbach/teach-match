@@ -1,13 +1,10 @@
-import random
 import os
 
 from django.db import models
 from django.urls import reverse
-from datetime import datetime, timedelta
+from datetime import datetime
 from django.utils import timezone
-
-from .helpers import SubstitutionHelper
-
+from django.contrib.auth.models import User
 
 def get_cv_upload_path(instance, filename):
     return os.path.join("cv", filename)
@@ -185,21 +182,6 @@ class Period(models.Model):
         return f"{self.start_time} - {self.end_time}"
 
 
-class Course(models.Model):
-    """grouping of subjects, e.g."""
-
-    name = models.CharField(max_length=255, verbose_name="Kursname")
-    description = models.TextField(verbose_name="Description", blank=True)
-
-    class Meta:
-        verbose_name = "Profil"
-        verbose_name_plural = "Profile"
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
-
-
 class Level(models.Model):
     """Sek1, Sek2, Kindergarten, Primarschule, etc.. used in school model"""
 
@@ -261,6 +243,9 @@ class School(models.Model):
         default=1,
     )
     plz = models.IntegerField(verbose_name="Postleitzahl", default=4000)
+    email = models.EmailField(verbose_name="Email", blank=True, max_length=255)
+    phone_number = models.CharField(verbose_name="Telefonnummer", blank=True, max_length=255)
+    mobile = models.CharField(verbose_name="Mobile", blank=True, max_length=255)
 
     class Meta:
         verbose_name = "Standort"
@@ -274,9 +259,11 @@ class School(models.Model):
 class Person(models.Model):
     """teacher, deputies and managers of the school"""
 
+    user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     school = models.ForeignKey(
         School, on_delete=models.CASCADE, related_name="person_schools", default=1
     )
+    teacherid = models.IntegerField(verbose_name="Lehrer-ID", blank=True, null=True)
     first_name = models.CharField(max_length=255, verbose_name="Vorname")
     last_name = models.CharField(max_length=255, verbose_name="Nachname")
     email = models.EmailField(verbose_name="Email", blank=True)
@@ -288,6 +275,7 @@ class Person(models.Model):
     )
     # cv_text = models.TextField(verbose_name="CV Text", blank=True)
     # cv_file = models.FileField(verbose_name="CV Datei", blank=True, upload_to=get_cv_upload_path)
+    username = models.CharField(max_length=255, verbose_name="Benutzername", blank=True)
     is_teacher = models.BooleanField(verbose_name="LehrerIn", default=False)
     is_candidate = models.BooleanField(
         verbose_name="KandidatIn für Stellvertretung", default=False
@@ -376,7 +364,7 @@ class Teacher(Person):
     def get_unique_subjects(self):
         # Get the unique subject objects related to lessons taught by this teacher
         unique_subject_ids = (
-            LessonTemplate.objects.filter(teacher=self)
+            Timetable.objects.filter(teacher=self)
             .values_list("subject", flat=True)
             .distinct()
         )
@@ -386,7 +374,7 @@ class Teacher(Person):
     def get_unique_classes(self):
         # Get the unique class objects related to lessons taught by this teacher
         unique_class_ids = (
-            LessonTemplate.objects.filter(teacher=self)
+            Timetable.objects.filter(teacher=self)
             .values_list("school_class", flat=True)
             .distinct()
         )
@@ -404,47 +392,6 @@ class Candidate(Person):
 
     class Meta:
         proxy = True
-
-
-class SchoolPerson(models.Model):
-    """persons related to a school, e.g. school director, teachers etc."""
-
-    school = models.ForeignKey(
-        School, on_delete=models.CASCADE, related_name="school_person_schools"
-    )
-    person = models.ForeignKey(
-        Person, on_delete=models.CASCADE, related_name="school_persons"
-    )
-    role = models.ForeignKey(
-        SchoolPersonRole, on_delete=models.CASCADE, related_name="school_person_roles"
-    )
-    description = models.TextField(verbose_name="Bemerkungen", blank=True)
-
-    class Meta:
-        verbose_name = "Zuordnung Person zu Schule"
-        verbose_name_plural = "Zuordnung Person zu Schule"
-
-    def __str__(self):
-        return f"{self.school.name}, {self.person.fullname}, {self.role.name}"
-
-
-class PersonCertificate(models.Model):
-    """Certificates for deputies and teachers of the school"""
-
-    person = models.ForeignKey(
-        Person, on_delete=models.CASCADE, related_name="certificates"
-    )
-    certificate = models.ForeignKey(
-        Certificate, on_delete=models.CASCADE, related_name="candidates_person"
-    )
-    year = models.CharField(max_length=255, verbose_name="Jahr", blank=True, null=True)
-
-    class Meta:
-        verbose_name = "Zuordnung Abschluss zu Person"
-        verbose_name_plural = "Zuordnung Abschluss zu Person"
-
-    def __str__(self):
-        return f"{self.person.fullname} - {self.certificate.name} - {self.year} - {self.person.is_teacher}"
 
 
 class Substitution(models.Model):
@@ -471,7 +418,7 @@ class Substitution(models.Model):
         verbose_name="Begründung",
     )
     partial_substitution_possible = models.BooleanField(
-        verbose_name="Teilübernahme", default=False
+        verbose_name="Teilübernahme möglich", default=False
     )
     comment_subsitution = models.TextField(
         verbose_name="Anmerkung zum Vikariat", blank=True, max_length=500
@@ -545,7 +492,7 @@ class SchoolClass(models.Model):
         return f"{self.school.name}, Klasse {self.name}"
 
 
-class LessonTemplate(models.Model):
+class Timetable(models.Model):
     """timetable template for a teacher: all periods for a week. the tempalte is used to create the timetable"""
 
     teacher = models.ForeignKey(
@@ -620,7 +567,7 @@ class SubstitutionCandidate(models.Model):
         return f"{self.candidate.fullname} - {self.rating}"
 
 
-class VacationTemplate(models.Model):
+class Vacation(models.Model):
     """Teacher vacation"""
 
     name = models.CharField(max_length=100, verbose_name="Bezeichnung")
@@ -652,7 +599,7 @@ class VacationDay(models.Model):
         default=get_default_time_of_day,
     )
     vacation = models.ForeignKey(
-        VacationTemplate, on_delete=models.CASCADE, related_name="vacation_templates"
+        Vacation, on_delete=models.CASCADE, related_name="vacation_templates"
     )
 
     def __str__(self):
