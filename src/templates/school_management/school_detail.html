@@ -27,18 +27,6 @@
     <li class="nav-item" role="presentation">
       <a
         class="nav-link"
-        id="contacts-tab"
-        data-bs-toggle="tab"
-        href="#contacts"
-        role="tab"
-        aria-controls="contacts"
-        aria-selected="false"
-        >Kontakte</a
-      >
-    </li>
-    <li class="nav-item" role="presentation">
-      <a
-        class="nav-link"
         id="teachers-tab"
         data-bs-toggle="tab"
         href="#teachers"
@@ -91,61 +79,7 @@
         </tbody>
       </table>
     </div>
-
-    <div
-      class="tab-pane fade"
-      id="contacts"
-      role="tabpanel"
-      aria-labelledby="contacts-tab"
-    >
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Rolle</th>
-            <th>Name</th>
-            <th>Telefon</th>
-            <th>eMail</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for contact in school_contacts %}
-          <tr>
-            <td>{{ contact.role.name }}</td>
-            <td><a href="{% url 'teacher_detail' pk=contact.id %}">{{ contact.person.fullname }}</a></td>
-            <td>{{ contact.person.phone_number }}</td>
-            <td>{{ contact.person.email }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-    
-    <div
-      class="tab-pane fade"
-      id="teachers"
-      role="tabpanel"
-      aria-labelledby="teachers-tab"
-    >
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Telefon</th>
-            <th>eMail</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for contact in school_teachers %}
-          <tr>
-            <td><a href="{% url 'teacher_detail' pk=contact.person.pk %}">{{ contact.person.fullname }}</a></td>
-            <td>{{ contact.person.phone_number }}</td>
-            <td>{{ contact.person.email }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-    
+ 
     <div
       class="tab-pane fade"
       id="classes"

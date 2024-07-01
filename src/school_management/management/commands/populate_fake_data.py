@@ -12,28 +12,19 @@ from school_management.models import (
     Person,
     Candidate,
     Teacher,
-    PersonCertificate,
-    PersonSubject,
     Substitution,
-    SubstitutionPeriod,
     Qualification,
     Subject,
     DayOfWeek,
-    Course,
     Period,
     TimeOfDay,
     Gender,
     SchoolPersonRole,
-    SchoolPerson,
     SchoolClass,
-    LessonTemplate,
-    AvailabilityTemplate,
-    Availability,
     SubstitutionCause,
-    Lesson,
-    VacationTemplate,
     SubstitutionStatus,
-    SubstitutionCandidate
+    SubstitutionCandidate,
+    CommunicationType
 )
 from django.db import connection
 import random
@@ -574,8 +565,10 @@ class Command(BaseCommand):
         
         force_reset = True
         if ok:
-            ok = self.fill_code(Qualification, './data/qualification.csv', force_reset)
+            ok = self.fill_code(CommunicationType, './data/communication_type.csv', force_reset)
         ok = False
+        if ok:
+            ok = self.fill_code(Qualification, './data/qualification.csv', force_reset)
         if ok:
             ok = self.fill_code(SubstitutionStatus, './data/substitutionstatus.csv', force_reset)
         if ok:
@@ -584,8 +577,6 @@ class Command(BaseCommand):
             ok = self.fill_vacation(force_reset)
         if ok:
             ok = self.fill_code(SubstitutionCause, './data/substitutioncause.csv', force_reset)
-        if ok:
-            ok = self.fill_code(Course, './data/course.csv', force_reset)
         if ok:
             ok = self.fill_code(Gender,'./data/gender.csv', force_reset)
         if ok:

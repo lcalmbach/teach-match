@@ -14,7 +14,11 @@ from .views import (
     TeacherListView,
     TeacherDetailView,
     TeacherEditView,
+    ApplicationCreateView,
+    InvitationCreateView
 )
+
+app_name = 'school_management'
 
 urlpatterns = [
     path("schools/", SchoolListView.as_view(), name="school_list"),
@@ -58,4 +62,6 @@ urlpatterns = [
 
     path("find_match/", SubstitutionAdminListView.as_view(), name="find_match"),
     path("login/", SubstitutionEditView.as_view(), name="login"),
+    path('application/create/<int:id>/', ApplicationCreateView.as_view(), name='application_create'),
+    path("invitation/", InvitationCreateView.as_view(), name="invitation_create"),
 ]

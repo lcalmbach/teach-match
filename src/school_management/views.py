@@ -1,5 +1,7 @@
 from django.forms import modelformset_factory
-from django.shortcuts import redirect, get_object_or_404
+from django.views import View
+from django.urls import reverse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import DetailView, UpdateView, CreateView
 from django.contrib import messages
 from django.utils import timezone
@@ -16,12 +18,18 @@ from .models import (
     Level,
     SubstitutionStatus,
     SubstitutionCandidate,
+    Invitation,
+    Application,
+    CommunicationType
 )
 from .forms import (
     SchoolForm,
     CandidateForm,
     SubstitutionForm,
     TeacherForm,
+    InvitationForm,
+    ApplicationForm,
+
 )
 from django.views.generic import ListView  # Import the necessary module
 from django.urls import reverse_lazy
@@ -76,8 +84,7 @@ class SchoolDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         school = context["school"]
         # Filter SchoolPerson by school and role ID
-        context["school_contacts"] = school.school_person_schools.filter(role__id=1)
-        context["school_teachers"] = school.school_person_schools.filter(role__id=4)
+        context["school_teachers"] = school.school_persons.filter(is_teacher=True)
         context["school_classes"] = school.class_schools.filter(school=school)
         context["substitutions"] = school.substitution_schools.filter(school=school)
 
@@ -209,11 +216,9 @@ class TeacherEditView(LoginRequiredMixin, UpdateView):
 
 class SubstitutionCandidatesListView(ListView):
     model = Substitution
-    context_object_name = (
-        "substitutions"  # The name of the variable to be used in the template
-    )
-    template_name = "school_management/substitution_list_candidates.html"  # Path to the template
-    success_url = reverse_lazy("substitution_candidates_list")
+    context_object_name = "substitutions"  
+    template_name = "school_management/substitution_candidates_list.html"  # Path to the template
+    success_url = reverse_lazy("school_management/substitution_candidates_list")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -423,3 +428,63 @@ class SubstitutionEditView(UpdateView):
         if error:
             context["error"] = error
         return self.render_to_response(context)
+
+
+class ApplicationCreateView(View):
+    def post(self, request, *args, **kwargs):
+        substitution_id = request.POST.get('substitution')
+        username = request.user.username
+        success_url = reverse('school_management:application_create', kwargs={'id': substitution_id})
+        substitution = get_object_or_404(Substitution, id=substitution_id)
+        candidate = get_object_or_404(Person, user__username=username)
+
+        # Ensure that type is set to 1 for applications
+        application_type = get_object_or_404(CommunicationType, id=1)
+
+        # Create the Application instance
+        application = Application(
+            substitution=substitution,
+            candidate=candidate,
+            type=application_type,
+            request_date=timezone.now(),
+            request_text=request.POST.get('request_text', '')
+        )
+        application.save()
+
+        # Determine the action and perform the corresponding task
+        action = request.POST.get('action')
+        if action == 'apply':
+            # Send email logic here
+            print('Email sent')
+            messages.success(request, 'Ihre Bewerbung wurde erfolgreich abgeschickt.')
+            success_url = reverse('school_management:substitution_candidates_list')
+
+        # Redirect to a success page or similar
+        
+        return redirect(success_url)
+
+    def get(self, request, *args, **kwargs):
+        candidate = request.user.person  # Assuming a one-to-one relationship between User and Person
+        form = ApplicationForm()
+        
+        substitution_id = kwargs.get('id')
+        substitution = get_object_or_404(Substitution, id=substitution_id)  # Ensure substitution is fetched here
+        
+        context = {
+            'form': form,
+            'substitution': substitution,
+            'candidate': candidate,
+            'username': request.user.username,
+            'substitution_id': substitution_id,
+        }
+        return render(request, 'school_management/application_create.html', context)
+
+
+
+class InvitationCreateView(LoginRequiredMixin, CreateView):
+    model = Invitation
+    form_class = InvitationForm
+    template_name = "school_management/invitation_create.html"
+    success_url = reverse_lazy(
+        "school_list"
+    )  # Redirect to school list view after saving

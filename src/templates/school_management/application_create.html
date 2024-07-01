@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load static %}
+<div class="col-md-6 offset-md-3">
+  <div class="form-container">
+    <h4>Bewerbung auf Stellvertretung #{{ substitution.id }} vom {{ substitution.start_date|date:"d.m.y"  }} bis {{ substitution.end_date|date:"d.m.y" }}</h4>
+    Schule: {{ substitution.school }}<br>
+    Bewerbung von: {{ candidate.fullname }}<br><br>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <!-- Include hidden fields -->
+      <input type="hidden" name="substitution" value="{{ substitution.id }}">
+      <input type="hidden" name="candidate" value="{{ candidate.id }}">
+      {{ form|crispy }}
+      <button type="submit" name="action" value="apply" class="btn btn-success">
+      Abschicken
+      </button>
+      <a href="javascript:history.back()" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Zurück
+      </a>
+    </form>
+  </div>
+</div>
+{% endblock %}

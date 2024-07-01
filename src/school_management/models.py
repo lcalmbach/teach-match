@@ -17,6 +17,20 @@ def get_default_time_of_day():
         return None
 
 
+class CommunicationType(models.Model):
+    """Application, Invitation"""
+
+    name = models.CharField(max_length=255, verbose_name="Name")
+    description = models.TextField(verbose_name="Beschreibung", blank=True)
+
+    class Meta:
+        verbose_name = "Kommunikationsart"
+        verbose_name_plural = "Kommunikationsarten"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+    
 class SubstitutionStatus(models.Model):
     """Status of a teacher substitution"""
 
@@ -261,7 +275,7 @@ class Person(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     school = models.ForeignKey(
-        School, on_delete=models.CASCADE, related_name="person_schools", default=1
+        School, on_delete=models.CASCADE, related_name="school_persons", default=1
     )
     teacherid = models.IntegerField(verbose_name="Lehrer-ID", blank=True, null=True)
     first_name = models.CharField(max_length=255, verbose_name="Vorname")
@@ -604,3 +618,40 @@ class VacationDay(models.Model):
 
     def __str__(self):
         return f"{self.date} - {self.vacation.name}"
+
+
+class Communication(models.Model):
+    substitution = models.ForeignKey(Substitution, on_delete=models.CASCADE, related_name="substitution")
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, related_name="candidate")
+    type = models.ForeignKey(CommunicationType, on_delete=models.CASCADE, related_name="communication_type")
+    request_date = models.DateField(verbose_name="Gesendet am", default=timezone.now)
+    request_text = models.TextField(verbose_name="Anfrage", blank=True, max_length=500)    
+    answer_text = models.TextField(verbose_name="Antwort", blank=True, max_length=500)
+    answer_date = models.DateField(verbose_name="Antwort am", blank=True, null=True)
+    
+    def __str__(self):
+        return f"{self.sent_date} {self.candidate.fullname}"
+
+
+class ApplicationManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(type_id=1)
+
+
+class Application(Communication):
+    objects = ApplicationManager()
+
+    class Meta:
+        proxy = True
+
+
+class InvitationManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(type_id=2)
+
+
+class Invitation(Communication):
+    objects = InvitationManager()
+
+    class Meta:
+        proxy = True

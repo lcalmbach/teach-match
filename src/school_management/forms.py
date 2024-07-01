@@ -1,5 +1,5 @@
 from django import forms
-from .models import School, Person, Substitution, Teacher, Candidate
+from .models import School, Person, Substitution, Teacher, Candidate, Invitation, Application
 import fitz  # PyMuPDF
 
 
@@ -7,6 +7,24 @@ class SchoolForm(forms.ModelForm):
     class Meta:
         model = School
         fields = "__all__"
+
+class InvitationForm(forms.ModelForm):
+    class Meta:
+        model = Invitation
+        fields = "__all__"
+
+class ApplicationForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        fields = ['request_text']  # Include other fields if necessary
+        labels = {
+            'request_text': 'Bemerkungen zur Bewerbung',
+        }
+        widgets = {
+            'request_text': forms.Textarea(attrs={'rows': 4}),
+            'substitution': forms.HiddenInput(),
+            'candidate': forms.HiddenInput(),
+        }
 
 
 class CandidateForm(forms.ModelForm):

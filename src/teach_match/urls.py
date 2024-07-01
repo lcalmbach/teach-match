@@ -22,11 +22,11 @@ from django.conf import settings
 from django.shortcuts import redirect
 
 def redirect_to_substitution_candidates(request):
-    return redirect('substitution_candidates_list', permanent=True)
+    return redirect('school_management/substitution_candidates/', permanent=True)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-     path('', redirect_to_substitution_candidates, name='index'),
+    path('', redirect_to_substitution_candidates, name='index'),
     path('school_management/', include('school_management.urls')),
     path('login/', include('login_account.urls')),
     # ... other URL patterns ...
