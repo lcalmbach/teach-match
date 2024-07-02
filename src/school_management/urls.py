@@ -47,19 +47,19 @@ urlpatterns = [
         "substitution/<int:pk>/",
         SubstitutionEditView.as_view(),
         name="substitution_edit",
-    ),  # For editing
+    ),  
     path(
         "substitution/new/",
         SubstitutionCreateView.as_view(),
         name="substitution_create",
-    ),  # For creating new
+    ),  
     path(
         "substitution/new/<int:teacher_id>/",
         SubstitutionCreateView.as_view(),
         name="substitution_create_with_teacher",
     ),
     path("substitutions_candidates/", SubstitutionCandidatesListView.as_view(), name="substitution_candidates_list"),
-
+    
     path("find_match/", SubstitutionAdminListView.as_view(), name="find_match"),
     path("login/", SubstitutionEditView.as_view(), name="login"),
     path('application/create/<int:id>/', ApplicationCreateView.as_view(), name='application_create'),

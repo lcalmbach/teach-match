@@ -6,7 +6,7 @@ teach_match/templates/school_management/school_list.html
 <div class="table-container">
     <h2>Stellvertretungen Admininstration</h2>
     <br>
-    <a href="{% url 'substitution_create' %}" class="btn btn-success">Neu</a>
+    <a href="{% url 'school_management:substitution_create' %}" class="btn btn-success">Neu</a>
     <br><br>
     <form method="get" action="">
       <table class="table table-striped">
@@ -75,9 +75,9 @@ teach_match/templates/school_management/school_list.html
             {% for substitution in substitutions %}
             <tr>
               <td>
-                <a href="{% url 'school_detail' pk=substitution.school.pk %}">{{ substitution.school.name }}</a>
+                <a href="{% url 'school_management:school_detail' pk=substitution.school.pk %}">{{ substitution.school.name }}</a>
               </td>
-                <td><a href="{% url 'teacher_detail' pk=substitution.teacher.pk %}">{{ substitution.teacher.fullname }}</a></td>
+                <td><a href="{% url 'school_management:teacher_detail' pk=substitution.teacher.pk %}">{{ substitution.teacher.fullname }}</a></td>
                 <td>{{ substitution.start_date }}</td> 
                 <td>{{ substitution.end_date }}</td>
                 <td>
@@ -99,8 +99,8 @@ teach_match/templates/school_management/school_list.html
                 </table>
                 </td>
                 <td>{{ substitution.status.name }}</td> 
-                <td><a href="{% url 'substitution_detail' pk=substitution.pk %}" title="Stellvertretung ansehen"><i class="fas fa-eye"></i></a></td>
-                <td><a href="{% url 'substitution_edit' pk=substitution.pk %}" title="Stellvertretung editieren"><i class="fas fa-edit"></i></a></td>
+                <td><a href="{% url 'school_management:substitution_detail' pk=substitution.pk %}" title="Stellvertretung ansehen"><i class="fas fa-eye"></i></a></td>
+                <td><a href="{% url 'school_management:substitution_edit' pk=substitution.pk %}" title="Stellvertretung editieren"><i class="fas fa-edit"></i></a></td>
             </tr>
             {% endfor %}
         </tbody>

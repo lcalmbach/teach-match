@@ -5,7 +5,7 @@
   <p>{{ school.level }}</p>
   <p>{{ school.address }}</p>
   <p>{{ school.location }}</p>
-  <a href="{% url 'school_list' %}" class="btn btn-primary">Zurück</a>
+  <a href="{% url 'school_management:school_list' %}" class="btn btn-primary">Zurück</a>
 </div>
 <br /><br />
 
@@ -70,7 +70,7 @@
         <tbody>
           {% for s in substitutions %}
           <tr>
-            <td><a href="{% url 'teacher_detail' pk=s.teacher.id %}">{{ s.teacher.fullname }}</a></td>
+            <td><a href="{% url 'school_management:teacher_detail' pk=s.teacher.id %}">{{ s.teacher.fullname }}</a></td>
             <td>{{ s.start_date }}</td>
             <td>{{ s.end_date }}</td>
             <td>{{ s.status.name }}</td>
@@ -97,7 +97,7 @@
           {% for school_class in school_classes %}
           <tr>
             <td>{{ school_class.name }}</td>
-            <td><a href="{% url 'teacher_detail' pk=school_class.contact_person.id %}">{{ school_class.contact_person.fullname }}</a></td>
+            <td><a href="{% url 'school_management:teacher_detail' pk=school_class.contact_person.id %}">{{ school_class.contact_person.fullname }}</a></td>
           </tr>
           {% endfor %}
         </tbody>

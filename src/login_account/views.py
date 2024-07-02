@@ -35,6 +35,8 @@ def user_login(request):
 
 
 def user_logout(request):
+    user = request.user
+    person = Person.objects.get(user=user)
     logout(request)
     messages.info(request, f"Auf Wiedersehen {person.first_name}.")
     return redirect('index')
@@ -45,6 +47,7 @@ def user_signup(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
+            person = Person.objects.get(user=user)
             login(request, user)
             return redirect('home')  # Redirect to a home page or other appropriate page
     else:

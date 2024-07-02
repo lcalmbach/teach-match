@@ -293,7 +293,7 @@ class SubstitutionAdminListView(ListView):
     context_object_name = (
         "substitutions"  # The name of the variable to be used in the template
     )
-    template_name = "school_management/substitution_list_admin.html"  # Path to the template
+    template_name = "school_management/substitution_admin_list.html"  # Path to the template
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
