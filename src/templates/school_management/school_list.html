@@ -43,7 +43,7 @@ teach_match/templates/school_management/school_list.html
         <tbody>
             {% for school in schools %}
             <tr>
-                <td><a href="{% url 'school_detail' pk=school.pk %}">{{ school.name }}</a></td>
+                <td><a href="{% url 'school_management:schools' pk=school.pk %}">{{ school.name }}</a></td>
                 <td>{{ school.level.name }}</td> 
                 <td>{{ school.location }}</td> 
             </tr>

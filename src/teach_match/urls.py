@@ -22,7 +22,7 @@ from django.conf import settings
 from django.shortcuts import redirect
 
 def redirect_to_substitution_candidates(request):
-    return redirect('school_management/substitution_candidates/', permanent=True)
+    return redirect('school_management/substitutions_candidates/', permanent=True)
 
 urlpatterns = [
     path("admin/", admin.site.urls),

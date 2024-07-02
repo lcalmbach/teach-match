@@ -10,17 +10,19 @@ from login_account.forms import LoginForm
 from django.contrib.auth import login
 from .forms import SignUpForm
 
+from school_management.models import Person
+
 def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
             user = authenticate(request, username=data['username'], password=data['password'])
-
+            person = Person.objects.get(user=user)
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    messages.info(request, "Sie wurden erfolgreich eingeloggt.")
+                    messages.info(request, f"Willkommen {person.first_name}.")
                     return redirect('index')
                 else:
                     return HttpResponse('Disabled account')
@@ -34,7 +36,7 @@ def user_login(request):
 
 def user_logout(request):
     logout(request)
-    messages.info(request, "Sie wurden erfolgreich ausgeloggt.")
+    messages.info(request, f"Auf Wiedersehen {person.first_name}.")
     return redirect('index')
 
 

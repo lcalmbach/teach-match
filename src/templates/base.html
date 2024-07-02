@@ -39,21 +39,21 @@
       <!-- Right-aligned items -->
       <ul class="navbar-nav ms-auto">
         {% if not request.user.is_authenticated %}
-        <!-- User is not logged in -->
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'login' %}">Login</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
-        </li>
+          <!-- User is not logged in -->
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+          </li>
         {% else %}
-        <!-- User is logged in -->
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'user_profile' %}">Profile</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-        </li>
+          <!-- User is logged in -->
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'user_profile' %}">Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+          </li>
         {% endif %}
       </ul>
     </div>
