@@ -226,6 +226,7 @@ class Subject(models.Model):
     name = models.CharField(max_length=255, verbose_name="Name")
     name_short = models.CharField(max_length=255, verbose_name="Kürzel", blank=True)
     description = models.TextField(verbose_name="Description", blank=True)
+    level = models.ForeignKey(Level, on_delete=models.CASCADE, verbose_name="Stufe")
 
     class Meta:
         verbose_name = "Fach"
@@ -274,10 +275,8 @@ class Person(models.Model):
     """teacher, deputies and managers of the school"""
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
-    school = models.ForeignKey(
-        School, on_delete=models.CASCADE, related_name="school_persons", default=1
-    )
-    teacherid = models.IntegerField(verbose_name="Lehrer-ID", blank=True, null=True)
+    schools = models.ManyToManyField(School, related_name='school_persons')
+    initials = models.CharField(max_length=255, verbose_name="Kürzel", blank=True)
     first_name = models.CharField(max_length=255, verbose_name="Vorname")
     last_name = models.CharField(max_length=255, verbose_name="Nachname")
     email = models.EmailField(verbose_name="Email", blank=True)
@@ -289,7 +288,6 @@ class Person(models.Model):
     )
     # cv_text = models.TextField(verbose_name="CV Text", blank=True)
     # cv_file = models.FileField(verbose_name="CV Datei", blank=True, upload_to=get_cv_upload_path)
-    username = models.CharField(max_length=255, verbose_name="Benutzername", blank=True)
     is_teacher = models.BooleanField(verbose_name="LehrerIn", default=False)
     is_candidate = models.BooleanField(
         verbose_name="KandidatIn für Stellvertretung", default=False
@@ -301,7 +299,7 @@ class Person(models.Model):
     #    verbose_name="Erfahrung in Jahren", blank=True, default=1
     # )
     available_from_date = models.DateField(
-        verbose_name="Verfügbar ab", blank=True, null=True
+        verbose_name="Verfügbar von", blank=True, null=True
     )
     available_to_date = models.DateField(
         verbose_name="Verfügbar ab", blank=True, null=True
@@ -338,10 +336,6 @@ class Person(models.Model):
     )
     availability_comment = models.TextField(
         max_length=500, verbose_name="Bemerkungen zur Verfügbarkeit", blank=True
-    )
-
-    gender = models.ForeignKey(
-        "Gender", on_delete=models.CASCADE, verbose_name="Geschlecht", default=1
     )
     description = models.TextField(
         max_length=500, verbose_name="Bemerkungen", blank=True
@@ -493,9 +487,9 @@ class SchoolClass(models.Model):
     level = models.ForeignKey(
         Level, on_delete=models.CASCADE, related_name="class_levels"
     )
-    contact_person = models.ForeignKey(
-        Person, on_delete=models.CASCADE, related_name="class_persons"
-    )
+    # contact_person = models.ForeignKey(
+    #     Person, on_delete=models.CASCADE, related_name="class_persons"
+    # )
     school_year = models.IntegerField(verbose_name="Schuljahr", default=1)
 
     class Meta:

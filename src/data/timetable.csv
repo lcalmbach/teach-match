@@ -1,4 +1,4 @@
-weekday_number;weekday_name;lektion_number;lektion_startime;lehrperson_key;abbreviation;nachname;vorname;klasse_name;school;fach_name_kurz
+weekday_number;weekday_name;lektion_number;lektion_startime;lehrperson_key;initials;nachname;vorname;school_class_name;school_id;subject_name_short
 3;Donnerstag;5;13:00:00;1030;HaA;Haidorfer;Astrid;F01;2;AB
 3;Donnerstag;6;13:45:00;1030;HaA;Haidorfer;Astrid;F01;2;AB
 3;Donnerstag;7;14:45:00;1030;HaA;Haidorfer;Astrid;F01;2;AB

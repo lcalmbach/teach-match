@@ -35,7 +35,6 @@ class CandidateForm(forms.ModelForm):
             "last_name",
             "email",
             "phone_number",
-            "year_of_birth",
             "available_from_date",
             "available_to_date",
             "availability_mo_am",
@@ -49,7 +48,6 @@ class CandidateForm(forms.ModelForm):
             "availability_fr_am",
             "availability_fr_pm",
             "availability_comment",
-            "gender",
         ]
 
     def save(self, commit=True):
@@ -94,24 +92,24 @@ class SubstitutionForm(forms.ModelForm):
             "subjects",
         ]
         widgets = {
-            "start_date": forms.DateInput(
-                attrs={"type": "date", "class": "form-control"}
-            ),
-            "end_date": forms.DateInput(
-                attrs={"type": "date", "class": "form-control"}
-            ),
+            "start_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),
+            "end_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['start_date'].input_formats = ['%Y-%m-%d']
+        self.fields['end_date'].input_formats = ['%Y-%m-%d']
+
 
 
 class TeacherForm(forms.ModelForm):
     class Meta:
         model = Teacher
         fields = [
-            "school",
             "first_name",
             "last_name",
+            "initials",
             "email",
             "phone_number",
-            "year_of_birth",
-            "gender",
         ]

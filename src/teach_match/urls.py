@@ -29,7 +29,6 @@ urlpatterns = [
     path('', redirect_to_substitution_candidates, name='index'),
     path('school_management/', include('school_management.urls')),
     path('login/', include('login_account.urls')),
-    # ... other URL patterns ...
     path('profile/', views.user_profile, name='user_profile'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

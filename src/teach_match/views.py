@@ -13,10 +13,22 @@ def index(request):
 @login_required
 def user_profile(request):
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect('user_profile')
+        profile_form = ProfileEditForm(request.POST, instance=request.user.profile)
+        password_change_form = PasswordChangeForm(request.user, request.POST)
+        
+        if profile_form.is_valid():
+            profile_form.save()
+        
+        if password_change_form.is_valid():
+            user = password_change_form.save()
+            update_session_auth_hash(request, user)  # Important to keep the user logged in
+            return redirect('profile_edit')  # Redirect to the same page or any other page
+        
     else:
-        form = UserProfileForm(instance=request.user)
-    return render(request, 'user_profile.html', {'form': form})
+        profile_form = ProfileEditForm(instance=request.user.profile)
+        password_change_form = PasswordChangeForm(request.user)
+    
+    return render(request, 'profile_edit.html', {
+        'form': profile_form,
+        'password_change_form': password_change_form,
+    })

@@ -12,6 +12,7 @@ teach_match/templates/school_management/school_list.html
       <table class="table table-striped">
         <thead>
             <tr>
+                <th>#Ref</th>
                 <th>Schule</th>
                 <th>Lehrkraft</th>
                 <th>Von</th>
@@ -23,6 +24,7 @@ teach_match/templates/school_management/school_list.html
             </tr>
 
             <tr> <!-- Filter inputs row -->
+              <th><input type="text" name="id_filter" value="{{ request.GET.id_filter }}"></th>
               <th>
                 <select name="school_filter">
                   <option value="">---</option>
@@ -74,9 +76,10 @@ teach_match/templates/school_management/school_list.html
         <tbody>
             {% for substitution in substitutions %}
             <tr>
-              <td>
-                <a href="{% url 'school_management:school_detail' pk=substitution.school.pk %}">{{ substitution.school.name }}</a>
-              </td>
+              <td>{{ substitution.id }}</td> 
+                <td>
+                  <a href="{% url 'school_management:school_detail' pk=substitution.school.pk %}">{{ substitution.school.name }}</a>
+                </td>
                 <td><a href="{% url 'school_management:teacher_detail' pk=substitution.teacher.pk %}">{{ substitution.teacher.fullname }}</a></td>
                 <td>{{ substitution.start_date }}</td> 
                 <td>{{ substitution.end_date }}</td>

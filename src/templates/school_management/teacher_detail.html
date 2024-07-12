@@ -16,10 +16,10 @@
       <th>Vorname:</th>
       <td>{{ teacher.first_name }}</td>
     </tr>
-    <tr>
+    {% comment %} <tr>
       <th>Geschlecht:</th>
       <td>{{ teacher.gender.name }}</td>
-    </tr>
+    </tr> {% endcomment %}
     <tr>
       <th>Jahrgang:</th>
       <td>{{ teacher.year_of_birth }}</td>
@@ -43,6 +43,7 @@
 <div class="container mt-5">
   <!-- Tab links -->
   <ul class="nav nav-tabs" id="myTab" role="tablist">
+    
     <li class="nav-item" role="presentation">
       <a
         class="nav-link"
@@ -102,7 +103,7 @@
       <tbody>
         {% for substitution in teacher.teacher_substitutions.all %}
         <tr>
-          <td><a href="{% url 'substitution_detail' pk=substitution.pk %}">{{ substitution.start_date }}</a></td>
+          <td><a href="{% url 'school_management:substitution_detail' pk=substitution.pk %}">{{ substitution.start_date }}</a></td>
           <td>{{ substitution.end_date }}</td>
           <td>{{ substitution.cause.name }}</td>
         </tr>
@@ -123,6 +124,7 @@
           {{ x.name }}
         </li>
         {% endfor %}
+      </ul>
   </div>
 
   <div
@@ -155,8 +157,8 @@
       </table>
   </div>
 
-    <a href="{% url 'teacher_list' %}" class="btn btn-primary">Zurück</a>
-    <a href="{% url 'substitution_create_with_teacher' teacher.pk %}" class="btn btn-primary">🔎Stellvertretung</a>
+    <a href="{% url 'school_management:teacher_list' %}" class="btn btn-primary">Zurück</a>
+    <a href="{% url 'school_management:substitution_create_with_teacher' teacher.pk %}" class="btn btn-primary">🔎Stellvertretung</a>
   </div>
 </div>
 

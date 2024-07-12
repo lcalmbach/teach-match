@@ -1,0 +1,16 @@
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+<div class="info-container">
+    <h1>Administrative Aufgaben</h1>
+    <table>
+        <tr>
+            <td class="button-cell"><button onclick="location.href='{% url 'school_management:calculate_availability' %}'">Ausführen</button></td>
+            <td>Berechne die Verfügbarkeit von LehrerInnen basierend auf dem aktuellen Stundenplan</td>
+        </tr>
+    </table>
+
+</div>
+{% endblock %}

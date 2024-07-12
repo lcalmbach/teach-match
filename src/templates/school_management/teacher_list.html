@@ -12,7 +12,6 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Telefon</th>
-                    <th>Schule</th>
                     <th>Editieren</th>
                 </tr>
                 <tr> <!-- Filter inputs row -->
@@ -24,18 +23,18 @@
                 </tr>
             </thead>
             <tbody>
-                {% for school_person in teachers %}
+                {% for teacher in teachers %}
                 <tr>
-                  <td><a href="{% url 'teacher_detail' pk=school_person.pk %}">{{ school_person.person.fullname }}</a></td>
-                    <td>{{ school_person.person.email }}</td>
-                    <td>{{ school_person.person.phone_number }}</td>
-                    <td>{{ school_person.school.name }}</td>
-                    <td><a href="{% url 'teacher_edit' pk=school_person.pk %}" class="btn btn-primary">Edit</a></td>
-                </tr>
+                    
+                    <td>{{ teacher.fullname }}</td>
+                    <td>{{ teacher.email }}</td>
+                    <td>{{ teacher.phone_number }}</td>
+                    <td><a href="{% url 'school_management:teacher_detail' pk=teacher.pk %}" title="Lehrperson ansehen"><i class="fas fa-eye"></i></a></td>
+                    <td><a href="{% url 'school_management:teacher_edit' pk=teacher.pk %}" title="Lehrperson editieren"><i class="fas fa-edit"></i></a></td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
     </form>
 </div>  
 {% endblock %}
-

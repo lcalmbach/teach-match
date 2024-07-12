@@ -24,7 +24,9 @@ from school_management.models import (
     SubstitutionCause,
     SubstitutionStatus,
     SubstitutionCandidate,
-    CommunicationType
+    CommunicationType,
+    Timetable,
+
 )
 from django.db import connection
 import random
@@ -32,11 +34,41 @@ import os
 import shutil
 import fitz  # PyMuPDF
 from django.conf import settings
+from django.contrib.auth.models import User, Group
 
 today = datetime.now()
 end_of_year = datetime(today.year, 12, 31)
 all_days, all_periods = [],[]
         
+
+def generate_username(first_name, last_name, existing_usernames):
+    """
+    Generate a unique 5-character username.
+    
+    :param first_name: First name of the user.
+    :param last_name: Last name of the user.
+    :param existing_usernames: List of existing usernames to ensure uniqueness.
+    :return: A unique 5-character username.
+    """
+    # Create the base username
+    base_username = (first_name[0] + last_name[:4]).lower()
+    
+    # Ensure the base username is 5 characters long
+    if len(base_username) < 5:
+        base_username = (base_username + "0" * 5)[:5]
+    
+    # If the base username is unique, return it
+    if base_username not in existing_usernames:
+        return base_username
+    
+    # If not, append a number to make it unique
+    counter = 1
+    while True:
+        new_username = f"{base_username[:4]}{counter}"
+        if new_username not in existing_usernames:
+            return new_username
+        counter += 1
+
 
 def generate_date_list(year):
     start_date = datetime(year, 1, 1)
@@ -80,35 +112,48 @@ class Command(BaseCommand):
         """
         model.objects.all().delete()
 
-
-    def fill_teachers_candidates(self, faker, force=True):
+    def fill_teachers(self, faker):
         try:
-            if force:
-                Person.objects.filter().delete()
-            # teachers
-            num_entries = 50
-            for _ in range(num_entries):
+            df = pd.read_csv('./data/teachers.csv', sep=';')
+            unique_initials = df['initials'].dropna().unique()
+            unique_initials_df = pd.DataFrame(unique_initials, columns=['initials'])
+            teachers_group, _ = Group.objects.get_or_create(name='teachers')
+            for index, row in unique_initials_df.iterrows():
+                usernames = User.objects.values_list('username', flat=True)
+                first_name = faker.first_name()
+                last_name = faker.last_name()
+                username = generate_username(first_name, last_name, usernames)
+                User.objects.filter(username=username).delete()
+                user = User.objects.create_user(username=username, password='password', first_name=first_name, last_name=last_name)  # Set a default password
+                teachers_group.user_set.add(user)
+                print(username)
                 Person.objects.create(
                     first_name=faker.first_name(),
                     last_name=faker.last_name(),
+                    initials=row['initials'],
                     email='lukas.calmbach@bs.com',
                     phone_number='+41791742159',
-                    gender=random.choice(Gender.objects.all()),
-                    year_of_birth=faker.random_int(min=1990, max=2004),
-                    cv_text=faker.text(max_nb_chars=200),
-
                     is_teacher=True,
-                    is_candidate=random.choice([True, False]),
-                    years_of_experience=faker.random_int(min=1, max=30),
+                    user = user
                 )
             print("Teachers created...")
+            return True
+        except Exception as e:
+            print(e)
+            return False
+        
 
+    def fill_candidates(self, faker, force=True):
+        try:
             # deputy candidates
             num_entries = 100
             for _ in range(num_entries):
+                first_name = faker.first_name()
+                last_name = faker.last_name()
+                username = self.generate_username(first_name, last_name)
                 Person.objects.create(
-                    first_name=faker.first_name(),
-                    last_name=faker.last_name(),
+                    first_name=first_name,
+                    last_name=last_name,
                     email='lukas.calmbach@bs.com',
                     phone_number='+41791742159',
                     gender=random.choice(Gender.objects.all()),
@@ -224,55 +269,99 @@ class Command(BaseCommand):
             print(e)
             return False
         return True
+    
+    # def assign_cvs_to_candidates(self):
+    #     source_filenames = [f"{settings.MEDIA_ROOT}/cv/{x+1}.pdf" for x in range(6)]
+    #     try:
+    #         for candidate in Person.objects.all():
+    #             source_filename = random.choice(source_filenames)
+    #             target_filename = f"{settings.MEDIA_ROOT}/cv/{candidate.pk}.pdf"
 
-    def assign_cvs_to_candidates(self):
-        source_filenames = [f"{settings.MEDIA_ROOT}\cv\{x+1}.pdf" for x in range(6)]
-        try:
-            for candidate in Person.objects.all():
-                source_filename = random.choice(source_filenames)
-                target_filename = f"{settings.MEDIA_ROOT}\cv\{candidate.pk}.pdf"
+    #             # Ensure the 'cv' directory exists
+    #             os.makedirs(os.path.dirname(target_filename), exist_ok=True)
 
-                # Ensure the 'cv' directory exists
-                os.makedirs(os.path.dirname(target_filename), exist_ok=True)
+    #             # Copy the file
+    #             shutil.copy(source_filename, target_filename)
 
-                # Copy the file
-                shutil.copy(source_filename, target_filename)
+    #             # Extract text from the copied PDF
+    #             text = extract_text_from_pdf(target_filename)
 
-                # Extract text from the copied PDF
-                text = extract_text_from_pdf(target_filename)
-
-                # Assign extracted text and filename to the candidate
-                candidate.cv_text = text
-                candidate.cv_file = f"\cv\{candidate.pk}.pdf"
-                candidate.save()
-            print("CVs assigned.")
-        except Exception as e:
-            print(e)
-            return False
-        return True
-
+    #             # Assign extracted text and filename to the candidate
+    #             candidate.cv_text = text
+    #             candidate.cv_file = f"\cv\{candidate.pk}.pdf"
+    #             candidate.save()
+    #         print("CVs assigned.")
+    #     except Exception as e:
+    #         print(e)
+    #         return False
+    #     return True
 
     def add_substitutions(self, faker):
         print("Creating substitutions...")
+        Substitution.objects.all().delete()
+        SubstitutionCandidate.objects.all().delete()
         self.reset_id_sequence(Substitution)
-        teacher_ids = Person.objects.filter(is_teacher=True).values_list('id', flat=True)
-        teacher_ids = list(teacher_ids)
-        random.shuffle(teacher_ids)
-        selected_teacher_ids = teacher_ids[:20]
-        selected_teachers = Person.objects.filter(id__in=selected_teacher_ids)
+        
+        all_teachers = list(Person.objects.filter(is_teacher=True))
         all_causes = list(SubstitutionCause.objects.all())
+        start_day = datetime(today.year - 1, 1, 1)
+        days = 2 * 365
+        status_occupied = SubstitutionStatus.objects.get(id=1)
+        status_finished = SubstitutionStatus.objects.get(id=2)
+        status_ongoing = SubstitutionStatus.objects.get(id=2)
+        status_planned = SubstitutionStatus.objects.get(id=4)
+
         try:
-            for teacher in selected_teachers:
-                start_date = today + timedelta(days=random.randint(1, (end_of_year - today).days))
-                end_date = start_date + timedelta(days=random.randint(1, 30))
-                Substitution.objects.create(
+            for _ in range(100):
+                teacher = random.choice(all_teachers)
+                start_date = start_day + timedelta(days=random.randint(1, days))
+                end_date = start_date + timedelta(days=random.randint(1, 20))
+                school = Timetable.objects.filter(teacher=teacher).first().school
+                rand_candidate = Candidate.objects.order_by('?').first()
+                if start_date <= today <= end_date:
+                    status = status_ongoing
+                    candidate = None
+                elif today < start_date:
+                    status = status_planned
+                    candidate = None
+                elif today > end_date:
+                    status = status_finished
+                    candidate = rand_candidate
+                else:
+                    status = status_ongoing
+                    candidate = rand_candidate
+
+                s = Substitution.objects.create(
                     teacher=teacher,
+                    school=school,
                     start_date=start_date,
                     end_date=end_date,
-                    start_period=Period.objects.get(pk=3),
-                    end_period=Period.objects.get(pk=3),
+                    status = status,
                     cause = random.choice(all_causes),
+                    mo_am = teacher.availability_mo_am,
+                    mo_pm = teacher.availability_mo_pm,
+                    tu_am = teacher.availability_tu_am,
+                    tu_pm = teacher.availability_tu_pm,
+                    we_am = teacher.availability_we_am,
+                    we_pm = teacher.availability_we_pm,
+                    th_am = teacher.availability_th_am,
+                    th_pm = teacher.availability_th_pm,
+                    fr_am = teacher.availability_fr_am,
+                    fr_pm = teacher.availability_fr_pm
                 )
+                # create 10 potential candidates
+                for _ in range(10):
+                    SubstitutionCandidate.objects.create(
+                        substitution=s,
+                        candidate=random.choice(Candidate.objects.all()),
+                        rating=random.randint(50, 100)
+                    )
+                if s.status == status_finished:
+                    highest_ranking_candidate = SubstitutionCandidate.objects.order_by('-rating').first()
+                    highest_ranking_candidate.invited_date = highest_ranking_candidate.substitution.start_date - timedelta(days=10)
+                    highest_ranking_candidate.accepted_date = highest_ranking_candidate.substitution.start_date - timedelta(days=8)
+                    highest_ranking_candidate.selected_date = highest_ranking_candidate.substitution.start_date - timedelta(days=7)
+                    highest_ranking_candidate.save()
             print("Substitutions created.")
         except Exception as e:
             print(e)
@@ -307,11 +396,10 @@ class Command(BaseCommand):
                 Subject.objects.create(
                     id=row['id'],
                     name=row['name'],
-                    description=row['description'],
-                    course_id=row['course_id'],
-                    school_year=row['school_year'],
+                    name_short = row['name_short'],
+                    level_id=row['level_id'],
                 )
-            print(f"codes for {filename} created.")
+            print(f"Subject codes for {filename} created.")
         except Exception as e:
             print(e)
             return False
@@ -379,48 +467,31 @@ class Command(BaseCommand):
             return False
         print("codes for schools created.")
         return True
-
-    def assign_teachers_to_schools(self, force: bool=False):
-        # id; name;address;url;plz;level_id;location_id
-        try:
-            if force:
-                pass
-            for person in Person.objects.filter(is_teacher=True):
-                school = random.choice(School.objects.all())
-                SchoolPerson.objects.create(
-                    school=school,
-                    person=person,
-                    role=SchoolPersonRole.objects.get(id=4),
-                    description="Lehrperson"
-                )
-        except Exception as e:
-            print(traceback.format_exc())  # This prints the whole traceback
-            print(e)
-            return False
-        print("teachers have been assigned to schools.")
-        return True
     
 
-    def fill_timetable_template(self, force: bool=False):
+    def fill_timetable(self, force: bool=False):
         """Create timetable template for each school and teacher"""
+        
         try:
             if force:
-                LessonTemplate.objects.all().delete()
+                Timetable.objects.all().delete()
             
-            for teacher in Person.objects.filter(is_teacher=True):
-                school = teacher.school_persons.first().school
-                for day in random.sample(all_days, 3):
-                    for period in random.sample(all_periods, 5):
-                        subject = random.choice(Subject.objects.all())
-                        LessonTemplate.objects.create(
-                            teacher=teacher,
-                            school=school,
-                            day=day,
-                            period=period,
-                            school_class=random.choice(SchoolClass.objects.filter(school=school)),
-                            frequency=1,
-                            subject=subject,
-                        )
+            timetable_df = pd.read_csv('./data/timetable.csv', sep=';')
+            for index, row in timetable_df.iterrows():
+                teacher = Teacher.objects.filter(initials=row['initials'])[0]  # Assuming 'initials' uniquely identifies a Teacher
+                print(teacher.initials)
+                school_class = SchoolClass.objects.filter(name=row['school_class_name'], school_id=row['school_id'])[0]  # Assuming this combination uniquely identifies a SchoolClass
+                print(row['subject_name_short'], len(Subject.objects.filter(name_short=row['subject_name_short'])))
+                subject = Subject.objects.filter(name_short=row['subject_name_short'])[0]  # Assuming 'id' uniquely identifies a Subject
+                print(row['subject_name_short'])
+                Timetable.objects.create(
+                    teacher=teacher,
+                    school_id=row['school_id'],
+                    day_id=row['weekday_number'],
+                    period_id=row['lektion_number'],
+                    school_class=school_class,
+                    subject=subject,
+                )
             print(f"Timetable template created.")
         except Exception as e:
             print(e)
@@ -429,20 +500,33 @@ class Command(BaseCommand):
 
     
     def fill_classes(self, force: bool=False):
+        def get_teacher(row):
+            # Corrected boolean indexing with proper parentheses
+            teachers = time_table_df[(time_table_df['school'] == row['school']) & (time_table_df['klasse_name'] == row['name'])]
+            # Fixed reference to 'teachers' instead of 'teacher'
+            teacher = teachers.iloc[0]['abbreviation']
+            # Now 'teacher' is correctly defined before being used
+            teacher = Teacher.objects.get(initials=teacher, school_id=row['school'])
+            return teacher
+        
         try:
             if force:
                 SchoolClass().objects.all().delete()
+            time_table_df = pd.read_csv('./data/timetable.csv', sep=';')
+            print(time_table_df.head())
+            
             filename = './data/schoolclass.csv'
             df = pd.read_csv(filename, sep=';')
+
             for index, row in df.iterrows():
-                teacher = get_random_teacher(row['school'])
-                school = School.objects.get(id=row['school'])
+                # removed, but kept in case it is needed later
+                # teacher = get_teacher(row)
+                print(row['level'])
                 SchoolClass.objects.create(
                     name=row['name'],
-                    school=school,
-                    contact_person=teacher,
+                    school=School.objects.get(id=row['school']),
                     level=Level.objects.get(id=row['level']),
-                    school_year=row['school_year'],
+                    year = 1
                 )
             print(f"classes created.")
         except Exception as e:
@@ -491,29 +575,7 @@ class Command(BaseCommand):
         return True
         
 
-    def fill_timetable(self, force: bool=False):
-        try:
-            if force:
-                Lesson.objects.all().delete()
-            days_in_year = generate_date_list(2024)
-
-            for date in days_in_year:
-                day_id = date.weekday() + 1
-                for lesson_template in LessonTemplate.objects.filter(day=DayOfWeek.objects.get(id=day_id)):
-                    Lesson.objects.create(
-                        teacher=lesson_template.teacher,
-                        date=date,
-                        school=lesson_template.school,
-                        period=lesson_template.period,
-                        school_class=lesson_template.school_class,
-                        subject=lesson_template.subject,
-                    )
-
-        except Exception as e:
-            print(e)
-            return False
-        print("Lessons have been assigned to teachers.")
-        return True
+    
     
     def fill_vacation(self, force: bool=False):
         try:
@@ -562,11 +624,11 @@ class Command(BaseCommand):
         global all_periods
         faker = Faker("de_DE")
         ok = True
-        
         force_reset = True
+        '''
+        ok = False        
         if ok:
             ok = self.fill_code(CommunicationType, './data/communication_type.csv', force_reset)
-        ok = False
         if ok:
             ok = self.fill_code(Qualification, './data/qualification.csv', force_reset)
         if ok:
@@ -603,31 +665,32 @@ class Command(BaseCommand):
         if ok:
             ok = self.fill_school()
         if ok:
-            ok = self.fill_teachers_candidates(faker)
+            ok = self.fill_candidates(faker)
+        if ok:
+            ok = self.fill_teachers(faker)
         if ok:
             ok = self.add_person_certificate(faker)
         if ok:
             ok = self.assign_cvs_to_candidates()
+        '''
         if ok:
             ok = self.add_substitutions(faker)
+        '''
         if ok:
             ok = self.fill_school_contacts(faker)
         if ok:
-            ok = self.assign_teachers_to_schools(faker)
-        if ok:
             ok = self.fill_classes()
         if ok:
-            ok = self.fill_timetable_template(force_reset)
+            ok = self.fill_timetable(force_reset)
         if ok:
             ok = self.fill_person_subject(force_reset)
         if ok:
             ok = self.fill_timetable(force_reset)
         if ok:
-            ok = self.assign_cvs_to_candidates()
-        if ok:
             ok = self.fill_availabilities(force_reset)
         if ok:
             ok = self.fill_substitution_candidates(force_reset)
+        '''
         if not ok:
             print("An error occurred while populating the data.")
 

@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile
+from school_management.models import Teacher, Candidate  # Absolute import
 from crispy_forms.helper import FormHelper
 
 
@@ -42,3 +42,35 @@ class SignUpForm(UserCreationForm):
 class LoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}))
+
+
+class TeacherForm(forms.ModelForm):
+    class Meta:
+        model = Teacher
+        fields = [
+            'first_name', 
+            'last_name', 
+        ]  # Replace with actual fields for teachers
+
+
+class CandidateForm(forms.ModelForm):
+    class Meta:
+        model = Candidate
+        fields = [
+            'first_name', 
+            'last_name', 
+            'available_from_date', 
+            'available_to_date',
+            
+            'availability_mo_am',
+            'availability_tu_am',
+            'availability_we_am',
+            'availability_th_am',
+            'availability_fr_am',
+            'availability_mo_pm',
+            'availability_tu_pm',
+            'availability_we_pm',
+            'availability_th_pm',
+            'availability_fr_pm',
+        ]  # Replace with actual fields for teachers
+

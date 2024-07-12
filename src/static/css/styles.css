@@ -1,4 +1,8 @@
 
+td.button-cell {
+    padding: 10px; /* Adjust the values as needed */
+}
+
 .info-text {
     font-family: 'Roboto', sans-serif;
     background-color: #f0f0f0; /* Light grey background */
@@ -79,3 +83,8 @@
     padding: 1cap; 
     margin: 5px; 
   }
+
+
+.faint-green-bg {
+    background-color: #e0ffe0 !important;
+}

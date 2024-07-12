@@ -1,4 +1,5 @@
 from django.forms import modelformset_factory
+from django.http import HttpResponse
 from django.views import View
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -20,7 +21,8 @@ from .models import (
     SubstitutionCandidate,
     Invitation,
     Application,
-    CommunicationType
+    CommunicationType,
+    Communication
 )
 from .forms import (
     SchoolForm,
@@ -84,10 +86,12 @@ class SchoolDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         school = context["school"]
         # Filter SchoolPerson by school and role ID
-        context["school_teachers"] = school.school_persons.filter(is_teacher=True)
+        # context["school_teachers"] = school.school_persons.filter(is_teacher=True)
         context["school_classes"] = school.class_schools.filter(school=school)
         context["substitutions"] = school.substitution_schools.filter(school=school)
-
+        lessons = Timetable.objects.filter(school=school)
+        teachers = [l.teacher for l in lessons]
+        context["teachers"] = list(set(teachers))
         return context
 
 
@@ -162,20 +166,10 @@ class TeacherListView(ListView):
     context_object_name = "teachers"
 
     def get_queryset(self):
-        queryset = (
-            super()
-            .get_queryset()
-            .filter(role__id=4)
-            .annotate(
-                teacher=Concat(
-                    F("person__first_name"), Value(" "), F("person__last_name")
-                )
-            )
-        )
+        queryset = super().get_queryset()
         name_filter = self.request.GET.get("name_filter", "")
         email_filter = self.request.GET.get("email_filter", "")
         phone_filter = self.request.GET.get("phone_filter", "")
-        school_filter = self.request.GET.get("school_filter", "")
 
         # Apply filters if present
         if name_filter:
@@ -184,10 +178,8 @@ class TeacherListView(ListView):
             queryset = queryset.filter(person__email__icontains=email_filter)
         if phone_filter:
             queryset = queryset.filter(person__phone_number__icontains=phone_filter)
-        if school_filter:
-            queryset = queryset.filter(school__name__icontains=school_filter)
 
-        queryset = queryset.order_by("school__name", "teacher")
+        # queryset = queryset.order_by("teacher")
         return queryset
 
 
@@ -268,7 +260,7 @@ class SubstitutionCandidatesListView(ListView):
 
         # Apply filters if present
         yesterday = timezone.now() - timedelta(days=1)
-        queryset = queryset.filter(status_id=3, end_date__gt=yesterday)
+        queryset = queryset.filter(status_id__gt=2, end_date__gt=yesterday)
         if school_filter:
             queryset = queryset.filter(school_id=school_filter)
         if level_filter:
@@ -305,6 +297,7 @@ class SubstitutionAdminListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        id_filter = self.request.GET.get("id_filter", "")
         school_filter = self.request.GET.get("school_filter", "")
         teacher_filter = self.request.GET.get("teacher_filter", "")
         date_from_filter = self.request.GET.get("date_from_filter", "")
@@ -324,6 +317,8 @@ class SubstitutionAdminListView(ListView):
         }
 
         # Apply filters if present
+        if id_filter:
+            queryset = queryset.filter(pk=id_filter)
         if school_filter:
             queryset = queryset.filter(school_id=school_filter)
         if teacher_filter:
@@ -374,11 +369,12 @@ class SubstitutionCreateView(CreateView):
         return redirect("substitution_edit", pk=self.object.pk)
 
 
+
 class SubstitutionEditView(UpdateView):
     model = Substitution
     form_class = SubstitutionForm
     template_name = "school_management/substitution_edit.html"
-    success_url = reverse_lazy("substitution_admin_list")
+    success_url = reverse_lazy("school_management:substitution_admin_list")
 
     def get_object(self, queryset=None):
         pk = self.kwargs.get("pk")
@@ -389,12 +385,8 @@ class SubstitutionEditView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         substitution = self.get_object()
-        if substitution:
-            context['substitution_candidates'] = substitution.substitution_candidates.all().order_by('-rating')
-        else:
-            context['substitution_candidates'] = []
-
-        # If any additional context is needed, add it here
+        context['substitution_candidates'] = substitution.substitution_candidates.all().order_by('-rating')
+        context['applications'] = Application.objects.filter(substitution=substitution)
         return context
 
     def post(self, request, *args, **kwargs):
@@ -430,14 +422,13 @@ class SubstitutionEditView(UpdateView):
         return self.render_to_response(context)
 
 
+
 class ApplicationCreateView(View):
     def post(self, request, *args, **kwargs):
         substitution_id = request.POST.get('substitution')
-        username = request.user.username
         success_url = reverse('school_management:application_create', kwargs={'id': substitution_id})
         substitution = get_object_or_404(Substitution, id=substitution_id)
-        candidate = get_object_or_404(Person, user__username=username)
-
+        candidate = get_object_or_404(Person, user=request.user)
         # Ensure that type is set to 1 for applications
         application_type = get_object_or_404(CommunicationType, id=1)
 
@@ -450,6 +441,7 @@ class ApplicationCreateView(View):
             request_text=request.POST.get('request_text', '')
         )
         application.save()
+
 
         # Determine the action and perform the corresponding task
         action = request.POST.get('action')
@@ -464,7 +456,8 @@ class ApplicationCreateView(View):
         return redirect(success_url)
 
     def get(self, request, *args, **kwargs):
-        candidate = request.user.person  # Assuming a one-to-one relationship between User and Person
+        print (99999,request.user, len(Person.objects.filter(id = 1)) )
+        candidate = get_object_or_404(Person, user=request.user)
         form = ApplicationForm()
         
         substitution_id = kwargs.get('id')
@@ -488,3 +481,30 @@ class InvitationCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy(
         "school_list"
     )  # Redirect to school list view after saving
+
+
+def admin_tasks(request):
+    return render(request, 'school_management/admin_tasks.html')
+
+def calculate_teacher_availability(request):
+    # Fetch all teachers and their schedules
+    teachers = Teacher.objects.all()
+    schedules = Timetable.objects.filter(teacher__in=teachers)
+    
+    # Example calculation logic
+    availability = {}
+    for teacher in teachers:
+        teacher.availability_mo_am = schedules.filter(teacher=teacher, day_id=1, period__time_of_day__id=0).exists()
+        teacher.availability_mo_pm = schedules.filter(teacher=teacher, day_id=1, period__time_of_day__id=1).exists()
+        teacher.availability_th_am = schedules.filter(teacher=teacher, day_id=4, period__time_of_day__id=0).exists()
+        teacher.availability_th_pm = schedules.filter(teacher=teacher, day_id=4, period__time_of_day__id=1).exists()
+        teacher.availability_tu_am = schedules.filter(teacher=teacher, day_id=2, period__time_of_day__id=0).exists()
+        teacher.availability_tu_pm = schedules.filter(teacher=teacher, day_id=2, period__time_of_day__id=1).exists()
+        teacher.availability_we_am = schedules.filter(teacher=teacher, day_id=3, period__time_of_day__id=0).exists()
+        teacher.availability_we_pm = schedules.filter(teacher=teacher, day_id=3, period__time_of_day__id=1).exists()
+        teacher.availability_fr_am = schedules.filter(teacher=teacher, day_id=5, period__time_of_day__id=0).exists()
+        teacher.availability_fr_pm = schedules.filter(teacher=teacher, day_id=5, period__time_of_day__id=1).exists()
+        teacher.save()
+
+    messages.success(request, "Die Verfügbarkeit der Lehrer wurde aktualisiert")
+    return redirect('school_management:admin_tasks')

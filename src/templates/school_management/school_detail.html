@@ -52,6 +52,7 @@
 
   <!-- Tab content -->
   <div class="tab-content" id="myTabContent">
+    
     <div
       class="tab-pane fade show active"
       id="substitutions"
@@ -79,7 +80,51 @@
         </tbody>
       </table>
     </div>
- 
+    
+    <div
+      class="tab-pane fade"
+      id="teachers"
+      role="tabpanel"
+      aria-labelledby="teachers-tab"
+    >
+    <table class="table table-striped">
+      <thead>
+          <tr>
+              <th>Name</th>
+              <th>Belegung</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for teacher in teachers %}
+          <tr>
+              <td>
+                  <a href="{% url 'school_management:teacher_detail' pk=teacher.id %}">{{ teacher.fullname }}</a>
+              </td>
+              <td>
+                  <table>
+                      <tr>
+                          <td>{% if teacher.availability_mo_am %}◉{% else %}○{% endif %}</td>
+                          <td>{% if teacher.availability_tu_am %}◉{% else %}○{% endif %}</td>
+                          <td>{% if teacher.availability_we_am %}◉{% else %}○{% endif %}</td>
+                          <td>{% if teacher.availability_th_am %}◉{% else %}○{% endif %}</td>
+                          <td>{% if teacher.availability_fr_am %}◉{% else %}○{% endif %}</td>
+                      </tr>
+                      <tr>
+                          <td>{% if teacher.availability_mo_pm %}◉{% else %}○{% endif %}</td>
+                          <td>{% if teacher.availability_tu_pm %}◉{% else %}○{% endif %}</td>
+                          <td>{% if teacher.availability_we_pm %}◉{% else %}○{% endif %}</td>
+                          <td>{% if teacher.availability_th_pm %}◉{% else %}○{% endif %}</td>
+                          <td>{% if teacher.availability_fr_pm %}◉{% else %}○{% endif %}</td>
+                      </tr>
+                  </table>
+              </td>
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+    </div>
+
+
     <div
       class="tab-pane fade"
       id="classes"
@@ -97,7 +142,6 @@
           {% for school_class in school_classes %}
           <tr>
             <td>{{ school_class.name }}</td>
-            <td><a href="{% url 'school_management:teacher_detail' pk=school_class.contact_person.id %}">{{ school_class.contact_person.fullname }}</a></td>
           </tr>
           {% endfor %}
         </tbody>

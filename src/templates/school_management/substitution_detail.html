@@ -28,7 +28,7 @@
         </tr>
       </tbody>
     </table>
-    <a href="{% url 'substitution_admin_list' %}" class="btn btn-primary">Zurück</a>
+    <a href="{% url 'school_management:substitution_admin_list' %}" class="btn btn-primary">Zurück</a>
   </div>
 </div>
 
@@ -67,7 +67,7 @@
                   <tbody>
                       {% for x in candidates.all %}
                       <tr>
-                          <td><a href="{% url 'candidate_detail' pk=x.candidate.pk %}">{{ x.candidate.fullname }}</a></td>
+                          <td><a href="{% url 'school_management:candidate_detail' pk=x.candidate.pk %}">{{ x.candidate.fullname }}</a></td>
                           <td>{{ x.candidate.subjects.all|join:", " }}</td>
                           <td>{{ x.rating }}</td>
                       </tr>

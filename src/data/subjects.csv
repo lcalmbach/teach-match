@@ -1,25 +1,25 @@
-id;name;name_kurz
-1;Fach A;A;
-2;Allgemeinbildung;AB;
-3;Fach ABC;ABC;
-4;Fach BM;BM;
-5;Fach BMO;BMO;
-6;Fach BO;BO;
-7;Fach BT;BT;
-8;Deutsch;D;
-9;Deutsch als Zweitsprache;DaZ
-10;Gestalten;G;
-11;Lernatelier;LA;
-12;Fach Ly;Ly;
-13;Mathematik;M;
-14;Fach PA;PA;
-15;Fach Inp;PIn;
-16;Fach PM;PM;
-17;FAch PO;PO;
-18;Fach Proj;Proj;
-19;Fach PT;PT;
-20;Sport;Sp;
-21;Fach U;U;
-22;Fach WPF;WPF;
+id;name;name_short;level_id
+1;Fach A;A;7
+2;Allgemeinbildung;AB;7
+3;Fach ABC;ABC;7
+4;Fach BM;BM;7
+5;Fach BMO;BMO;7
+6;Fach BO;BO;7
+7;Fach BT;BT;7
+8;Deutsch;D;7
+9;Deutsch als Zweitsprache;DaZ;7
+10;Gestalten;G;7
+11;Lernatelier;LA;7
+12;Fach Ly;Ly;7
+13;Mathematik;M;7
+14;Fach PA;PA;7
+15;Fach Inp;PIn;7
+16;Fach PM;PM;7
+17;Fach PO;PO;7
+18;Fach Proj;Proj;7
+19;Fach PT;PT;7
+20;Sport;Sp;7
+21;Fach U;U;7
+22;Fach WPF;WPF;7
 
 

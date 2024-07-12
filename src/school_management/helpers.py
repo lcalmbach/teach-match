@@ -49,7 +49,7 @@ class SubstitutionHelper:
         self.init()
 
     def init(self):
-        Lesson = apps.get_model("school_management", "LessonTemplate")
+        Lesson = apps.get_model("school_management", "Timetable")
         SchoolClass = apps.get_model("school_management", "SchoolClass")
 
         self.days_in_substitution = list(

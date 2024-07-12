@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -8,7 +9,7 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from login_account.forms import LoginForm
 from django.contrib.auth import login
-from .forms import SignUpForm
+from .forms import SignUpForm, TeacherForm, CandidateForm
 
 from school_management.models import Person
 
@@ -34,13 +35,69 @@ def user_login(request):
     return render(request, 'login_account/login.html', {'form': form})
 
 
+@login_required
 def user_logout(request):
     user = request.user
-    person = Person.objects.get(user=user)
-    logout(request)
-    messages.info(request, f"Auf Wiedersehen {person.first_name}.")
+    try:
+        person = Person.objects.get(user=user)
+        logout(request)
+        messages.info(request, f"Auf Wiedersehen {person.first_name}.")
+    except Person.DoesNotExist:
+        logout(request)
+        messages.info(request, f"Auf Wiedersehen.")
     return redirect('index')
 
+@login_required
+def user_profile(request):
+    user = request.user
+    try:
+        person = Person.objects.get(user=user)
+    except Person.DoesNotExist:
+        messages.error(request, "Profile not found.")
+        return redirect('some_error_page')  # Handle the error appropriately
+
+    if request.method == 'POST':
+        profile_form_valid = False
+        password_change_form_valid = False
+        
+        if person.is_teacher:
+            form = TeacherForm(request.POST, instance=person)
+        elif person.is_candidate:
+            form = CandidateForm(request.POST, instance=person)
+        else:
+            messages.error(request, "Invalid profile type.")
+            return redirect('some_error_page')
+
+        password_change_form = PasswordChangeForm(request.user, request.POST)
+
+        if form.is_valid():
+            form.save()
+            profile_form_valid = True
+            messages.success(request, "Profile updated successfully.")
+        
+        if password_change_form.is_valid():
+            user = password_change_form.save()
+            update_session_auth_hash(request, user)  # Important to keep the user logged in
+            password_change_form_valid = True
+            messages.success(request, "Password changed successfully.")
+
+        if profile_form_valid or password_change_form_valid:
+            return redirect('profile')  # Redirect to a profile success page
+    else:
+        if person.is_teacher:
+            form = TeacherForm(instance=person)
+        elif person.is_candidate:
+            form = CandidateForm(instance=person)
+        else:
+            messages.error(request, "Invalid profile type.")
+            return redirect('some_error_page')
+
+        password_change_form = PasswordChangeForm(request.user)
+
+    return render(request, 'login_account/profile.html', {
+        'form': form,
+        'password_change_form': password_change_form
+    })
 
 def user_signup(request):
     if request.method == 'POST':

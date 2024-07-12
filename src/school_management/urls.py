@@ -15,7 +15,9 @@ from .views import (
     TeacherDetailView,
     TeacherEditView,
     ApplicationCreateView,
-    InvitationCreateView
+    InvitationCreateView,
+    admin_tasks,
+    calculate_teacher_availability
 )
 
 app_name = 'school_management'
@@ -60,6 +62,10 @@ urlpatterns = [
     ),
     path("substitutions_candidates/", SubstitutionCandidatesListView.as_view(), name="substitution_candidates_list"),
     
+
+    path('admin-tasks/', admin_tasks, name='admin_tasks'),
+    path('calculate-availability/', calculate_teacher_availability, name='calculate_availability'),
+
     path("find_match/", SubstitutionAdminListView.as_view(), name="find_match"),
     path("login/", SubstitutionEditView.as_view(), name="login"),
     path('application/create/<int:id>/', ApplicationCreateView.as_view(), name='application_create'),
