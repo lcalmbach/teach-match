@@ -341,9 +341,14 @@ class Person(models.Model):
         max_length=500, verbose_name="Bemerkungen", blank=True
     )
 
+    notify_mail_flag = models.BooleanField( verbose_name="Benachrichtigung per Mail", default=False)
+    notify_sms_flag = models.BooleanField( verbose_name="Benachrichtigung per SMS", default=False)
+
     subjects = models.ManyToManyField(
         "Subject", related_name="person_subjects", blank=True
     )  # Many-to-many relationship
+
+
 
     @property
     def fullname(self):

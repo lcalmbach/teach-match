@@ -18,13 +18,25 @@ class ApplicationForm(forms.ModelForm):
         model = Application
         fields = ['request_text']  # Include other fields if necessary
         labels = {
-            'request_text': 'Bemerkungen zur Bewerbung',
+            'answer_text': 'Bemerkungen zur Bewerbung',
         }
         widgets = {
             'request_text': forms.Textarea(attrs={'rows': 4}),
             'substitution': forms.HiddenInput(),
             'candidate': forms.HiddenInput(),
         }
+
+class ResponseForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        fields = ['answer_text']  # Include other fields if necessary
+        labels = {
+            'answer_text': 'Antwort',
+        }
+        widgets = {
+            'answer_text': forms.Textarea(attrs={'rows': 8}),
+        }
+
 
 
 class CandidateForm(forms.ModelForm):

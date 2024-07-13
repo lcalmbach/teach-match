@@ -154,9 +154,7 @@ class SubstitutionHelper:
         msg['From'] = gmail_user
         msg['To'] = to_email
         msg['Subject'] = subject
-
         msg.attach(MIMEText(body, 'plain'))
-        print(gmail_user, gmail_password)
         # Connect to the Gmail server
         try:
             server = smtplib.SMTP('smtp.gmail.com', 587)

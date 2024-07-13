@@ -16,6 +16,7 @@ from .views import (
     TeacherEditView,
     ApplicationCreateView,
     InvitationCreateView,
+    ApplicationResponseView,
     admin_tasks,
     calculate_teacher_availability
 )
@@ -69,5 +70,6 @@ urlpatterns = [
     path("find_match/", SubstitutionAdminListView.as_view(), name="find_match"),
     path("login/", SubstitutionEditView.as_view(), name="login"),
     path('application/create/<int:id>/', ApplicationCreateView.as_view(), name='application_create'),
+    path('application/response/<int:id>/', ApplicationResponseView.as_view(), name='application_response'),
     path("invitation/", InvitationCreateView.as_view(), name="invitation_create"),
 ]

@@ -98,17 +98,13 @@
             <tbody>
                 {% for a in applications %}
                 <tr>
-                    <td>{{ a.candidate.fullname }}</td>
+                    <td>{{ a.id }}</td>
                     <td>{{ a.request_text }}</td>
+                    <td>{{ a.candidate.fullname }}</td>
                     <td>{{ a.request_date }}</td>
-
                       <td>
-                        <button type="button" class="btn btn-primary">
-                            <i class="fas fa-envelope"></i>
-                        </button>
-                        <button type="button" class="btn btn-success">
-                            <i class="fab fa-whatsapp"></i>
-                        </button>
+                        <a href="{% url 'school_management:application_response' a.id %}" class="btn btn-outline-primary me-2">
+                        Antwort</a>
                     </td>
                 </tr>
                 {% endfor %}

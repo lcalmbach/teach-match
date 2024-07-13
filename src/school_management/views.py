@@ -31,6 +31,7 @@ from .forms import (
     TeacherForm,
     InvitationForm,
     ApplicationForm,
+    ResponseForm
 
 )
 from django.views.generic import ListView  # Import the necessary module
@@ -405,7 +406,7 @@ class SubstitutionEditView(UpdateView):
                 return self.form_valid(form)
             elif action == 'delete':
                 self.object.delete()
-                messages.success(request, 'Substitution successfully deleted.')
+                messages.success(request, 'die Stellvertretung wurde erfolgreich gelöscht.')
                 return redirect(self.success_url)
         else:
             print("Form invalid")
@@ -447,7 +448,12 @@ class ApplicationCreateView(View):
         action = request.POST.get('action')
         if action == 'apply':
             # Send email logic here
-            print('Email sent')
+            subject = f'Bewerbung für Vertretung {substitution_id} ({application.substitution.school.name}, {application.substitution.start_date} - {application.substitution.end_date}, Vertrung von {application.substitution.teacher.fullname})'
+            message = application.request_text
+            message += f'<br><br><a href="http://127.0.0.1:8000/school_management/candidates/{candidate.id}/">{candidate.fullname}</a>'
+            helper = SubstitutionHelper(substitution)
+            helper.send_email(subject, message)
+
             messages.success(request, 'Ihre Bewerbung wurde erfolgreich abgeschickt.')
             success_url = reverse('school_management:substitution_candidates_list')
 
@@ -471,6 +477,50 @@ class ApplicationCreateView(View):
             'substitution_id': substitution_id,
         }
         return render(request, 'school_management/application_create.html', context)
+
+
+
+class ApplicationResponseView(View):
+    def post(self, request, *args, **kwargs):
+        application_id = request.POST.get('application_id')
+        success_url = reverse('school_management:application_response', kwargs={'id': application_id})
+        application = get_object_or_404(Application, id=application_id)
+        author = get_object_or_404(Person, user=request.user)
+        candidate = application.candidate
+        # Ensure that type is set to 1 for applications
+        application_type = get_object_or_404(CommunicationType, id=1)
+
+        application.answer_date=timezone.now()
+        application.answer_text=request.POST.get('answer_text', '')
+        application.save()
+
+        # Determine the action and perform the corresponding task
+        action = request.POST.get('action')
+        if action == 'apply':
+            # Send email logic here
+            subject = f'Ihre Bewerbung für Vertretung {application_id} ({application.substitution.school.name}, {application.substitution.start_date} - {application.substitution.end_date}, Vertrung von {application.substitution.teacher.fullname})'
+            message = application.answer_text
+            helper = SubstitutionHelper(application.substitution)
+            helper.send_email(subject, message)
+
+            messages.success(request, 'Ihre Bewerbung wurde erfolgreich abgeschickt.')
+            success_url = reverse('school_management:substitution_candidates_list')
+
+        # Redirect to a success page or similar
+        
+        return redirect(success_url)
+
+    def get(self, request, *args, **kwargs):
+        form = ResponseForm()
+        application = get_object_or_404(Application, id=kwargs.get('id'))  # Ensure substitution is fetched here
+        author = get_object_or_404(Person, user=request.user)
+        context = {
+            'form': form,
+            'application': application,
+            'username': request.user.username,
+            'author': author.fullname
+        }
+        return render(request, 'school_management/application_response.html', context)
 
 
 
