@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+teach_match/templates/school_management/school_list.html
+{% block title %}Bewerbungen{% endblock title %}
+
+{% block content %}
+<div class="table-container">
+    <h2>Bewerbungen</h2>
+    <form method="get" action="">
+      <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Stellvertretung Nr</th>
+                <th>Datum Start Stellvertretung</th>
+                <th>Bewerbung Nr</th>
+                <th>Kandidat</th>
+                <th>Datum Bewerbung</th>
+                <th>Antwort Datum</th>
+                <th>Antwort</th>
+            </tr>
+        </thead>
+        <tr> <!-- Filter inputs row -->
+          <th><input type="text" name="substitution_filter" value="{{ request.GET.substitution_filter }}"></th>
+          <th><input type="text" name="substitution_date_filter" value="{{ request.GET.substitution_date_filter }}"></th>
+          <th><input type="text" name="application_filter" value="{{ request.GET.application_filter }}"></th>
+          <th><input type="text" name="candidate_filter" value="{{ request.GET.candidate_filter }}"></th>
+          <th><input type="text" name="application_date_filter" value="{{ request.GET.application_date_filter }}"></th>
+          <th><input type="text" name="application_answer_type" value="{{ request.GET.application_answer_type_filter }}"></th>
+          <th><input type="text" name="application_answer_date value="{{ request.GET.application_answer_date }}"></th>
+      </tr>
+        <tbody>
+            {% for a in applications %}
+            <tr>
+                <td><a href="{% url 'school_management:substitution_detail' pk=a.substitution.id %}">{{ a.substitution.id }}</a></td>
+                <td>{{ a.substitution.start_date}}</td> 
+                <td><a href="{% url 'school_management:application_detail' pk=a.id %}">{{ a.id }}</a></td>
+                <td>{{ a.candidate.fullname }}</td> 
+                <td>{{ a.request_date }}</td> 
+                <td>{{ a.answer_date}}</td> 
+                <td>{{ a.answer_type.name }}</td> 
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </form> 
+</div>  
+{% endblock %}
+

@@ -558,3 +558,29 @@ def calculate_teacher_availability(request):
 
     messages.success(request, "Die Verfügbarkeit der Lehrer wurde aktualisiert")
     return redirect('school_management:admin_tasks')
+
+
+class ApplicationListView(ListView):
+    model = Application
+    context_object_name = (
+        "applications"  # The name of the variable to be used in the template
+    )
+    template_name = "school_management/applications_list.html"  # Path to the template
+
+    def get_queryset(self):
+        queryset = super().get_queryset()  # Get the original queryset
+        status_filter = self.request.GET.get("status_filter", "")
+        substutution_filter = self.request.GET.get("status_filter", "")
+
+        # Apply filters if present
+        if status_filter:
+            queryset = queryset.filter(name__icontains=status_filter)
+        if substutution_filter:
+            queryset = queryset.filter(name__icontains=status_filter)
+        
+        return queryset
+    
+class ApplicationDetailView(DetailView):
+    model = Application
+    template_name = "school_management/application_detail.html"
+    context_object_name = "application"

@@ -18,7 +18,9 @@ from .views import (
     InvitationCreateView,
     ApplicationResponseView,
     admin_tasks,
-    calculate_teacher_availability
+    calculate_teacher_availability,
+    ApplicationListView,
+    ApplicationDetailView
 )
 
 app_name = 'school_management'
@@ -72,4 +74,6 @@ urlpatterns = [
     path('application/create/<int:id>/', ApplicationCreateView.as_view(), name='application_create'),
     path('application/response/<int:id>/', ApplicationResponseView.as_view(), name='application_response'),
     path("invitation/", InvitationCreateView.as_view(), name="invitation_create"),
+    path("applications/", ApplicationListView.as_view(), name="application_list"),
+    path("applications/<int:pk>/", ApplicationDetailView.as_view(), name="application_detail"),
 ]

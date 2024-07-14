@@ -25,6 +25,7 @@ from school_management.models import (
     SubstitutionStatus,
     SubstitutionCandidate,
     CommunicationType,
+    CommunicationAnswerType,
     Timetable,
 
 )
@@ -625,6 +626,8 @@ class Command(BaseCommand):
         faker = Faker("de_DE")
         ok = True
         force_reset = True
+        if ok:
+            ok = self.fill_code(CommunicationAnswerType, './data/communication_answer_type.csv', force_reset)
         '''
         ok = False        
         if ok:
@@ -672,10 +675,8 @@ class Command(BaseCommand):
             ok = self.add_person_certificate(faker)
         if ok:
             ok = self.assign_cvs_to_candidates()
-        '''
         if ok:
             ok = self.add_substitutions(faker)
-        '''
         if ok:
             ok = self.fill_school_contacts(faker)
         if ok:
@@ -691,6 +692,7 @@ class Command(BaseCommand):
         if ok:
             ok = self.fill_substitution_candidates(force_reset)
         '''
+        
         if not ok:
             print("An error occurred while populating the data.")
 

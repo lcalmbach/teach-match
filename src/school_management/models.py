@@ -17,6 +17,20 @@ def get_default_time_of_day():
         return None
 
 
+class CommunicationAnswerType(models.Model):
+    """Application, Invitation"""
+
+    name = models.CharField(max_length=255, verbose_name="Name")
+    description = models.TextField(verbose_name="Beschreibung", blank=True)
+
+    class Meta:
+        verbose_name = "AntwortTyp"
+        verbose_name_plural = "Kommunikations Antworttypen"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+    
 class CommunicationType(models.Model):
     """Application, Invitation"""
 
@@ -627,6 +641,7 @@ class Communication(models.Model):
     request_text = models.TextField(verbose_name="Anfrage", blank=True, max_length=500)    
     answer_text = models.TextField(verbose_name="Antwort", blank=True, max_length=500)
     answer_date = models.DateField(verbose_name="Antwort am", blank=True, null=True)
+    answer_type = models.ForeignKey(CommunicationAnswerType, on_delete=models.CASCADE, related_name="communication_answer_type", blank=True, null=True)
     
     def __str__(self):
         return f"{self.sent_date} {self.candidate.fullname}"
