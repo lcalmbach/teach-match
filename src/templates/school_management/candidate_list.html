@@ -4,13 +4,14 @@
 
 {% block content %}
 <div class="table-container">
-    <h2>Kandidaten für Stellvertretungen ({{candidates|length}})</h2>
+    <h2>Kandidatinnen für Stellvertretungen ({{candidates|length}})</h2>
     <br>
       <form method="get" action="">
         <table id="candidates" class="table table-striped">
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>Nachname</th>
+                    <th>Vorname</th>
                     <th>Jahrgang</th>
                     <th>Verfügbarkeit</th>
                     <th>Von</th>
@@ -20,20 +21,26 @@
                     <th></th>
                 </tr>
                 <tr> <!-- Filter inputs row -->
-                    <th><input type="text" name="name_filter" value="{{ request.GET.name_filter }}"></th>
+                    <th><input type="text" name="last_name_filter" value="{{ request.GET.last_name_filter }}"></th>
+                    <th><input type="text" name="first_name_filter" value="{{ request.GET.first_name_filter }}"></th>
                     <th><input type="text" name="year_filter" value="{{ request.GET.year_filter }}"></th>
                     <th></th>
                     <th><input type="text" name="available_from_filter" value="{{ request.GET.email_filter }}"></th>
                     <th><input type="text" name="avaialable_to_filter" value="{{ request.GET.email_filter }}"></th>
-                    <th><input type="text" name="email_filter" value="{{ request.GET.email_filter }}"></th>
-                    <th><input type="text" name="phone_filter" value="{{ request.GET.phone_filter }}"></th>
                     <th></th>
+                    <th></th>
+                    <th>  
+                      <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-filter"></i>
+                      </button>
+                    </th>
                 </tr>
             </thead>
             <tbody>
                 {% for candidate in candidates %}
                 <tr>
-                  <td><a href="{% url 'school_management:candidate_detail' pk=candidate.pk %}">{{ candidate.fullname }}</a></td>
+                  <td><a href="{% url 'school_management:candidate_detail' pk=candidate.pk %}">{{ candidate.last_name }}</a></td>
+                    <td>{{ candidate.first_name }}</td>
                     <td>{{ candidate.year_of_birth }}</td>
                     <td>
                       <table>

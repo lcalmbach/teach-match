@@ -312,6 +312,7 @@ class Person(models.Model):
     # years_of_experience = models.IntegerField(
     #    verbose_name="Erfahrung in Jahren", blank=True, default=1
     # )
+    gender = models.ForeignKey(Gender, on_delete=models.CASCADE, blank=True, null=True)
     available_from_date = models.DateField(
         verbose_name="Verfügbar von", blank=True, null=True
     )
@@ -362,8 +363,20 @@ class Person(models.Model):
         "Subject", related_name="person_subjects", blank=True
     )  # Many-to-many relationship
 
-
-
+    @property 
+    def formal_salutation(self):
+        if self.gender.id == 1:
+            return f"Sehr geehrter Herr {self.last_name}"
+        else:
+            return f"Sehr geehrte Frau {self.last_name}"
+    
+    @property 
+    def informal_salutation(self):
+        if self.gender.id == 1:
+            return f"Lieber{self.first_name}"
+        else:
+            return f"Liebe {self.first_name}"
+        
     @property
     def fullname(self):
         return f"{self.last_name} {self.first_name}"

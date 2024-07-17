@@ -15,21 +15,16 @@
                     <th>Editieren</th>
                 </tr>
                 <tr> <!-- Filter inputs row -->
-                    <th><input type="text" name="name_filter" value="{{ request.GET.name_filter }}"></th>
-                    <th><input type="text" name="email_filter" value="{{ request.GET.email_filter }}"></th>
-                    <th><input type="text" name="phone_filter" value="{{ request.GET.phone_filter }}"></th>
-                    <th><input type="text" name="school_filter" value="{{ request.GET.school_filter }}"></th>
-                    <th><input type="submit" value="Filter"></th>
+                    <th><input type="text" name="name_filter" value="{{ request.GET.name_filter }}">
+                    <input type="submit" value="Filter"></th>
                 </tr>
             </thead>
             <tbody>
                 {% for teacher in teachers %}
                 <tr>
-                    
-                    <td>{{ teacher.fullname }}</td>
+                    <td><a href="{% url 'school_management:teacher_detail' pk=teacher.pk %}" title="Lehrperson Detailansicht">{{teacher.fullname}}</a></td>
                     <td>{{ teacher.email }}</td>
                     <td>{{ teacher.phone_number }}</td>
-                    <td><a href="{% url 'school_management:teacher_detail' pk=teacher.pk %}" title="Lehrperson ansehen"><i class="fas fa-eye"></i></a></td>
                     <td><a href="{% url 'school_management:teacher_edit' pk=teacher.pk %}" title="Lehrperson editieren"><i class="fas fa-edit"></i></a></td>
                     </tr>
                 {% endfor %}

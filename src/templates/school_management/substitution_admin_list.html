@@ -12,7 +12,7 @@ teach_match/templates/school_management/school_list.html
       <table class="table table-striped">
         <thead>
             <tr>
-                <th>#Ref</th>
+                <th>#Referenz Nummer</th>
                 <th>Schule</th>
                 <th>Lehrkraft</th>
                 <th>Von</th>
@@ -76,34 +76,34 @@ teach_match/templates/school_management/school_list.html
         <tbody>
             {% for substitution in substitutions %}
             <tr>
-              <td>{{ substitution.id }}</td> 
-                <td>
-                  <a href="{% url 'school_management:school_detail' pk=substitution.school.pk %}">{{ substitution.school.name }}</a>
-                </td>
-                <td><a href="{% url 'school_management:teacher_detail' pk=substitution.teacher.pk %}">{{ substitution.teacher.fullname }}</a></td>
-                <td>{{ substitution.start_date }}</td> 
-                <td>{{ substitution.end_date }}</td>
-                <td>
-                  <table>
-                    <tr>
-                        <td>{% if substitution.mo_am %}◉{% else %}○{% endif %}</td>
-                        <td>{% if substitution.tu_am %}◉{% else %}○{% endif %}</td>
-                        <td>{% if substitution.we_am %}◉{% else %}○{% endif %}</td>
-                        <td>{% if substitution.th_am %}◉{% else %}○{% endif %}</td>
-                        <td>{% if substitution.fr_am %}◉{% else %}○{% endif %}</td>
-                    </tr>
-                    <tr>
-                      <td>{% if substitution.mo_pm %}◉{% else %}○{% endif %}</td>
-                      <td>{% if substitution.tu_pm %}◉{% else %}○{% endif %}</td>
-                      <td>{% if substitution.we_pm %}◉{% else %}○{% endif %}</td>
-                      <td>{% if substitution.th_pm %}◉{% else %}○{% endif %}</td>
-                      <td>{% if substitution.fr_pm %}◉{% else %}○{% endif %}</td>
+              <td><a href="{% url 'school_management:substitution_detail' pk=substitution.pk %}">{{ substitution.id }}</a></td>
+              <td>
+                <a href="{% url 'school_management:school_detail' pk=substitution.school.pk %}">{{ substitution.school.name }}</a>
+              </td>
+              <td><a href="{% url 'school_management:teacher_detail' pk=substitution.teacher.pk %}">{{ substitution.teacher.fullname }}</a></td>
+              <td>{{ substitution.start_date }}</td> 
+              <td>{{ substitution.end_date }}</td>
+              <td>
+                <table>
+                  <tr>
+                      <td>{% if substitution.mo_am %}◉{% else %}○{% endif %}</td>
+                      <td>{% if substitution.tu_am %}◉{% else %}○{% endif %}</td>
+                      <td>{% if substitution.we_am %}◉{% else %}○{% endif %}</td>
+                      <td>{% if substitution.th_am %}◉{% else %}○{% endif %}</td>
+                      <td>{% if substitution.fr_am %}◉{% else %}○{% endif %}</td>
                   </tr>
-                </table>
-                </td>
-                <td>{{ substitution.status.name }}</td> 
-                <td><a href="{% url 'school_management:substitution_detail' pk=substitution.pk %}" title="Stellvertretung ansehen"><i class="fas fa-eye"></i></a></td>
-                <td><a href="{% url 'school_management:substitution_edit' pk=substitution.pk %}" title="Stellvertretung editieren"><i class="fas fa-edit"></i></a></td>
+                  <tr>
+                    <td>{% if substitution.mo_pm %}◉{% else %}○{% endif %}</td>
+                    <td>{% if substitution.tu_pm %}◉{% else %}○{% endif %}</td>
+                    <td>{% if substitution.we_pm %}◉{% else %}○{% endif %}</td>
+                    <td>{% if substitution.th_pm %}◉{% else %}○{% endif %}</td>
+                    <td>{% if substitution.fr_pm %}◉{% else %}○{% endif %}</td>
+                </tr>
+              </table>
+              </td>
+              <td>{{ substitution.status.name }}</td> 
+              
+              <td><a href="{% url 'school_management:substitution_edit' pk=substitution.pk %}" title="Stellvertretung editieren"><i class="fas fa-edit"></i></a></td>
             </tr>
             {% endfor %}
         </tbody>

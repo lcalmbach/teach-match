@@ -53,6 +53,9 @@
         </td>
       </tr>
     </table>
+    <br>
+    <a href="{% url 'school_management:candidate_edit' pk=candidate.pk %}" class="btn btn-primary">Editieren</a>
+    <a href="{% url 'school_management:candidate_list' %}" class="btn btn-primary">Zurück</a>
   </div>
 
   <br><br>
@@ -78,19 +81,20 @@
     <!-- Tab content -->
     <div class="tab-content" id="myTabContent">
       <div class="tab-pane fade show active" id="subjects" role="tabpanel" aria-labelledby="subjects-tab">
-        <br><p>{{candidate.fullname}} unterrichtet folgende Fächer:</p>
+        <br><p>{{candidate.fullname}} hat folgende Fächer unterrichtet:</p>
         <table class="table table-striped">
           <thead>
               <tr>
                   <th>Fach</th>
-                  <th>Stufe</th>
+                  <th>Anzahl Male in Stellvertretung unterrichtet</th>
               </tr>
           </thead>
           <tbody>
-              {% for ps in subjects.all %}
+              {% for subject, number in subjects.items %}
               <tr>
-                  <td>{{ ps.subject.name }}</td>
-                  <td>{{ ps.subject.school_year }}</td>
+                  <td>{{ subject }}</td>
+                  <td>{{ number }}</td>
+
               </tr>
               {% endfor %}
           </tbody>
@@ -143,6 +147,7 @@
           </tbody>
         </table>
       </div>
+
       <!--
       <div class="tab-pane fade" id="cv" role="tabpanel" aria-labelledby="cv-tab">
           <h3>Curriculum Vitae von {{ candidate.fullname }}</h3>

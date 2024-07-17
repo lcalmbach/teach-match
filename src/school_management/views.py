@@ -7,6 +7,8 @@ from django.views.generic import DetailView, UpdateView, CreateView
 from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
+from collections import Counter
+from django.db.models import Value, CharField
 
 from .models import (
     School,
@@ -116,24 +118,18 @@ class CandidateListView(ListView):
         queryset = super().get_queryset()  # Get the original queryset
         first_name_filter = self.request.GET.get("first_name_filter", "")
         last_name_filter = self.request.GET.get("last_name_filter", "")
-        gender_filter = self.request.GET.get("gender_filter", "")
         year_filter = self.request.GET.get("year_filter", "")
-        email_filter = self.request.GET.get("email_filter", "")
-        phone_filter = self.request.GET.get("phone_filter", "")
 
+        
         # Apply filters if present
+        print(first_name_filter)
         if first_name_filter:
             queryset = queryset.filter(first_name__icontains=first_name_filter)
+            print(first_name_filter)
         if last_name_filter:
             queryset = queryset.filter(last_name__icontains=last_name_filter)
-        if gender_filter:
-            queryset = queryset.filter(gender__name__icontains=gender_filter)
         if year_filter:
             queryset = queryset.filter(year_of_birth__icontains=year_filter)
-        if email_filter:
-            queryset = queryset.filter(email__icontains=email_filter)
-        if phone_filter:
-            queryset = queryset.filter(phone_number__icontains=phone_filter)
 
         return queryset
 
@@ -146,10 +142,12 @@ class CandidateDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         candidate = context["candidate"]
-        context["availabilities"] = candidate.availability_templates_candidate.all()
-        context["subjects"] = candidate.personsubject_persons.all()
-        context["certificates"] = candidate.certificates.all()
-        context["substitutions"] = candidate.substitution_deputies.all()
+        all_subjects = []
+        for substitution_candidate in SubstitutionCandidate.objects.filter(candidate=candidate, selected_date__isnull=False):
+            h = SubstitutionHelper(substitution_candidate.substitution)
+            all_subjects += h.subjects
+        context['subjects']= dict(Counter([x.name for x in all_subjects]))
+
 
         return context
 
@@ -169,16 +167,10 @@ class TeacherListView(ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         name_filter = self.request.GET.get("name_filter", "")
-        email_filter = self.request.GET.get("email_filter", "")
-        phone_filter = self.request.GET.get("phone_filter", "")
 
         # Apply filters if present
         if name_filter:
             queryset = queryset.filter(person__last_name__icontains=name_filter)
-        if email_filter:
-            queryset = queryset.filter(person__email__icontains=email_filter)
-        if phone_filter:
-            queryset = queryset.filter(person__phone_number__icontains=phone_filter)
 
         # queryset = queryset.order_by("teacher")
         return queryset
@@ -348,7 +340,7 @@ class SubstitutionDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         substitution = self.get_object()
         context["candidates"] = substitution.substitution_candidates
-
+        context['completed_by'] = SubstitutionCandidate.objects.filter(substitution=substitution, selected_date__isnull=False).order_by("selected_date")
         return context
 
 
