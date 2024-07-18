@@ -26,6 +26,34 @@ class ApplicationForm(forms.ModelForm):
             'candidate': forms.HiddenInput(),
         }
 
+class ApplicationFullForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        fields = '__all__'
+
+        widgets = {
+            "request_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),
+
+        }
+
+        labels = {
+            'request_text': 'Bewerbung Text',
+            'request_date': 'Bewerbung gesendet am',
+            'answer_date': 'Antwort am',
+        }
+        
+
+
+class ApplicationListForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        fields = '__all__'
+        widgets = {
+            "substitution_date_filter_from": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),
+            "substitution_date_filter_to": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),
+        }
+
+
 class ResponseForm(forms.ModelForm):
     class Meta:
         model = Application

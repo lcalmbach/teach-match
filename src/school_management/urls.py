@@ -20,7 +20,8 @@ from .views import (
     admin_tasks,
     calculate_teacher_availability,
     ApplicationListView,
-    ApplicationDetailView
+    ApplicationDetailView,
+    ApplicationEditView
 )
 
 app_name = 'school_management'
@@ -76,4 +77,5 @@ urlpatterns = [
     path("invitation/", InvitationCreateView.as_view(), name="invitation_create"),
     path("applications/", ApplicationListView.as_view(), name="application_list"),
     path("applications/<int:pk>/", ApplicationDetailView.as_view(), name="application_detail"),
+    path("applications/<int:pk>/edit/", ApplicationEditView.as_view(), name="application_edit"),
 ]

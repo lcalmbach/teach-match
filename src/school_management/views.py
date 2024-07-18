@@ -9,6 +9,7 @@ from django.utils import timezone
 from datetime import timedelta
 from collections import Counter
 from django.db.models import Value, CharField
+from django.db.models import Q
 
 from .models import (
     School,
@@ -33,7 +34,8 @@ from .forms import (
     TeacherForm,
     InvitationForm,
     ApplicationForm,
-    ResponseForm
+    ResponseForm,
+    ApplicationFullForm,
 
 )
 from django.views.generic import ListView  # Import the necessary module
@@ -525,8 +527,10 @@ class InvitationCreateView(LoginRequiredMixin, CreateView):
     )  # Redirect to school list view after saving
 
 
+
 def admin_tasks(request):
     return render(request, 'school_management/admin_tasks.html')
+
 
 def calculate_teacher_availability(request):
     # Fetch all teachers and their schedules
@@ -561,14 +565,25 @@ class ApplicationListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()  # Get the original queryset
-        status_filter = self.request.GET.get("status_filter", "")
-        substutution_filter = self.request.GET.get("status_filter", "")
-
+        application_filter = self.request.GET.get("application_filter", "")
+        substitution_filter = self.request.GET.get("substitution_filter", "")
+        candidate_filter = self.request.GET.get("candidate_filter", "")
+        substitution_date_filter_from = self.request.GET.get("substitution_date_filter_from", "")
+        substitution_date_filter_to = self.request.GET.get("substitution_date_filter_to", "")
         # Apply filters if present
-        if status_filter:
-            queryset = queryset.filter(name__icontains=status_filter)
-        if substutution_filter:
-            queryset = queryset.filter(name__icontains=status_filter)
+        if substitution_filter:
+            queryset = queryset.filter(substitution_id=substitution_filter)
+        if application_filter:
+            queryset = queryset.filter(id=application_filter)
+        if candidate_filter:
+            queryset = queryset.filter(
+                Q(candidate__first_name__icontains=candidate_filter) |
+                Q(candidate__last_name__icontains=candidate_filter)
+            )
+        if substitution_date_filter_from:
+            queryset = queryset.filter(substitution__start_date__gte=substitution_date_filter_from)
+        if substitution_date_filter_to:
+            queryset = queryset.filter(substitution__start_date__lte=substitution_date_filter_to)
         
         return queryset
     
@@ -576,3 +591,13 @@ class ApplicationDetailView(DetailView):
     model = Application
     template_name = "school_management/application_detail.html"
     context_object_name = "application"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+class ApplicationEditView(LoginRequiredMixin, UpdateView):
+    model = Application
+    form_class = ApplicationFullForm
+    template_name = "school_management/application_edit.html"
+    success_url = reverse_lazy("school_management:application_list")
