@@ -1,104 +1,196 @@
 {% extends "base.html" %}
+{% load custom_filters %}
+
+{% block title %}Stellvertretung{% endblock title %}
 {% block content %}
 <div class="info-container">
   <div class="col-md-6 offset-md-3"></div>  
     <h2>Informationen zur Stellvertretung</h2><br>
     <table class="table table-striped">
       <tbody>
-        
+        <tr>
+          <th>Ref#</th>
+          <td>{{ substitution.id }}</td>
+        </tr>
+        <tr>
+          <th>Schule</th>
+          <td>{{ substitution.school.name }}</td>
+        </tr>
         <tr>
           <th>Vertretene Lehrperson</th>
-          <td>{{ substitution.teacher.fullname }}</td>
+          <th><a href="{% url 'school_management:teacher_detail' pk=substitution.teacher.id %}">{{ substitution.teacher.fullname }}</a></tr>
         </tr>
         <tr>
           <th>Von</th>
-          <td>{{ substitution.start_date }}</td>
+          <td>{{ substitution.start_date | weekday }} {{ substitution.start_date }} </td>
         </tr>
         <tr>
           <th>Bis</th>
-          <td>{{ substitution.end_date }}</td>
+          <td>{{ substitution.end_date | weekday }} {{ substitution.end_date }}</td>
         </tr>
         <tr>
           <th>Grund</th>
           <td>{{ substitution.cause.name }}</td>
         </tr>
         <tr>
+          <th>Fächer</th>
+          <td>{{ substitution.subjects }}</td>
+        </tr>
+        <tr>
+          <th>Teilübernahme möglich</th>
+          <td>{{ substitution.partial_substitution_possible|yesno }}</td>
+        </tr>
+        <tr>
+          <th>Wochen-Lektionen</th>
+          <td>{{ timetable |length }}</td>
+        </tr>
+        <tr>
+          <th>Minimale Qualifikation</th>
+          <td>{{ substitution.minimum_qualification }}</td>
+        </tr>
+        <tr>
+          <th>Klasse(n)</th>
+          <td>{{ substitution.classes  }}</td>
+        </tr>
+        <tr>
+          <th>Kommentar zur Stellvertretung</th>
+          <td>{{ substitution.comment_subsitution|safe  }}</td>
+        </tr>
+        <tr>
+          <th>Kommentar zur Klasse</th>
+          <td>{{ substitution.comment_class|safe  }}</td>
+        </tr>
+        <tr>
+          <th>Zusammenfassung (automatisch generiert)</th>
+          <td>{{ substitution.summary|safe  }}</td>
+        </tr>
+        {% if substitution.selection_comment %}
+          <tr>
+            <th>Bemerkungen zum Ablauf des Vikariats</th>
+            <td>{{ substitution.selection_comment|safe  }}</td>
+          </tr>
+        {% endif %}
+        <tr>
           <th>Status</th>
           <td>{{ substitution.status.name }}</td>
         </tr>
       </tbody>
     </table>
-    <a href="{% url 'school_management:substitution_admin_list' %}" class="btn btn-primary">Zurück</a>
     <a href="{% url 'school_management:substitution_edit' pk=substitution.pk %}" class="btn btn-primary">Editieren</a>
+    <button type="button" class="btn btn-secondary" onclick="history.back()">
+      <i class="bi bi-arrow-left"></i> Zurück
+  </button>
   </div>
 </div>
 
 <div class="container mt-5">
-  
+
   <ul class="nav nav-tabs" id="myTab" role="tablist">
-      <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="zusammenfassung-tab" data-bs-toggle="tab" data-bs-target="#zusammenfassung" type="button" role="tab" aria-controls="zusammenfassung" aria-selected="true">Zusammenfassung</button>
-      </li>
-      <li class="nav-item" role="presentation">
-          <button class="nav-link" id="kandidaten-tab" data-bs-toggle="tab" data-bs-target="#kandidaten" type="button" role="tab" aria-controls="kandidaten" aria-selected="false">Mögliche Stellvertretende</button>
-      </li>
-      <li class="nav-item" role="presentation">
-          <button class="nav-link" id="completedby-tab" data-bs-toggle="tab" data-bs-target="#completedby" type="button" role="tab" aria-controls="completedby" aria-selected="false">Durchführung</button>
-      </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="timetable-tab" data-bs-toggle="tab" href="#timetable" role="tab" aria-controls="timetable" aria-selected="true">Stundenplan</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="candidates-tab" data-bs-toggle="tab" href="#candidates" role="tab" aria-controls="candidates" aria-selected="false">Kandidaten</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="applications-tab" data-bs-toggle="tab" href="#applications" role="tab" aria-controls="applications" aria-selected="false">Bewerbungen</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="completedby-tab" data-bs-toggle="tab" href="#completedby" role="tab" aria-controls="completedby" aria-selected="false">Durchführung</a>
+    </li>
   </ul>
 
-
   <div class="tab-content" id="myTabContent">
-      <div class="tab-pane fade show active" id="zusammenfassung" role="tabpanel" aria-labelledby="zusammenfassung-tab">
-        <div class="mt-3">
-          <p>{{ substitution.summary|safe }}</p>
-        </div>
-      </div>
-      <div class="tab-pane fade" id="kandidaten" role="tabpanel" aria-labelledby="kandidaten-tab">
-          <div class="mt-3">
-              Diese KandidatInnen sind in der Stellvertretumgsperiode verfügbar und unterrichten mindestens eines der benötigten Fächer:
-              <table class="table table-striped">
-                  <thead>
-                      <tr>
-                          <th>Kandidat</th>
-                          <th>Fächer</th>
-                          <th>Rating</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      {% for x in candidates.all %}
-                      <tr>
-                          <td><a href="{% url 'school_management:candidate_detail' pk=x.candidate.pk %}">{{ x.candidate.fullname }}</a></td>
-                          <td>{{ x.candidate.subjects.all|join:", " }}</td>
-                          <td>{{ x.rating }}</td>
-                      </tr>
-                      {% endfor %}
-                  </tbody>
-              </table>
-          </div>
-      </div>
-      
-      <div class="tab-pane fade" id="completedby" role="tabpanel" aria-labelledby="completedby-tab">
-          <div class="mt-3">
-              <table class="table table-striped">
-                  <thead>
-                      <tr>
-                          <th>Kandidat</th>
-                          <th>Bemerkungen</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      {% for x in completed_by %}
-                      <tr>
-                          <td><a href="{% url 'school_management:candidate_detail' pk=x.candidate.pk %}">{{ x.candidate.fullname }}</a></td>
-                          <td>{{ x.comments }}</td>
-                      </tr>
-                      {% endfor %}
-                  </tbody>
-              </table>
-          </div>
-      </div>
+    <div class="tab-pane fade show active" id="timetable" role="tabpanel" aria-labelledby="timetable-tab">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Tag</th>
+                    <th>Lektion</th>
+                    <th>Fach</th>
+                    <th>Klasse</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in timetable %}
+                  <tr>
+                      <td>{{ item.day.name }}</td>
+                      <td>{{ item.period }}</td>
+                      <td>{{ item.subject.name }}</td>
+                      <td>{{ item.school_class.name }}</td>
+                  </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="tab-pane fade" id="candidates" role="tabpanel" aria-labelledby="candidates-tab">
+        <p>Diese KandidatInnen sind in der Stellvertretumgsperiode verfügbar:</p>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Kandidat</th>
+                    <th>Verfügbar Halbtage (50)</th>
+                    <th>Anz. Erfahrungen (25)</th>
+                    <th>Anz. Erfahrungen Schule (25)</th>
+                    <th>Rating</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for x in candidates %}
+                <tr>
+                    <td><a href="{% url 'school_management:candidate_detail' pk=x.candidate.pk %}">{{ x.candidate.last_name }} {{ x.candidate.first_name }}</a></td>
+                    <td>{{x.matching_half_days}}/{{halfdays}}</td>
+                    <td>{{x.num_experiences}}</td>
+                    <td>{{x.num_experiences_in_school}}</td>
+                    <td>{{ x.rating }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="tab-pane fade" id="applications" role="tabpanel" aria-labelledby="applications-tab">
+      <table class="table table-striped">
+          <thead>
+              <tr>
+                  <th>Kandidat</th>
+                  <th>Bemerkungen</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for x in completed_by %}
+                <tr>
+                    <td><a href="{% url 'school_management:candidate_detail' pk=x.candidate.pk %}">{{ x.candidate.fullname }}</a></td>
+                    <td>{{ x.comments }}</td>
+                </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+    </div>
+
+    <div class="tab-pane fade" id="completedby" role="tabpanel" aria-labelledby="completedby-tab">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Kandidat</th>
+                    <th>Bemerkungen</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for x in completed_by %}
+                  <tr>
+                      <td><a href="{% url 'school_management:candidate_detail' pk=x.candidate.pk %}">{{ x.candidate.fullname }}</a></td>
+                      <td>{{ x.comments }}</td>
+                  </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
   </div>
+
 </div>
+
 
 {% endblock content %}

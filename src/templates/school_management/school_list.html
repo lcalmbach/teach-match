@@ -1,10 +1,11 @@
 {% extends "base.html" %}
-teach_match/templates/school_management/school_list.html
-{% block title %}Lehrkraft-Stellvertretung{% endblock title %}
+{% load crispy_forms_tags %} 
+{% block title %}Schul-Standorte{% endblock title %}
+
 
 {% block content %}
 <div class="table-container">
-    <h2>Standorte</h2>
+    <h2>Schul-Standorte</h2>
     <form method="get" action="">
       <table class="table table-striped">
         <thead>
@@ -12,6 +13,7 @@ teach_match/templates/school_management/school_list.html
                 <th>Name</th>
                 <th>Stufe</th>
                 <th>Ort</th>
+                <th></th>
             </tr>
         </thead>
         <tr> <!-- Filter inputs row -->
@@ -35,6 +37,8 @@ teach_match/templates/school_management/school_list.html
                   </option>
               {% endfor %}
             </select>
+          </th>
+          <th>
             <button type="submit" class="btn btn-primary">
               <i class="fas fa-filter"></i>
             </button>
@@ -46,6 +50,7 @@ teach_match/templates/school_management/school_list.html
                 <td><a href="{% url 'school_management:school_detail' pk=school.pk %}">{{ school.name }}</a></td>
                 <td>{{ school.level.name }}</td> 
                 <td>{{ school.location }}</td> 
+                <td><a href="{% url 'school_management:school_edit' pk=school.pk %}" title="Profil editieren"><i class="fas fa-edit"></i></a></td>
             </tr>
             {% endfor %}
         </tbody>

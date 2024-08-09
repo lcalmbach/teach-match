@@ -3,7 +3,7 @@
 {% block content %}
 <div class="info-container">
   <h2>Lehrkraft</h2>
-  <table class="info-table">
+  <table class="table">
     <tr>
       <th>ID:</th>
       <td>{{ teacher.id }}</td>
@@ -36,27 +36,42 @@
       <th>Telefon:</th>
       <td>{{ teacher.phone_number }}</td>
     </tr>
+    <tr>
+      <th>Anzahl Lektionen:</th>
+      <td>{{ lessons | length }}</td>
+    </tr>
+    <tr>
+      <th>Unterrichts-Tage:</th>
+      <td>
+        <div class="d-flex">
+          <table>
+              <tr>
+                  <td>{% if teacher.availability_mo_am %}◉{% else %}○{% endif %}</td>
+                  <td>{% if teacher.availability_tu_am %}◉{% else %}○{% endif %}</td>
+                  <td>{% if teacher.availability_we_am %}◉{% else %}○{% endif %}</td>
+                  <td>{% if teacher.availability_th_am %}◉{% else %}○{% endif %}</td>
+                  <td>{% if teacher.availability_fr_am %}◉{% else %}○{% endif %}</td>
+              </tr>
+              <tr>
+                  <td>{% if teacher.availability_mo_pm %}◉{% else %}○{% endif %}</td>
+                  <td>{% if teacher.availability_tu_pm %}◉{% else %}○{% endif %}</td>
+                  <td>{% if teacher.availability_we_pm %}◉{% else %}○{% endif %}</td>
+                  <td>{% if teacher.availability_th_pm %}◉{% else %}○{% endif %}</td>
+                  <td>{% if teacher.availability_fr_pm %}◉{% else %}○{% endif %}</td>
+              </tr>
+          </table>
+      </div>
+      </td>
+    </tr>
   </table>
 </div>
 
-<br /><br />
+<br/><br />
+
 <div class="container mt-5">
   <!-- Tab links -->
   <ul class="nav nav-tabs" id="myTab" role="tablist">
     
-    <li class="nav-item" role="presentation">
-      <a
-        class="nav-link"
-        id="substitution-tab"
-        data-bs-toggle="tab"
-        href="#substitutions"
-        role="tab"
-        aria-controls="substitutions"
-        aria-selected="true"
-        >Abwesenheiten</a
-      >
-    </li>
-
     <li class="nav-item" role="presentation">
       <a
         class="nav-link"
@@ -82,80 +97,95 @@
         >Stundenplan</a
       >
     </li>
+  
+    <li class="nav-item" role="presentation">
+      <a
+        class="nav-link"
+        id="substitution-tab"
+        data-bs-toggle="tab"
+        href="#substitutions"
+        role="tab"
+        aria-controls="substitutions"
+        aria-selected="true"
+        >Abwesenheiten</a
+      >
+    </li>
+
   </ul>Stellvertretung Dauer:</th>
 
   <!-- Tab content -->
   <div class="tab-content" id="myTabContent">
-  <div
+
+    <div
       class="tab-pane fade show active"
-      id="substitutions"
+      id="subjects"
       role="tabpanel"
-      aria-labelledby="substitution-tab"
-  >
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Von</th>
-          <th>Bis</th>
-          <th>Grund</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for substitution in teacher.teacher_substitutions.all %}
-        <tr>
-          <td><a href="{% url 'school_management:substitution_detail' pk=substitution.pk %}">{{ substitution.start_date }}</a></td>
-          <td>{{ substitution.end_date }}</td>
-          <td>{{ substitution.cause.name }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+      aria-labelledby="subjects-tab"
+      >
+        <ul>
+          {% for x in subjects %}
+          <li>
+            {{ x.name }}
+          </li>
+          {% endfor %}
+        </ul>
+    </div>
 
-  <div
-    class="tab-pane fade"
-    id="subjects"
-    role="tabpanel"
-    aria-labelledby="subjects-tab"
-    >
-      <ul>
-        {% for x in subjects %}
-        <li>
-          {{ x.name }}
-        </li>
-        {% endfor %}
-      </ul>
-  </div>
+    <div
+      class="tab-pane fade"
+      id="timetable"
+      role="tabpanel"
+      aria-labelledby="timetable-tab"
+      >
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Schule</th>
+              <th>Wochentag/Lektion</th>
+              <th>Periode</th>
+              <th>Klasse</th>
+              <th>Fach</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for x in lessons.all %}
+            <tr>
+              <td>{{ x.school.name }}</td>
+              <td>{{ x.day.name_short }}</td>
+              <td>{{ x.period }}</td>
+              <td>{{ x.school_class.name }}</td>
+              <td>{{ x.subject.name }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
 
-  <div
-    class="tab-pane"
-    id="timetable"
-    role="tabpanel"
-    aria-labelledby="timetable-tab"
+    <div
+        class="tab-pane"
+        id="substitutions"
+        role="tabpanel"
+        aria-labelledby="substitution-tab"
     >
       <table class="table table-striped">
         <thead>
           <tr>
-            <th>Schule</th>
-            <th>Wochentag/Lektion</th>
-            <th>Periode</th>
-            <th>Klasse</th>
-            <th>Fach</th>
+            <th>Von</th>
+            <th>Bis</th>
+            <th>Grund</th>
           </tr>
         </thead>
         <tbody>
-          {% for x in lessons.all %}
+          {% for substitution in teacher.teacher_substitutions.all %}
           <tr>
-            <td>{{ x.school.name }}</td>
-            <td>{{ x.day.name_short }}</td>
-            <td>{{ x.period }}</td>
-            <td>{{ x.school_class.name }}</td>
-            <td>{{ x.subject.name }}</td>
+            <td><a href="{% url 'school_management:substitution_detail' pk=substitution.pk %}">{{ substitution.start_date }}</a></td>
+            <td>{{ substitution.end_date }}</td>
+            <td>{{ substitution.cause.name }}</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
-  </div>
+    </div>
 
     <a href="{% url 'school_management:teacher_list' %}" class="btn btn-primary">Zurück</a>
     <a href="{% url 'school_management:substitution_create_with_teacher' teacher.pk %}" class="btn btn-primary">🔎Stellvertretung</a>

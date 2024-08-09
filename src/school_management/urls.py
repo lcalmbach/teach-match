@@ -44,13 +44,12 @@ urlpatterns = [
     
     path("substitutions_admin/", SubstitutionAdminListView.as_view(), name="substitution_admin_list"),
     path(
-        "substitutions/<int:pk>/",
+        "substitution/<int:pk>/",
         SubstitutionDetailView.as_view(),
         name="substitution_detail",
     ),
-    
     path(
-        "substitution/<int:pk>/",
+        "substitution/<int:pk>/edit/",
         SubstitutionEditView.as_view(),
         name="substitution_edit",
     ),  

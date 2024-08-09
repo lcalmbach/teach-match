@@ -4,7 +4,8 @@
   <div class="form-container">
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %} {{ form|crispy }}
-      <button type="submit" class="btn btn-success">Speichern</button>
+      <button type="submit" name="action" value="save" class="btn btn-success">Speichern</button>
+      <button type="submit" name="action" value="delete" class="btn btn-success">Löschen</button>
     </form>
   </div>
 </div>

@@ -1,12 +1,66 @@
-{% extends "base.html" %} {% block content %} {% load crispy_forms_tags %} 
+{% extends "base.html" %} 
+{% block content %}
+{% load crispy_forms_tags %}
 {% load static %}
+
 <div class="col-md-6 offset-md-3">
-  <h2>Bewerbung</h2>
+  <h2>Bewerbung bearbeiten</h2>
   <div class="form-container">
     <form method="post" enctype="multipart/form-data">
-      {% csrf_token %} {{ form|crispy }}
-      <button type="submit" class="btn btn-success">Speichern</button>
+      {% csrf_token %}
+      {{ form|crispy }}
+      
+
+      <!-- Action buttons -->
+       <span>
+        <button type="submit" class="btn btn-secondary">Speichern</button>
+        &nbsp;&nbsp;
     </form>
+      <button type="button" class="btn btn-success" onclick="setResponseText('confirm')">Bestätigen</button>
+      <button type="button" class="btn btn-danger" onclick="setResponseText('reject')">Ablehnen</button>
+      <button type="button" class="btn btn-primary" onclick="setResponseText('accept')">Annehmen</button>
+      &nbsp;&nbsp;
+      <button type="submit" class="btn btn-primary" name="action" value="send">Senden</button>
+      
+      <button type="button" class="btn btn-danger float-right" action="delete">Löschen</button>
+    </span>
   </div>
 </div>
+
+<script>
+  function setResponseText(action) {
+    let responseText = document.getElementById('responseText');
+    
+    // Set default response text based on the button clicked
+    switch (action) {
+      case 'confirm':
+        response_text.value = '{{ antworten.bestaetigung }}';
+        response_type.value = 1;
+        break;
+      case 'reject':
+      response_text.value = '{{ antworten.absage }}';
+      response_type.value = 2;
+        break;
+      case 'accept':
+        response_text.value = '{{ antworten.annahme }}';
+        response_type.value = 3;
+        break;
+    }
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Get month (0-11), add 1 and pad with 0
+    const day = String(now.getDate()).padStart(2, '0'); // Get day and pad with 0
+    const year = now.getFullYear(); // Get year
+    console.log(`${month}/${day}/${year}`);
+    response_date.value = `${year}-${month}-${day}`; 
+    
+    // Optionally, automatically submit the form
+    response_text.form.submit();
+  }
+</script>
+
+<style>
+  .float-right {
+    float: right;
+  }
+</style>
 {% endblock %}

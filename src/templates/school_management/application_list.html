@@ -34,8 +34,17 @@ teach_match/templates/school_management/school_list.html
           <th><input type="text" name="application_filter" value="{{ request.GET.application_filter }}"></th>
           <th><input type="text" name="candidate_filter" value="{{ request.GET.candidate_filter }}"></th>
           <th><input type="text" name="application_date_filter" value="{{ request.GET.application_date_filter }}"></th>
-          <th><input type="text" name="application_answer_type" value="{{ request.GET.application_answer_type_filter }}"></th>
-          <th><input type="text" name="application_answer_date value="{{ request.GET.application_answer_date }}"></th>
+          <th><input type="text" name="application_response_date value="{{ request.GET.application_response_date }}"></th>
+          <th>
+            <select name="response_filter">
+              <option value="">Antwort</option>
+              {% for response in responses %}
+                  <option value="{{ response.id }}" {% if request.GET.level_filter == response.id|stringformat:"s" %}selected{% endif %}>
+                      {{ response.name }}
+                  </option>
+              {% endfor %}
+            </select>
+          </th>
           <th>
             <button type="submit" class="btn btn-primary">
               <i class="fas fa-filter"></i>
@@ -49,8 +58,8 @@ teach_match/templates/school_management/school_list.html
                 <td><a href="{% url 'school_management:application_detail' pk=a.id %}">{{ a.id }}</a></td>
                 <td>{{ a.candidate.fullname }}</td> 
                 <td>{{ a.request_date }}</td> 
-                <td>{{ a.answer_date}}</td> 
-                <td>{{ a.answer_type.name }}</td> 
+                <td>{{ a.response_date}}</td> 
+                <td>{{ a.response_type.name }}</td> 
                 <td><a href="{% url 'school_management:application_edit' pk=a.pk %}" title="Bewerbung editieren"><i class="fas fa-edit"></i></a></td>
             </tr>
             {% endfor %}

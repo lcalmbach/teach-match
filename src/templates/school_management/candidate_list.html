@@ -64,7 +64,7 @@
                     <td>{{ candidate.available_to_date }}</td>
                     <td>{{ candidate.email }}</td>
                     <td>{{ candidate.phone_number }}</td>
-                    <td><a href="{% url 'school_management:candidate_edit' pk=candidate.pk %}" class="btn btn-primary">Edit</a></td>
+                    <td><a href="{% url 'school_management:candidate_edit' pk=candidate.pk %}" title="Profil editieren"><i class="fas fa-edit"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
   <div class="info-container">
-  <h2>Bewerbung</h2>
+    <h2>Bewerbung</h2>
     <table class="info-table">
         <tr>
             <th>Stellvertretung Dauer:</th>
@@ -22,24 +22,25 @@
         </tr>
         <tr>
             <th>Antwort:</th>
-            <td>{{ application.answer_type.name  }}</td>
+            <td>{{ application.response_type  }}</td>
         </tr>
         <tr>
             <th>Antwort Datum:</th>
-            <td>{{ application.answer_date  }}</td>
+            <td>{{ application.response_date  }}</td>
         </tr>
         <tr>
             <th>Antwort Text:</th>
-            <td>{{ application.answer_text }}</td>
+            <td>{{ application.response_text }}</td>
         </tr>
-      </tr>
+        </tr>
     </table>
     <br>
     <a href="javascript:history.back()" class="btn btn-primary">Zurück</a>
-    <a href="{% url 'school_management:application_edit' pk=application.pk %}" class="btn btn-primary">Editieren</a>
-  </div>
-
-      
+    <a href="{% url 'school_management:application_edit' pk=application.pk %}" class="btn btn-primary" action="confirm">Bestätigen</a>
+    <a href="{% url 'school_management:application_edit' pk=application.pk %}" class="btn btn-primary" action="accept">Annehmen</a>
+    <a href="{% url 'school_management:application_edit' pk=application.pk %}" class="btn btn-primary" action="reject">Ablehnen</a>
+    <a href="{% url 'school_management:application_edit' pk=application.pk %}" class="btn btn-primary" action="edit">Editieren</a>
+  </div> 
 </div>
 
 {% endblock content %}

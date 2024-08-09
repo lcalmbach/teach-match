@@ -5,7 +5,7 @@ import random
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
+from .models import SubstitutionCandidate
 
 def get_week_days(start_date, end_date):
     """
@@ -48,6 +48,36 @@ class SubstitutionHelper:
         self.fr_pm = False
         self.init()
 
+    def get_matching_half_days(self, candidate):
+        result = 0
+        result += 1 if self.substitution.mo_am and candidate.availability_mo_am else 0 
+        result += 1 if self.substitution.mo_pm and candidate.availability_mo_pm else 0 
+        result += 1 if self.substitution.tu_am and candidate.availability_tu_am else 0 
+        result += 1 if self.substitution.tu_pm and candidate.availability_tu_pm else 0 
+        result += 1 if self.substitution.we_am and candidate.availability_we_am else 0 
+        result += 1 if self.substitution.we_pm and candidate.availability_we_pm else 0 
+        result += 1 if self.substitution.th_am and candidate.availability_th_am else 0 
+        result += 1 if self.substitution.th_pm and candidate.availability_th_pm else 0 
+        result += 1 if self.substitution.fr_am and candidate.availability_fr_am else 0 
+        result += 1 if self.substitution.fr_pm and candidate.availability_fr_pm else 0 
+
+        return result
+
+    def get_half_days(self):
+        result = 0
+        result += 1 if self.substitution.mo_am else 0 
+        result += 1 if self.substitution.mo_pm else 0 
+        result += 1 if self.substitution.tu_am else 0 
+        result += 1 if self.substitution.tu_pm else 0 
+        result += 1 if self.substitution.we_am else 0 
+        result += 1 if self.substitution.we_pm else 0 
+        result += 1 if self.substitution.th_am else 0 
+        result += 1 if self.substitution.th_pm else 0 
+        result += 1 if self.substitution.fr_am else 0 
+        result += 1 if self.substitution.fr_pm else 0 
+
+        return result
+    
     def init(self):
         Lesson = apps.get_model("school_management", "Timetable")
         SchoolClass = apps.get_model("school_management", "SchoolClass")
@@ -58,7 +88,7 @@ class SubstitutionHelper:
         self.lessons = Lesson.objects.filter(
             teacher=self.substitution.teacher,
             day__in=self.days_in_substitution,
-        )
+        ).order_by('day__id', 'period__id')
         self.classes = SchoolClass.objects.filter(
             id__in=self.lessons.values_list("school_class_id", flat=True)
         )
@@ -78,7 +108,7 @@ class SubstitutionHelper:
         return days
 
     def get_summary(self):
-        text = f"Von {self.substitution.start_date.strftime('%d.%m.%y')} bis {self.substitution.start_date.strftime('%d.%m.%y')}, insgesamt {len(self.lessons)} Wochenlektionen. "
+        text = f"Von {self.substitution.start_date.strftime('%d.%m.%y')} bis {self.substitution.end_date.strftime('%d.%m.%y')}, insgesamt {len(self.lessons)} Wochenlektionen. "
         if not self.substitution.comment_subsitution is None:
             text += f"\n{self.substitution.comment_subsitution}."
         if not self.substitution.comment_class is None:
@@ -110,6 +140,7 @@ class SubstitutionHelper:
                 return max_rating
             return int(number / max_number * max_rating)
 
+        SubstitutionCandidate.objects.filter(substitution=self.substitution).delete()
         candidate = apps.get_model("school_management", "Candidate")
         substitution_candidate = apps.get_model("school_management", "SubstitutionCandidate")
         candidates = candidate.objects.filter(
@@ -117,30 +148,33 @@ class SubstitutionHelper:
             available_to_date__gt=self.substitution.end_date,
         )
         result = []
+        half_days = self.get_half_days()
         for c in candidates:
-            matching_half_days = random.randint(50, 100)
-            num_experiences = random.randint(0, 8)
-            num_experiences_in_school = random.randint(0, 3)
-            num_experiences_with_class = random.randint(1, 2)
-            num_experiences_with_subjects = num_experiences_in_school
-            
-            rating = assign_rating(matching_half_days, 100, 30)
-            rating += assign_rating(num_experiences * 5, 30)
-            rating += assign_rating(num_experiences_in_school, 3, 20)
-            rating += assign_rating(num_experiences_with_class, 3, 10) 
-            rating += assign_rating(num_experiences_with_subjects, 2, 10)
+            matching_half_days = self.get_matching_half_days(c)
+            if matching_half_days > 0:
+                num_experiences = SubstitutionCandidate.objects.filter(candidate=c, accepted_date__isnull=False).count()
 
-            sc = substitution_candidate.objects.create(
-                candidate=c,
-                substitution=self.substitution,
-                matching_half_days=matching_half_days,
-                num_experiences=num_experiences,
-                num_experiences_in_school=num_experiences_in_school,
-                num_experiences_with_class=num_experiences_with_class,
-                num_experiences_with_subjects=num_experiences_with_subjects,
-                rating=rating
-            )
-            result.append(sc)
+                num_experiences_in_school = SubstitutionCandidate.objects.filter(candidate=c, accepted_date__isnull=False, substitution__school=self.substitution.school).count()
+                # num_experiences_with_class = random.randint(1, 2)
+                # num_experiences_with_subjects = num_experiences_in_school
+                
+                rating = matching_half_days / half_days * 50 if matching_half_days > 0 else 0
+                rating += assign_rating(num_experiences, 6, 25)
+                rating += assign_rating(num_experiences_in_school, 3, 25)
+                #rating += assign_rating(num_experiences_with_class, 3, 10) 
+                #rating += assign_rating(num_experiences_with_subjects, 2, 10)
+
+                sc = substitution_candidate.objects.create(
+                    candidate=c,
+                    substitution=self.substitution,
+                    matching_half_days=matching_half_days,
+                    num_experiences=num_experiences,
+                    num_experiences_in_school=num_experiences_in_school,
+                    #num_experiences_with_class=num_experiences_with_class,
+                    #num_experiences_with_subjects=num_experiences_with_subjects,
+                    rating=rating
+                )
+                result.append(sc)
         return result
 
     def send_email(self, subject, body):

@@ -18,12 +18,14 @@ class ApplicationForm(forms.ModelForm):
         model = Application
         fields = ['request_text']  # Include other fields if necessary
         labels = {
-            'answer_text': 'Bemerkungen zur Bewerbung',
+            'response_text': 'Bemerkungen zur Bewerbung',
         }
         widgets = {
             'request_text': forms.Textarea(attrs={'rows': 4}),
             'substitution': forms.HiddenInput(),
             'candidate': forms.HiddenInput(),
+            "request_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),
+            
         }
 
 class ApplicationFullForm(forms.ModelForm):
@@ -33,13 +35,14 @@ class ApplicationFullForm(forms.ModelForm):
 
         widgets = {
             "request_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),
+            "response_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),
 
         }
 
         labels = {
             'request_text': 'Bewerbung Text',
             'request_date': 'Bewerbung gesendet am',
-            'answer_date': 'Antwort am',
+            'response_date': 'Antwort am',
         }
         
 
@@ -57,12 +60,12 @@ class ApplicationListForm(forms.ModelForm):
 class ResponseForm(forms.ModelForm):
     class Meta:
         model = Application
-        fields = ['answer_text']  # Include other fields if necessary
+        fields = ['response_text']  # Include other fields if necessary
         labels = {
-            'answer_text': 'Antwort',
+            'response_text': 'Antwort',
         }
         widgets = {
-            'answer_text': forms.Textarea(attrs={'rows': 8}),
+            'response_text': forms.Textarea(attrs={'rows': 8}),
         }
 
 
@@ -113,7 +116,7 @@ class CandidateForm(forms.ModelForm):
         return instance
 
 
-class SubstitutionForm(forms.ModelForm):
+class SubstitutionCreateForm(forms.ModelForm):
     class Meta:
         model = Substitution
         exclude =  [
@@ -128,18 +131,57 @@ class SubstitutionForm(forms.ModelForm):
             "fr_am",
             "fr_pm",
             "classes",
-            "levels",
             "subjects",
+            "levels",
+            "summary",
+            "comment_subsitution"
         ]
         widgets = {
             "start_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),
             "end_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['start_date'].input_formats = ['%Y-%m-%d']
+        self.fields['end_date'].input_formats = ['%Y-%m-%d']
+    
+class SubstitutionEditForm(forms.ModelForm):
+    class Meta:
+        model = Substitution
+        exclude =  [
+            "mo_am",
+            "mo_pm",
+            "tu_am",
+            "tu_pm",
+            "we_am",
+            "we_pm",
+            "th_am",
+            "th_pm",
+            "fr_am",
+            "fr_pm",
+            "classes",
+            "subjects",
+            "levels",
+            "summary",
+        ]
+        widgets = {
+            "start_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),
+            "end_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),
+        }
+        
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['start_date'].input_formats = ['%Y-%m-%d']
         self.fields['end_date'].input_formats = ['%Y-%m-%d']
+        status = self.initial.get('status') or self.instance.status
+        
+        # Conditionally remove the substitution_comment field if status is not 'closed'
+        print(status)
+        if status != 2:
+            print(123)
+            self.fields.pop('selection_comment')
 
 
 

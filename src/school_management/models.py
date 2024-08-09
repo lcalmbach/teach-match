@@ -1,10 +1,15 @@
 import os
+import calendar
+import locale
 
 from django.db import models
 from django.urls import reverse
 from datetime import datetime
 from django.utils import timezone
 from django.contrib.auth.models import User
+
+locale.setlocale(locale.LC_TIME, 'de_DE.UTF-8')
+
 
 def get_cv_upload_path(instance, filename):
     return os.path.join("cv", filename)
@@ -17,7 +22,7 @@ def get_default_time_of_day():
         return None
 
 
-class CommunicationAnswerType(models.Model):
+class CommunicationResponseType(models.Model):
     """Application, Invitation"""
 
     name = models.CharField(max_length=255, verbose_name="Name")
@@ -421,6 +426,15 @@ class Teacher(Person):
         unique_classes = SchoolClass.objects.filter(id__in=unique_class_ids)
         return unique_classes
 
+    def get_unique_days(self):
+        # Unique Tage an denen der Lehrer arbeitet
+        unique_day_numbers = (
+            Timetable.objects.filter(teacher=self)
+            .values_list("day", flat=True)
+            .distinct().order_by('day')
+        )
+        unique_day_names = [calendar.day_name[day] for day in unique_day_numbers]
+        return unique_day_names
 
 class CandidateManager(models.Manager):
     def get_queryset(self):
@@ -595,8 +609,8 @@ class SubstitutionCandidate(models.Model):
     comments = models.TextField(verbose_name="Bemerkungen", blank=True)
 
     invited_date = models.DateField(verbose_name="Einladungsdatum", blank=True, null=True)
-    accepted_date = models.DateField(verbose_name="Bestätigung am", blank=True, null=True)
     selected_date = models.DateField(verbose_name="Zusage", blank=True, null=True)
+    accepted_date = models.DateField(verbose_name="Bestätigung am", blank=True, null=True)
     record_created_date = models.DateField(default=timezone.now, verbose_name="Erstellt am")
 
     class Meta:
@@ -652,12 +666,12 @@ class Communication(models.Model):
     type = models.ForeignKey(CommunicationType, on_delete=models.CASCADE, related_name="communication_type")
     request_date = models.DateField(verbose_name="Gesendet am", default=timezone.now)
     request_text = models.TextField(verbose_name="Anfrage", blank=True, max_length=500)    
-    answer_text = models.TextField(verbose_name="Antwort", blank=True, max_length=500)
-    answer_date = models.DateField(verbose_name="Antwort am", blank=True, null=True)
-    answer_type = models.ForeignKey(CommunicationAnswerType, on_delete=models.CASCADE, related_name="communication_answer_type", blank=True, null=True)
+    response_text = models.TextField(verbose_name="Antwort", blank=True, max_length=500)
+    response_date = models.DateField(verbose_name="Antwort am", blank=True, null=True)
+    response_type = models.ForeignKey(CommunicationResponseType, on_delete=models.CASCADE, related_name="communication_response_type", blank=True, null=True)
     
     def __str__(self):
-        return f"{self.sent_date} {self.candidate.fullname}"
+        return f"{self.request_date} {self.candidate.fullname}"
 
 
 class ApplicationManager(models.Manager):

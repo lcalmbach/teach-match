@@ -37,7 +37,8 @@ td.button-cell {
     padding: 20px; /* Space inside the div */
     margin-top: 20px; /* Space outside the div */
     background-color: #f9f9f9; /* Light background color */
-    max-width: 600px; /* Maximum width */
+    width: 100%; /* Set a fixed width */
+    max-width: 1200px; /* Maximum width */
     margin-left: auto; /* Center the div horizontally */
     margin-right: auto;
 }
@@ -88,3 +89,7 @@ td.button-cell {
 .faint-green-bg {
     background-color: #e0ffe0 !important;
 }
+
+.float-right {
+    float: right;
+  }
