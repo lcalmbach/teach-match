@@ -8,7 +8,10 @@ from datetime import datetime
 from django.utils import timezone
 from django.contrib.auth.models import User
 
-locale.setlocale(locale.LC_TIME, 'de_DE.UTF-8')
+try:
+    locale.setlocale(locale.LC_TIME, 'de_DE.UTF-8')
+except locale.Error:
+    locale.setlocale(locale.LC_TIME, 'C')
 
 
 def get_cv_upload_path(instance, filename):
