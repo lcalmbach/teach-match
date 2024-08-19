@@ -92,6 +92,10 @@ class CandidateForm(forms.ModelForm):
             "availability_fr_pm",
             "availability_comment",
         ]
+        widgets = {
+            "available_from_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),
+            "available_to_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),
+        }
 
     def save(self, commit=True):
         # Call the parent class's save method to get the model instance

@@ -9,12 +9,11 @@
     <br>
     {% if not request.user.is_authenticated %}
     <div class="alert alert-info" role="info">
-        <b></b>Willkommen beim Stellvertretungsportal der Zentralen Brückenangebote des Kantons Basel-Stadt</b><br>
-        Um dich für eine Stellvertretung zu bewerben, musst du dich zuerst 
-        <a class="nav-link" href="{% url 'login_account:login' %}">einloggen</a>. Falls du noch kein Konto in unserem Portal hast, kannst du gerne eines beantragen. Kontaktiere dazu bitte Hans Muster (079 999-999, hans.muster@meineschule.dh).
+        <b></b>Willkommen beim Stellvertretungsportal der Zentralen Brückenangebote des Kantons Basel-Stadt!</b><br>
+        Um dich für eine Stellvertretung zu bewerben, musst du dich zuerst einloggen. Falls du noch kein Konto in unserem Portal hast, kannst du gerne eines beantragen. Kontaktiere dazu bitte Anna Muster (079 999-999, hans.muster@meineschule.ch).
     </div>
-    
     {% endif %}
+    
     <br>
     <form method="get" action="" class="mb-4">
         <div class="row">

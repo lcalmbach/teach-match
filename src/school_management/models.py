@@ -327,7 +327,7 @@ class Person(models.Model):
         verbose_name="Verfügbar von", blank=True, null=True
     )
     available_to_date = models.DateField(
-        verbose_name="Verfügbar ab", blank=True, null=True
+        verbose_name="Verfügbar bis", blank=True, null=True
     )
     availability_mo_am = models.BooleanField(
         verbose_name="Montag Vormittag", default=False
