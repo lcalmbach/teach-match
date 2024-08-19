@@ -12,6 +12,7 @@
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
       <input type="hidden" name="application_id" value="{{ application.id }}">
+
       {{ form|crispy }}
       <div class="d-flex justify-content-between">
         <div>

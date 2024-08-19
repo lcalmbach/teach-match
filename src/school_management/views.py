@@ -194,19 +194,28 @@ class CandidateEditView(LoginRequiredMixin, UpdateView):
 
 
 class TeacherListView(ListView):
-    model = Teacher
+    model = Timetable
     template_name = "school_management/teacher_list.html"  # Path to the template
     context_object_name = "teachers"
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        # Get unique combinations of teacher and school from the Timetable model
+        queryset = (
+            Timetable.objects
+            .select_related('teacher', 'school')
+            .values('teacher__id', 'teacher__first_name', 'teacher__last_name', 'teacher__phone_number', 'teacher__email', 'school__name')
+            .distinct()
+        )
+        print(queryset)
         name_filter = self.request.GET.get("name_filter", "")
 
         # Apply filters if present
         if name_filter:
-            queryset = queryset.filter(person__last_name__icontains=name_filter)
+            queryset = queryset.filter(teacher__person__last_name__icontains=name_filter)
 
-        # queryset = queryset.order_by("teacher")
+        # Order by teacher's last name
+        queryset = queryset.order_by('teacher__last_name')
+
         return queryset
 
 
@@ -288,7 +297,7 @@ class SubstitutionCandidatesListView(ListView):
 
         # Apply filters if present
         yesterday = timezone.now() - timedelta(days=1)
-        queryset = queryset.filter(status_id__gt=2, end_date__gt=yesterday)
+        queryset = queryset.filter(status_id=1, end_date__gt=yesterday)
         if school_filter:
             queryset = queryset.filter(school_id=school_filter)
         if level_filter:
@@ -304,7 +313,7 @@ class SubstitutionCandidatesListView(ListView):
                 field_name = key.replace("_filter", "")
                 queryset = queryset.filter(**{field_name: True})
 
-        queryset = queryset.order_by("-start_date")
+        queryset = queryset.order_by("start_date")
         return queryset
 
 
@@ -343,14 +352,17 @@ class SubstitutionAdminListView(ListView):
             "th_pm_filter": self.request.GET.get("th_pm_filter"),
             "fr_pm_filter": self.request.GET.get("fr_pm_filter"),
         }
-
+        print(id_filter)
         # Apply filters if present
         if id_filter:
             queryset = queryset.filter(pk=id_filter)
         if school_filter:
             queryset = queryset.filter(school_id=school_filter)
         if teacher_filter:
-            queryset = queryset.filter(teacher__name__icontains=teacher_filter)
+            queryset = queryset.filter(
+                Q(teacher__last_name__icontains=teacher_filter) |
+                Q(teacher__first_name__icontains=teacher_filter)
+            )
         if date_from_filter:
             queryset = queryset.filter(start_date__gt=date_from_filter)
         if date_to_filter:
@@ -362,7 +374,7 @@ class SubstitutionAdminListView(ListView):
                 field_name = key.replace("_filter", "")
                 queryset = queryset.filter(**{field_name: True})
 
-        queryset = queryset.order_by("start_date")
+        queryset = queryset.order_by("start_date").order_by('-id')
         return queryset
 
 
@@ -380,6 +392,7 @@ class SubstitutionDetailView(DetailView):
         context['timetable'] = substitution_helper.lessons
         context['candidates'] = SubstitutionCandidate.objects.filter(substitution=substitution).order_by('-rating')
         context['halfdays'] = substitution_helper.get_half_days()
+        context['applications'] = Application.objects.filter(substitution=substitution)
         print(context['halfdays'])
         return context
 
@@ -643,20 +656,34 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
     form_class = ApplicationFullForm
     template_name = "school_management/application_edit.html"
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        
+        # Define the 'antworten' dictionary
+        context['antworten'] = {
+            'bestaetigung': 'Ihre Anfrage wurde bestätigt.',
+            'absage': 'Leider müssen wir Ihre Anfrage ablehnen.',
+            'annahme': 'Ihre Anfrage wurde angenommen.'
+        }
+        
+        return context
+
     def post(self, request, *args, **kwargs):
-        print(request.POST)
         self.object = self.get_object()
         form = self.get_form()
-        action = request.POST.get('action')  # Retrieve the action from the form submission
+        action = request.POST.get('action')  
 
         if form.is_valid():
-            application = form.save(commit=False)
             response_text = request.POST.get('response_text')
-            response_type = request.POST.get('response_type')
+            response_type_id = request.POST.get('response_type')  
+            response_type = CommunicationResponseType.objects.get(pk=response_type_id)
             response_date = request.POST.get('response_date')
-            print(response_date)
+
+            # Modify the application object and save it
+            application = form.save(commit=False)
             application.response_text = response_text
-            # application.response_type = CommunicationResponseType.objects.get(response_type)
+            application.response_type = response_type  # Assign the actual CommunicationResponseType instance
             application.response_date = response_date
             application.save()
 

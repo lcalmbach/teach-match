@@ -14,6 +14,9 @@ except locale.Error:
     locale.setlocale(locale.LC_TIME, 'C')
 
 
+def default_communication_response_type():
+    return CommunicationResponseType.objects.get(pk=4)
+
 def get_cv_upload_path(instance, filename):
     return os.path.join("cv", filename)
 
@@ -100,7 +103,6 @@ class SchoolYear(models.Model):
 
 class SubstitutionCause(models.Model):
     """cause for a teacher substitution"""
-
     name = models.CharField(max_length=255, verbose_name="Name")
 
     class Meta:
@@ -473,6 +475,7 @@ class Substitution(models.Model):
         on_delete=models.CASCADE,
         related_name="substitution_causes",
         verbose_name="Begründung",
+        default=1,
     )
     partial_substitution_possible = models.BooleanField(
         verbose_name="Teilübernahme möglich", default=False
@@ -511,7 +514,7 @@ class Substitution(models.Model):
     status = models.ForeignKey(
         SubstitutionStatus,
         on_delete=models.SET_DEFAULT,
-        default=3,
+        default=1,
         related_name="substitution_status",
         verbose_name="Status Besetzung Vikariat",
     )
@@ -610,7 +613,7 @@ class SubstitutionCandidate(models.Model):
     )
     rating = models.IntegerField(verbose_name="Bewertung", default=1)
     comments = models.TextField(verbose_name="Bemerkungen", blank=True)
-
+    selected = models.BooleanField(verbose_name="Ausgewählt", default=False)
     invited_date = models.DateField(verbose_name="Einladungsdatum", blank=True, null=True)
     selected_date = models.DateField(verbose_name="Zusage", blank=True, null=True)
     accepted_date = models.DateField(verbose_name="Bestätigung am", blank=True, null=True)
@@ -671,7 +674,7 @@ class Communication(models.Model):
     request_text = models.TextField(verbose_name="Anfrage", blank=True, max_length=500)    
     response_text = models.TextField(verbose_name="Antwort", blank=True, max_length=500)
     response_date = models.DateField(verbose_name="Antwort am", blank=True, null=True)
-    response_type = models.ForeignKey(CommunicationResponseType, on_delete=models.CASCADE, related_name="communication_response_type", blank=True, null=True)
+    response_type = models.ForeignKey(CommunicationResponseType, on_delete=models.CASCADE, related_name="communication_response_type",default=default_communication_response_type) 
     
     def __str__(self):
         return f"{self.request_date} {self.candidate.fullname}"

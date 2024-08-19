@@ -4,7 +4,7 @@ teach_match/templates/school_management/school_list.html
 
 {% block content %}
 <div class="table-container">
-    <h2>Stellvertretungen Admininstration</h2>
+    <h2>Stellvertretungen Admininstration ({{substitutions|length}})</h2>
     <br>
     <a href="{% url 'school_management:substitution_create' %}" class="btn btn-success">Neu</a>
     <br><br>

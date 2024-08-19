@@ -31,7 +31,7 @@ class ApplicationForm(forms.ModelForm):
 class ApplicationFullForm(forms.ModelForm):
     class Meta:
         model = Application
-        fields = '__all__'
+        fields = ['response_text', 'response_date', 'response_type']
 
         widgets = {
             "request_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),

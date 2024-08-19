@@ -106,12 +106,24 @@
         href="#substitutions"
         role="tab"
         aria-controls="substitutions"
-        aria-selected="true"
+        aria-selected="false"
         >Abwesenheiten</a
       >
     </li>
+    <li class="nav-item" role="presentation">
+      <a
+        class="nav-link"
+        id="schools-tab"
+        data-bs-toggle="tab"
+        href="#schools"
+        role="tab"
+        aria-controls="schools"
+        aria-selected="false"
+        >tätig an Schulen</a
+      >
+    </li>
 
-  </ul>Stellvertretung Dauer:</th>
+  </ul>
 
   <!-- Tab content -->
   <div class="tab-content" id="myTabContent">
@@ -181,6 +193,27 @@
             <td><a href="{% url 'school_management:substitution_detail' pk=substitution.pk %}">{{ substitution.start_date }}</a></td>
             <td>{{ substitution.end_date }}</td>
             <td>{{ substitution.cause.name }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div
+        class="tab-pane"
+        id="schools"
+        role="tabpanel"
+        aria-labelledby="schools-tab"
+    >
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Schule</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for x in lessons_template_teachers.all %}
+          <tr>
+            <td>{{ x.name}}</td>
           </tr>
           {% endfor %}
         </tbody>

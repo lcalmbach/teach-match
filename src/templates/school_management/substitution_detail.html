@@ -134,6 +134,7 @@
                     <th>Anz. Erfahrungen (25)</th>
                     <th>Anz. Erfahrungen Schule (25)</th>
                     <th>Rating</th>
+                    <th>Auswahl für SMS</th>
                 </tr>
             </thead>
             <tbody>
@@ -144,25 +145,34 @@
                     <td>{{x.num_experiences}}</td>
                     <td>{{x.num_experiences_in_school}}</td>
                     <td>{{ x.rating }}</td>
+                    <td>
+                      <input type="checkbox" name="selected_candidates" value="{{ x.candidate.pk }}" {% if x.candidate.selected %}checked{% endif %}>
+                  </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        <button type="button" class="btn btn-secondary" onclick="history.back()">Selektierte Kandidatinnen einladen</button>
     </div>
 
     <div class="tab-pane fade" id="applications" role="tabpanel" aria-labelledby="applications-tab">
       <table class="table table-striped">
           <thead>
               <tr>
-                  <th>Kandidat</th>
-                  <th>Bemerkungen</th>
+                  <th>Bewerbung von</th>
+                  <th>Bewerbung am</th>
+                  <th>Antwort am</th>
+                  <th>Antwort Typ</th>
+                  <th></th>
               </tr>
           </thead>
           <tbody>
-              {% for x in completed_by %}
+              {% for x in applications %}
                 <tr>
                     <td><a href="{% url 'school_management:candidate_detail' pk=x.candidate.pk %}">{{ x.candidate.fullname }}</a></td>
-                    <td>{{ x.comments }}</td>
+                    <td>{{ x.request_date }}</td>
+                    <td>{{ x.response_date }}</td>
+                    <td><a href="{% url 'school_management:application_detail' pk=x.pk %}">{{ x.response_type }}</a></td>
                 </tr>
               {% endfor %}
           </tbody>

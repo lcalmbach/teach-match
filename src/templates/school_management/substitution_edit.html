@@ -2,6 +2,7 @@
 {% load crispy_forms_tags %}
 {% load custom_filters %}
 {% block content %}
+
 <div class="col-md-6 offset-md-3">
   <div class="form-container">
     <h2 class="d-flex justify-content-between align-items-center">
@@ -37,8 +38,6 @@
             {% csrf_token %}
             <button type="submit" name="action" value="delete"></button>
         </form>
-
-
       </div>
     </div>
   </div>

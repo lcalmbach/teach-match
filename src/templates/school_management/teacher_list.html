@@ -3,29 +3,40 @@
 
 {% block content %}
 <div class="table-container">
-    <h1>Lehrkräfte ({{teachers|length}})</h1>
+    <h1>Lehrkräfte ({{ teachers|length }})</h1>
     <br>
     <form method="get" action="">
         <table id="teachers" class="table table-striped">
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Email</th>
+                    <th>Vorname</th>
                     <th>Telefon</th>
-                    <th>Editieren</th>
+                    <th>Email</th>
+                    <th>Schule</th>
+                    <th>Filtern</th>
                 </tr>
                 <tr> <!-- Filter inputs row -->
-                    <th><input type="text" name="name_filter" value="{{ request.GET.name_filter }}">
-                    <input type="submit" value="Filter"></th>
+                    <th>
+                        <input type="text" name="name_filter" value="{{ request.GET.name_filter }}" placeholder="Name filtern">
+                    </th>
+                    <th colspan="2">
+                        <input type="submit" value="Filter" class="btn btn-primary">
+                    </th>
                 </tr>
             </thead>
             <tbody>
                 {% for teacher in teachers %}
-                <tr>
-                    <td><a href="{% url 'school_management:teacher_detail' pk=teacher.pk %}" title="Lehrperson Detailansicht">{{teacher.fullname}}</a></td>
-                    <td>{{ teacher.email }}</td>
-                    <td>{{ teacher.phone_number }}</td>
-                    <td><a href="{% url 'school_management:teacher_edit' pk=teacher.pk %}" title="Lehrperson editieren"><i class="fas fa-edit"></i></a></td>
+                    <tr>
+                        <td>
+                            <a href="{% url 'school_management:teacher_detail' pk=teacher.teacher__id %}" title="Lehrperson Detailansicht">
+                                {{ teacher.teacher__last_name }}
+                            </a>
+                        </td>
+                        <td>{{ teacher.teacher__first_name }}</td>
+                        <td>{{ teacher.teacher__phone_number }}</td>
+                        <td>{{ teacher.teacher__email}}</td>
+                        <td>{{ teacher.school__name }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
