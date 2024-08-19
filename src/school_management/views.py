@@ -633,6 +633,7 @@ class ApplicationListView(ListView):
         if response_filter:
             queryset = queryset.filter(response_type_id=response_filter)
         
+        queryset = queryset.order_by('-request_date')
         return queryset
 
     def get_context_data(self, **kwargs):
