@@ -4,8 +4,13 @@
   <div class="form-container">
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %} {{ form|crispy }}
-      <button type="submit" name="action" value="save" class="btn btn-success">Speichern</button>
-      <button type="submit" name="action" value="delete" class="btn btn-success">Löschen</button>
+      <div class="form-footer">
+        <button type="button" class="btn btn-secondary" onclick="history.back()">Zurück</button>
+        <button type="submit" class="btn btn-primary">Speichern</button>
+        <a href="{% url 'school_management:candidate_create' %}" class="btn btn-success">Neu</a>
+        <a href="{% url 'school_management:candidate_delete' candidate.pk %}" class="btn btn-danger"
+   onclick="return confirm('Möchten Sie diesen Eintrag wirklich löschen?');">Löschen</a>
+      </div>
     </form>
   </div>
 </div>

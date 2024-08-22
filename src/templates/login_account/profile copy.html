@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row p-5">
+  <div class="col-4 mx-auto">
+    <h1 class="text-center">Profil Editieren</h1>
+    <form method="post" action="{% url 'login_account:profile' %}">
+      {% csrf_token %}
+      {% crispy form %}
+      {{ form.errors }}  <!-- Add this to display form errors -->
+      <button type="submit" class="btn btn-primary">Speichern</button>
+    </form>
+    <br>
+    <br>
+
+    <!-- Password Change Expander -->
+    <a href="#passwordChangeForm" data-toggle="collapse" aria-expanded="false" aria-controls="passwordChangeForm">Passwort ändern</a>
+    <div class="collapse" id="passwordChangeForm">
+      <div class="card card-body">
+        <form method="post" action="{% url 'login_account:profile' %}">
+          {% csrf_token %}
+          {{ password_change_form.as_p }}
+          <button type="submit" class="btn btn-primary">Passwort ändern</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

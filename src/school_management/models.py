@@ -323,6 +323,8 @@ class Person(models.Model):
     #    verbose_name="Erfahrung in Jahren", blank=True, default=1
     # )
     gender = models.ForeignKey(Gender, on_delete=models.CASCADE, blank=True, null=True)
+    subjects = models.ManyToManyField(Subject, verbose_name="Fächer", related_name="person_subjects", blank=True)
+
     available_from_date = models.DateField(
         verbose_name="Verfügbar von", blank=True, null=True
     )
@@ -674,7 +676,7 @@ class Communication(models.Model):
     request_text = models.TextField(verbose_name="Anfrage", blank=True, max_length=500)    
     response_text = models.TextField(verbose_name="Antwort", blank=True, max_length=500)
     response_date = models.DateField(verbose_name="Antwort am", blank=True, null=True)
-    response_type = models.ForeignKey(CommunicationResponseType, on_delete=models.CASCADE, related_name="communication_response_type",default=default_communication_response_type) 
+    response_type = models.ForeignKey(CommunicationResponseType, on_delete=models.CASCADE, related_name="communication_response_type") 
     
     def __str__(self):
         return f"{self.request_date} {self.candidate.fullname}"

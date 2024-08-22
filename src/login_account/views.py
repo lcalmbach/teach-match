@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from login_account.forms import LoginForm
 from django.contrib.auth import login
-from .forms import SignUpForm, TeacherForm, CandidateForm
+from .forms import TeacherForm, CandidateForm
 
 from school_management.models import Person
 
@@ -48,7 +48,8 @@ def user_logout(request):
     return redirect('index')
 
 @login_required
-def user_profile(request):
+def user_profile_old(request):
+    print(request.method )
     user = request.user
     try:
         person = Person.objects.get(user=user)
@@ -99,14 +100,47 @@ def user_profile(request):
         'password_change_form': password_change_form
     })
 
-def user_signup(request):
+@login_required
+def user_profile(request):
+    print(request.method )
+    user = request.user
+    try:
+        person = Person.objects.get(user=user)
+    except Person.DoesNotExist:
+        messages.error(request, "Profile not found.")
+        return redirect('some_error_page')  # Handle the error appropriately
+
     if request.method == 'POST':
-        form = SignUpForm(request.POST)
+        profile_form_valid = False
+        password_change_form_valid = False
+        
+        if person.is_teacher:
+            form = TeacherForm(request.POST, instance=person)
+        elif person.is_candidate:
+            form = CandidateForm(request.POST, instance=person)
+        else:
+            messages.error(request, "Invalid profile type.")
+            return redirect('some_error_page')
+
         if form.is_valid():
-            user = form.save()
-            person = Person.objects.get(user=user)
-            login(request, user)
-            return redirect('home')  # Redirect to a home page or other appropriate page
+            form.save()
+            profile_form_valid = True
+            messages.success(request, "Profile updated successfully.")
+            return redirect('school_management:candidate_detail', pk=person.pk)
+
+            
     else:
-        form = SignUpForm()
-    return render(request, 'login_account/signup.html', {'form': form})
+        if person.is_teacher:
+            form = TeacherForm(instance=person)
+        elif person.is_candidate:
+            form = CandidateForm(instance=person)
+        else:
+            messages.error(request, "Invalid profile type.")
+            return redirect('some_error_page')
+
+    password_change_form = PasswordChangeForm(request.user)
+
+    return render(request, 'login_account/profile.html', {
+        'form': form,
+        'password_change_form': password_change_form
+    })

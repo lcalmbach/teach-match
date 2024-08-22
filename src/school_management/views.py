@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.views import View
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import DetailView, UpdateView, CreateView
+from django.views.generic import DetailView, UpdateView, CreateView, DeleteView
 from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
@@ -152,9 +152,9 @@ class CandidateDetailView(DetailView):
         for substitution_candidate in SubstitutionCandidate.objects.filter(candidate=candidate, selected_date__isnull=False):
             h = SubstitutionHelper(substitution_candidate.substitution)
             all_subjects += h.subjects
-        context['subjects']= dict(Counter([x.name for x in all_subjects]))
+        context['taught_subjects']= dict(Counter([x.name for x in all_subjects]))
         context['dateidates']= dict(Counter([x.name for x in all_subjects]))
-
+        print(candidate.subjects.all)
         return context
 
 
@@ -182,6 +182,13 @@ class CandidateEditView(LoginRequiredMixin, UpdateView):
             print("Form invalid")
             return self.form_invalid(form)
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add the candidate object to the context
+        context['candidate'] = self.object
+        return context
+    
     def form_valid(self, form):
         form.save()
         return redirect(self.success_url)
@@ -710,3 +717,25 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("school_management:application_edit", args=[self.object.id])
+
+
+class CandidateCreateView(CreateView):
+    model = Person
+    fields = ['first_name', 'last_name', 'email', 'phone_number', 'subjects', 'is_candidate']  # Include relevant fields
+    template_name = 'school_management/candidate_form.html'
+    success_url = reverse_lazy('school_management:candidate_list')  # Redirect to a list of candidates or another view after creation
+
+    def form_valid(self, form):
+        # Ensure that the person is marked as a candidate
+        form.instance.is_candidate = True
+        return super().form_valid(form)
+
+
+class CandidateDeleteView(DeleteView):
+    model = Person
+    template_name = 'school_management/candidate_confirm_delete.html'
+    success_url = reverse_lazy('school_management:candidate_list')  # Redirect to a list of candidates after deletion
+
+    def get_queryset(self):
+        # Ensure that only candidates can be deleted via this view
+        return super().get_queryset().filter(is_candidate=True)
