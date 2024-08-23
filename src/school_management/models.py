@@ -603,6 +603,9 @@ class SubstitutionCandidate(models.Model):
     matching_half_days = models.IntegerField(
         verbose_name="Übereinstimmende Halbtage", default=0
     )
+    matching_subjects = models.IntegerField(
+        verbose_name="Übereinstimmende Fächer", default=0
+    )
     num_experiences = models.IntegerField(verbose_name="Anzahl Erfahrungen", default=0)
     num_experiences_in_school = models.IntegerField(
         verbose_name="Anzahl Erfahrungen in Schule", default=0

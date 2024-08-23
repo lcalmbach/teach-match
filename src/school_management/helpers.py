@@ -35,6 +35,7 @@ class SubstitutionHelper:
         self.lessons = []
         self.classes = []
         self.levels = []
+        self.subjects = []
         self.canidates = []
         self.mo_am = False
         self.tu_am = False
@@ -134,6 +135,7 @@ class SubstitutionHelper:
         }
         return result
 
+                         
     def get_candidates(self):
         def assign_rating(number, max_number, max_rating=20):
             if number >= max_number:
@@ -146,28 +148,31 @@ class SubstitutionHelper:
         candidates = candidate.objects.filter(
             available_from_date__lt=self.substitution.start_date,
             available_to_date__gt=self.substitution.end_date,
+            # include subjects filter here!
         )
         result = []
         half_days = self.get_half_days()
+
         for c in candidates:
             matching_half_days = self.get_matching_half_days(c)
             if matching_half_days > 0:
                 num_experiences = SubstitutionCandidate.objects.filter(candidate=c, accepted_date__isnull=False).count()
-
+                matching_subjects = len(set(c.subjects.all()).intersection(self.subjects))
                 num_experiences_in_school = SubstitutionCandidate.objects.filter(candidate=c, accepted_date__isnull=False, substitution__school=self.substitution.school).count()
                 # num_experiences_with_class = random.randint(1, 2)
                 # num_experiences_with_subjects = num_experiences_in_school
                 
-                rating = matching_half_days / half_days * 50 if matching_half_days > 0 else 0
-                rating += assign_rating(num_experiences, 6, 25)
-                rating += assign_rating(num_experiences_in_school, 3, 25)
-                #rating += assign_rating(num_experiences_with_class, 3, 10) 
-                #rating += assign_rating(num_experiences_with_subjects, 2, 10)
+                rating = matching_half_days / half_days * 30 if matching_half_days > 0 else 0
+                rating = matching_subjects / len(self.subjects) * 30 if matching_subjects > 0 else 0
+
+                rating += assign_rating(num_experiences, 6, 20)
+                rating += assign_rating(num_experiences_in_school, 3, 20)
 
                 sc = substitution_candidate.objects.create(
                     candidate=c,
                     substitution=self.substitution,
                     matching_half_days=matching_half_days,
+                    matching_subjects=matching_subjects,
                     num_experiences=num_experiences,
                     num_experiences_in_school=num_experiences_in_school,
                     #num_experiences_with_class=num_experiences_with_class,
