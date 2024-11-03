@@ -30,13 +30,14 @@ Personen, die er Gruppe Administration zugeordnet sind, sehen neben der öffentl
 3.1.1 Administration erhält Bewerbung per Email
 3.1.2 Sie klickt auf Link in Email und öffnet die Bewerbungs-Bearbeitungsmaske 
 3.1.3 Sie klickt auf Bestägigen, und ergänzt falls nötig den Standardtext
+3.1.4 Sie verschickt und speichert die Antwort
+3.1.5 Nach bestätigung durch Kandidatin schliesst Admin das Vikariat: das Bestätigungsdatum wird auf den heutigen Tag erstetzt und Vikariat Status wird auf besetzt/abgeschlossen gesetzt.
 
 3.2 Administration erhält Lehrkraft Ausfall
 3.2.1 Admin öffnet Stellvertretungen Liste und eröffnet neue Stellvertretung
-3.2.2 Admin wählt geeignete Kandidatinnen aus and schickt eine Mail/SMS
-
-
-Diese Liste erlaubt eine Suche auch über vergangene Stellvertetungen, jede Stellvertretung kann entweder 
+3.2.2 Admin wählt geeignete Kandidatinnen aus and schickt ihnen eine Mail/SMS
+3.2.3 Kandidatinnen antworten entweder als SMS oder in der App
+3.2.4 bei eine mündlichen/SMS Antwort wird diese vom Admin in die App übertragen und aus der App beantwortet. Eingeladene Personen sollten eine sehr hohe Bewertung erhalten. Gleichzeitig können sich Kandidatinnen auch spontan bewerben. Reagiert eine Kandidatin nicht oder stark verzögert auf eine Einadung, so können auch Spontan-Bewerbungen berücksichtigt werden. 
 
 ## Superuser
 Superuser haben zusätzlich die Möglichkeit, Codes zu editieren, neue Schulen anzulegen etc.
@@ -73,7 +74,10 @@ Eine Stellvertretung umfasst die Wochenstunden einer Lehrkrfaft während einer b
 # Fragen
 1.1.1 Soll der Antrag für ein Konto durch den Kandidaten selbst erfolgen können? Annahme nein, wegen potentiellem Missbrauch durch Schülerinnnen.
 2.2.1 Muss hier scon eine Bwerbung per SMS möglich sein? 
-3.1.3 soll eine Bestätigung automatisch erfolgen? die Idee bei der manuellen Bestätigung wäre, dass man damit sicherstellt, dass eine Person die Bewerbung gesehen hat. 
+3.1.3 soll eine Bestätigung automatisch erfolgen? die Idee bei der manuellen Bestätigung wäre, dass man damit sicherstellt, dass eine Person 
+die Bewerbung gesehen hat. 
+3.1.4: was passiert wenn eien positive Antwort verschickt wurde?
+
 ??? welche Status machen Sinn für eine Stellvertretung: Vorschlag in Arbeit > besetzt oder abgeschlossen
 
 - welche attribute braucht es für eine lehrperson

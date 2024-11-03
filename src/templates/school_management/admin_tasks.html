@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% load static %}
@@ -10,7 +9,141 @@
             <td class="button-cell"><button onclick="location.href='{% url 'school_management:calculate_availability' %}'">Ausführen</button></td>
             <td>Berechne die Verfügbarkeit von LehrerInnen basierend auf dem aktuellen Stundenplan</td>
         </tr>
+        <tr>
+            <td class="button-cell"><button onclick="location.href='{% url 'school_management:calculate_availability' %}'">Einlesen Starten</button></td>
+            <td>
+                <div>Neuer Stundenplan einlesen</div>
+                <div id="drop-zone" class="drop-zone">
+                    <span class="drop-zone__prompt">XML-Datei hier ablegen oder klicken zum Hochladen</span>
+                    <input type="file" name="xmlFile" class="drop-zone__input" accept=".xml">
+                </div>
+            </td>
+        </tr>
     </table>
-
 </div>
+
+<style>
+    .drop-zone {
+        max-width: 100%;
+        height: 100px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-family: "Quicksand", sans-serif;
+        font-weight: 500;
+        font-size: 16px;
+        cursor: pointer;
+        color: #cccccc;
+        border: 2px dashed #009578;
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+    .button-cell {
+        width: 100px;
+    }
+    .content-cell {
+        display: flex;
+        flex-direction: column;
+    }
+    .drop-zone--over {
+        border-style: solid;
+    }
+
+    .drop-zone__input {
+        display: none;
+    }
+
+    .drop-zone__thumb {
+        width: 100%;
+        height: 100%;
+        border-radius: 5px;
+        overflow: hidden;
+        background-color: #cccccc;
+        background-size: cover;
+        position: relative;
+    }
+
+    .drop-zone__thumb::after {
+        content: attr(data-label);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 5px 0;
+        color: #ffffff;
+        background: rgba(0, 0, 0, 0.75);
+        font-size: 14px;
+        text-align: center;
+    }
+</style>
+
+<script>
+document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
+  const dropZoneElement = inputElement.closest(".drop-zone");
+
+  dropZoneElement.addEventListener("click", (e) => {
+    inputElement.click();
+  });
+
+  inputElement.addEventListener("change", (e) => {
+    if (inputElement.files.length) {
+      updateThumbnail(dropZoneElement, inputElement.files[0]);
+    }
+  });
+
+  dropZoneElement.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropZoneElement.classList.add("drop-zone--over");
+  });
+
+  ["dragleave", "dragend"].forEach((type) => {
+    dropZoneElement.addEventListener(type, (e) => {
+      dropZoneElement.classList.remove("drop-zone--over");
+    });
+  });
+
+  dropZoneElement.addEventListener("drop", (e) => {
+    e.preventDefault();
+
+    if (e.dataTransfer.files.length) {
+      inputElement.files = e.dataTransfer.files;
+      updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+    }
+
+    dropZoneElement.classList.remove("drop-zone--over");
+  });
+});
+
+function updateThumbnail(dropZoneElement, file) {
+  let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
+
+  // First time - remove the prompt
+  if (dropZoneElement.querySelector(".drop-zone__prompt")) {
+    dropZoneElement.querySelector(".drop-zone__prompt").remove();
+  }
+
+  // First time - there is no thumbnail element, so lets create it
+  if (!thumbnailElement) {
+    thumbnailElement = document.createElement("div");
+    thumbnailElement.classList.add("drop-zone__thumb");
+    dropZoneElement.appendChild(thumbnailElement);
+  }
+
+  thumbnailElement.dataset.label = file.name;
+
+  // Show thumbnail for image files
+  if (file.type.startsWith("image/")) {
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
+    };
+  } else {
+    thumbnailElement.style.backgroundImage = null;
+  }
+}
+</script>
 {% endblock %}
