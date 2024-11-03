@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from school_management.models import Teacher, Candidate  # Absolute import
+from school_management.models import Teacher, Candidate, Subject
 from crispy_forms.helper import FormHelper
 
 
@@ -54,6 +54,11 @@ class TeacherForm(forms.ModelForm):
 
 
 class CandidateForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["subjects"].widget.attrs.update(size="20")
+
     class Meta:
         model = Candidate
         fields = [
@@ -72,5 +77,17 @@ class CandidateForm(forms.ModelForm):
             'availability_we_pm',
             'availability_th_pm',
             'availability_fr_pm',
-        ]  # Replace with actual fields for teachers
+            'subjects',
+        ] 
 
+        widgets = {
+            "available_from_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),
+            "available_to_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),
+        }
+        subjects = forms.ModelMultipleChoiceField(
+            queryset=Subject.objects.all(),
+            widget=forms.SelectMultiple(),
+            # widget=forms.SelectMultiple(attrs={'class': 'form-select'}) 
+            required=False
+        )
+        

@@ -1,5 +1,5 @@
 from django import forms
-from .models import School, Person, Substitution, Teacher, Candidate, Invitation, Application
+from .models import School, Person, Substitution, Teacher, Candidate, Invitation, Application, Subject
 import fitz  # PyMuPDF
 
 
@@ -71,6 +71,10 @@ class ResponseForm(forms.ModelForm):
 
 
 class CandidateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["subjects"].widget.attrs.update(size="20")
+        
     class Meta:
         model = Person
         fields = [
@@ -91,6 +95,7 @@ class CandidateForm(forms.ModelForm):
             "availability_fr_am",
             "availability_fr_pm",
             "availability_comment",
+            "subjects"
         ]
         widgets = {
             "available_from_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}, format='%Y-%m-%d'),
@@ -199,3 +204,4 @@ class TeacherForm(forms.ModelForm):
             "email",
             "phone_number",
         ]
+

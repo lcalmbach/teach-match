@@ -1,28 +1,15 @@
-{% extends "base.html" %}
-{% load crispy_forms_tags %}
+{% extends "base.html" %} {% block content %} {% load crispy_forms_tags %} 
+{% load static %}
 
-{% block content %}
-<div class="row p-5">
-  <div class="col-4 mx-auto">
-    <h1 class="text-center">Profil Editieren</h1>
-    <form method="post">
-        {% csrf_token %}
-        {% crispy form %}
-        <button type="submit">Speichern</button>
+<div class="col-md-6 offset-md-3">
+  <div class="form-container">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %} {{ form|crispy }}
+      <button type="submit" name="action" value="save" class="btn btn-success">Speichern</button>
+      <button type="submit" name="action" value="delete" class="btn btn-success">Löschen</button>
     </form>
-    <br><br>
-    
-    <!-- Password Change Expander -->
-    <a href="#passwordChangeForm" data-toggle="collapse" aria-expanded="false" aria-controls="passwordChangeForm">Passwort ändern</a>
-    <div class="collapse" id="passwordChangeForm">
-      <div class="card card-body">
-        <form method="post" action="{% url 'login_account:profile' %}">
-          {% csrf_token %}
-          {{ password_change_form.as_p }}
-          <button type="submit" class="btn btn-primary">Passwort ändern</button>
-        </form>
-      </div>
-    </div>
   </div>
 </div>
+
+
 {% endblock %}

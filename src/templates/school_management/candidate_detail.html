@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
   <div class="info-container">
-    <table class="info-table">
+    <table class="table">
         <tr>
             <th>Nachname:</th>
             <td>{{ candidate.last_name }}</td>
@@ -33,25 +33,34 @@
         </tr>
         <tr>
           <th>Wochentage:</th>
-        <td>
-          <table>
-            <tr>
-                <td>{% if candidate.availability_mo_am %}◉{% else %}○{% endif %}</td>
-                <td>{% if candidate.availability_tu_am %}◉{% else %}○{% endif %}</td>
-                <td>{% if candidate.availability_we_am %}◉{% else %}○{% endif %}</td>
-                <td>{% if candidate.availability_th_am %}◉{% else %}○{% endif %}</td>
-                <td>{% if candidate.availability_fr_am %}◉{% else %}○{% endif %}</td>
-            </tr>
-            <tr>
-              <td>{% if candidate.availability_mo_pm %}◉{% else %}○{% endif %}</td>
-              <td>{% if candidate.availability_tu_pm %}◉{% else %}○{% endif %}</td>
-              <td>{% if candidate.availability_we_pm %}◉{% else %}○{% endif %}</td>
-              <td>{% if candidate.availability_th_pm %}◉{% else %}○{% endif %}</td>
-              <td>{% if candidate.availability_fr_pm %}◉{% else %}○{% endif %}</td>
-          </tr>
-        </table>
-        </td>
-      </tr>
+          <td>
+            <table>
+              <tr>
+                  <td>{% if candidate.availability_mo_am %}◉{% else %}○{% endif %}</td>
+                  <td>{% if candidate.availability_tu_am %}◉{% else %}○{% endif %}</td>
+                  <td>{% if candidate.availability_we_am %}◉{% else %}○{% endif %}</td>
+                  <td>{% if candidate.availability_th_am %}◉{% else %}○{% endif %}</td>
+                  <td>{% if candidate.availability_fr_am %}◉{% else %}○{% endif %}</td>
+              </tr>
+              <tr>
+                <td>{% if candidate.availability_mo_pm %}◉{% else %}○{% endif %}</td>
+                <td>{% if candidate.availability_tu_pm %}◉{% else %}○{% endif %}</td>
+                <td>{% if candidate.availability_we_pm %}◉{% else %}○{% endif %}</td>
+                <td>{% if candidate.availability_th_pm %}◉{% else %}○{% endif %}</td>
+                <td>{% if candidate.availability_fr_pm %}◉{% else %}○{% endif %}</td>
+              </tr>
+            </table>
+          </td>
+        <tr>
+        <tr>
+          <th>Bevorzugte Fächer:</th>
+          <td>
+            <ul>
+              {% for subject in candidate.subjects.all %}
+                <li>{{ subject.name }}</li>
+              {% endfor %}
+          </td>
+        </tr>
     </table>
     <br>
     <a href="{% url 'school_management:candidate_edit' pk=candidate.pk %}" class="btn btn-primary">Editieren</a>
@@ -96,7 +105,6 @@
               <tr>
                   <td>{{ subject }}</td>
                   <td>{{ number }}</td>
-
               </tr>
               {% endfor %}
           </tbody>
