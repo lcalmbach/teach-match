@@ -14,15 +14,16 @@
                     <th>Telefon</th>
                     <th>Email</th>
                     <th>Schule</th>
-                    <th>Filtern</th>
-                </tr>
+                    <th>
+                        <button type="submit" class="btn btn-primary">
+                          <i class="fas fa-filter"></i>
+                        </button>
+                      </th>
                 <tr> <!-- Filter inputs row -->
                     <th>
                         <input type="text" name="name_filter" value="{{ request.GET.name_filter }}" placeholder="Name filtern">
                     </th>
-                    <th colspan="2">
-                        <input type="submit" value="Filter" class="btn btn-primary">
-                    </th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -37,6 +38,7 @@
                         <td>{{ teacher.teacher__phone_number }}</td>
                         <td>{{ teacher.teacher__email}}</td>
                         <td>{{ teacher.school__name }}</td>
+                        <td><a href="{% url 'school_management:teacher_edit' pk=teacher.teacher__id %}" title="Lehrkraft editieren"><i class="fas fa-edit"></i></a></td>
                     </tr>
                 {% endfor %}
             </tbody>

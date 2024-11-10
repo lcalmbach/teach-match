@@ -16,14 +16,7 @@
       <th>Vorname:</th>
       <td>{{ teacher.first_name }}</td>
     </tr>
-    {% comment %} <tr>
-      <th>Geschlecht:</th>
-      <td>{{ teacher.gender.name }}</td>
-    </tr> {% endcomment %}
-    <tr>
-      <th>Jahrgang:</th>
-      <td>{{ teacher.year_of_birth }}</td>
-    </tr>
+    
     <tr>
       <th>Stellvertretungen:</th>
       <td>{{ teacher.is_candidate | boolean_to_ja_nein }}</td>
@@ -134,13 +127,20 @@
       role="tabpanel"
       aria-labelledby="subjects-tab"
       >
-        <ul>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Fach</th>
+          </tr>
+        </thead>
+        <tbody>
           {% for x in subjects %}
-          <li>
-            {{ x.name }}
-          </li>
+          <tr>
+            <td>{{ x.name }}</td>
+          </tr>
           {% endfor %}
-        </ul>
+        </tbody>
+      </table>
     </div>
 
     <div
@@ -211,9 +211,9 @@
           </tr>
         </thead>
         <tbody>
-          {% for x in lessons_template_teachers.all %}
+          {% for school in schools %}
           <tr>
-            <td>{{ x.name}}</td>
+            <td>{{ school }}</td>
           </tr>
           {% endfor %}
         </tbody>

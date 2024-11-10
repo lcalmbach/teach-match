@@ -7,14 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('school_management', '0049_remove_person_gender'),
+        ("school_management", "0049_remove_person_gender"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='subject',
-            name='level',
-            field=models.ForeignKey(default=7, on_delete=django.db.models.deletion.CASCADE, to='school_management.level', verbose_name='Stufe'),
+            model_name="subject",
+            name="level",
+            field=models.ForeignKey(
+                default=7,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="school_management.level",
+                verbose_name="Stufe",
+            ),
             preserve_default=False,
         ),
     ]

@@ -9,10 +9,7 @@ from django.conf import settings
 import random
 
 
-from school_management.models import (
-    Candidate,
-    Subject
-)
+from school_management.models import Candidate, Subject
 from school_management.helpers import SubstitutionHelper
 
 
@@ -26,18 +23,22 @@ class Command(BaseCommand):
         """
         model.objects.all().delete()
 
-    
     def handle(self, *args, **kwargs):
         candidates = Candidate.objects.filter(is_candidate=True)
         subjects = list(Subject.objects.all())
 
         # Define all half-day availability fields
         half_days = [
-            'availability_mo_am', 'availability_mo_pm',
-            'availability_tu_am', 'availability_tu_pm',
-            'availability_we_am', 'availability_we_pm',
-            'availability_th_am', 'availability_th_pm',
-            'availability_fr_am', 'availability_fr_pm'
+            "availability_mo_am",
+            "availability_mo_pm",
+            "availability_tu_am",
+            "availability_tu_pm",
+            "availability_we_am",
+            "availability_we_pm",
+            "availability_th_am",
+            "availability_th_pm",
+            "availability_fr_am",
+            "availability_fr_pm",
         ]
 
         if not subjects:
@@ -70,4 +71,8 @@ class Command(BaseCommand):
                 )
             )
 
-        self.stdout.write(self.style.SUCCESS("All candidates have been assigned subjects and availability."))
+        self.stdout.write(
+            self.style.SUCCESS(
+                "All candidates have been assigned subjects and availability."
+            )
+        )

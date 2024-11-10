@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}  <!-- Load crispy forms template tags -->
+
+{% block content %}
+    <div class="info-container">
+        <h1>Einladung für Stellvertretung {{ substitution.id }}</h1>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}  <!-- Render the form as a Crispy form -->
+            <button type="submit" class="btn btn-primary">Einladungen abschicken</button>
+        </form>
+    </div>
+{% endblock %}

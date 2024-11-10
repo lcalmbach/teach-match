@@ -28,29 +28,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-md-4 mb-3">
-                <label for="level_filter">Zyklus</label>
-                <select class="form-select" name="level_filter">
-                    <option value="">Stufe</option>
-                    {% for l in levels %}
-                        <option value="{{ l.name_short }}" {% if request.GET.level_filter == l.name_short %}selected{% endif %}>
-                            {{ l.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
             
-            <div class="col-md-4 mb-3">
-                <label for="availability_filter">Wochentage</label>
-                <select class="form-select" name="availability_filter">
-                    <option value="">Verfügbarkeit</option>
-                    {% for availability in availabilities %}
-                        <option value="{{ availability.id }}" {% if request.GET.availability_filter == availability.id|stringformat:"s" %}selected{% endif %}>
-                            {{ availability.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
             <div class="col-md-4 mb-3">
                 <label for="date_from_filter">Von</label>
                 <input type="date" class="form-control" name="date_from_filter" value="{{ request.GET.date_from_filter }}">
@@ -64,7 +42,7 @@
                 <select class="form-select" name="subject_filter">
                     <option value="">---</option>
                     {% for subject in subjects %}
-                        <option value="{{ subject.id }}" {% if request.GET.subject_filter == subject.id|stringformat:"s" %}selected{% endif %}>
+                        <option value="{{ subject.name_short }}" {% if request.GET.subject_filter == subject.name_short|stringformat:"s" %}selected{% endif %}>
                             {{ subject.name }}
                         </option>
                     {% endfor %}

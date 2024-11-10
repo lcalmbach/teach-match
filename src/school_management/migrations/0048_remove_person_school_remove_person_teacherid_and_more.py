@@ -7,36 +7,45 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('school_management', '0047_rename_sent_date_communication_request_date_and_more'),
+        (
+            "school_management",
+            "0047_rename_sent_date_communication_request_date_and_more",
+        ),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='person',
-            name='school',
+            model_name="person",
+            name="school",
         ),
         migrations.RemoveField(
-            model_name='person',
-            name='teacherid',
+            model_name="person",
+            name="teacherid",
         ),
         migrations.AddField(
-            model_name='person',
-            name='initials',
-            field=models.CharField(blank=True, max_length=255, verbose_name='Kürzel'),
+            model_name="person",
+            name="initials",
+            field=models.CharField(blank=True, max_length=255, verbose_name="Kürzel"),
         ),
         migrations.AddField(
-            model_name='person',
-            name='schools',
-            field=models.ManyToManyField(related_name='school_persons', to='school_management.school'),
+            model_name="person",
+            name="schools",
+            field=models.ManyToManyField(
+                related_name="school_persons", to="school_management.school"
+            ),
         ),
         migrations.AlterField(
-            model_name='communication',
-            name='request_text',
-            field=models.TextField(blank=True, max_length=500, verbose_name='Anfrage'),
+            model_name="communication",
+            name="request_text",
+            field=models.TextField(blank=True, max_length=500, verbose_name="Anfrage"),
         ),
         migrations.AlterField(
-            model_name='communication',
-            name='substitution',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='substitution', to='school_management.substitution'),
+            model_name="communication",
+            name="substitution",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="substitution",
+                to="school_management.substitution",
+            ),
         ),
     ]

@@ -3,8 +3,8 @@
 <div class="col-md-6 offset-md-3">
   <div class="form-container">
     <form method="post" enctype="multipart/form-data">
-      {% csrf_token %} {{ form|crispy }}
-      <button type="submit" class="btn btn-success">Save</button>
+      {% csrf_token %} 
+      {% crispy form %}
     </form>
   </div>
 </div>

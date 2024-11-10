@@ -6,10 +6,10 @@ import django.utils.timezone
 
 
 def set_default_created_timestamp(apps, schema_editor):
-    substitution = apps.get_model('substitution', 'Substitution')
+    substitution = apps.get_model("substitution", "Substitution")
     for obj in substitution.objects.filter(created_timestamp__isnull=True):
         obj.created_timestamp = django.utils.timezone.now()
-        obj.save(update_fields=['created_timestamp'])
+        obj.save(update_fields=["created_timestamp"])
 
 
 class Migration(migrations.Migration):
@@ -39,10 +39,9 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name='substitution',
-            name='created_timestamp',
+            model_name="substitution",
+            name="created_timestamp",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.RunPython(set_default_created_timestamp),
     ]
-

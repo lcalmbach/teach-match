@@ -7,26 +7,46 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('school_management', '0052_remove_person_username_person_notify_mail_flag_and_more'),
+        (
+            "school_management",
+            "0052_remove_person_username_person_notify_mail_flag_and_more",
+        ),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CommunicationAnswerType',
+            name="CommunicationAnswerType",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('description', models.TextField(blank=True, verbose_name='Beschreibung')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                (
+                    "description",
+                    models.TextField(blank=True, verbose_name="Beschreibung"),
+                ),
             ],
             options={
-                'verbose_name': 'AntwortTyp',
-                'verbose_name_plural': 'Kommunikations Antworttyp',
-                'ordering': ['name'],
+                "verbose_name": "AntwortTyp",
+                "verbose_name_plural": "Kommunikations Antworttyp",
+                "ordering": ["name"],
             },
         ),
         migrations.AddField(
-            model_name='communication',
-            name='answer_type',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='communication_answer_type', to='school_management.communicationanswertype'),
+            model_name="communication",
+            name="answer_type",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="communication_answer_type",
+                to="school_management.communicationanswertype",
+            ),
         ),
     ]

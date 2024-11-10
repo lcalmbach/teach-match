@@ -21,6 +21,7 @@ from .models import (
     SubstitutionCandidate,
 )
 
+
 # ist ein Versuch, die Admin-Oberfläche zu verbessern, im Moment erscheint der description Text aber noch nicht. Das scheint
 # komplizierter zu sein, man muss im templates folder ein eigenes template vorgeben, ev. machen wir das für die produktive Version
 # aber noch nicht für den POC

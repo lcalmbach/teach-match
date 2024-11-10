@@ -11,23 +11,35 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 import os
+import environ
 from pathlib import Path
 import django_heroku
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # BASE_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_URL = "https://teach-match-471e96400251.herokuapp.com/"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'lthz&jt*rosx3+04vb$&+gx@cl_o494e_*f#%3u_@ha34i3y^&')
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+SECRET_KEY = env(
+    "DJANGO_SECRET_KEY"
+)  # os.environ.get('DJANGO_SECRET_KEY', 'lthz&jt*rosx3+04vb$&+gx@cl_o494e_*f#%3u_@ha34i3y^&')
+TWILIO_ACCOUNT_SID = env("TWILIO_ACCOUNT_SID")
+TWILIO_ACCOUNT_TOKEN = env("TWILIO_ACCOUNT_TOKEN")
+TWILIO_PHONE_NUMBER = env("TWILIO_PHONE_NUMBER")
 
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -62,7 +74,7 @@ ROOT_URLCONF = "teach_match.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Add this line
+        "DIRS": [os.path.join(BASE_DIR, "templates")],  # Add this line
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -123,12 +135,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_URL = "/static/"
+MEDIA_URL = "/media/"
 
 
 # Default primary key field type
@@ -137,15 +149,15 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
-LOGIN_REDIRECT_URL = '/'
-LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = "/"
+LOGIN_URL = "login"
 
 django_heroku.settings(locals())
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = 'lukas.calmbach@bs.ch'
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = "lukas.calmbach@bs.ch"

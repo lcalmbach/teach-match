@@ -7,15 +7,22 @@ from django.urls import reverse
 from datetime import datetime
 from django.utils import timezone
 from django.contrib.auth.models import User
+from enum import Enum
 
 try:
-    locale.setlocale(locale.LC_TIME, 'de_DE.UTF-8')
+    locale.setlocale(locale.LC_TIME, "de_DE.UTF-8")
 except locale.Error:
-    locale.setlocale(locale.LC_TIME, 'C')
+    locale.setlocale(locale.LC_TIME, "C")
+
+
+class CommunicationTypeEnum(Enum):
+    BEWERBUNG = 1
+    EINLADUNG = 2
 
 
 def default_communication_response_type():
     return CommunicationResponseType.objects.get(pk=4)
+
 
 def get_cv_upload_path(instance, filename):
     return os.path.join("cv", filename)
@@ -41,7 +48,8 @@ class CommunicationResponseType(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
 class CommunicationType(models.Model):
     """Application, Invitation"""
 
@@ -55,7 +63,8 @@ class CommunicationType(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
 class SubstitutionStatus(models.Model):
     """Status of a teacher substitution"""
 
@@ -103,6 +112,7 @@ class SchoolYear(models.Model):
 
 class SubstitutionCause(models.Model):
     """cause for a teacher substitution"""
+
     name = models.CharField(max_length=255, verbose_name="Name")
 
     class Meta:
@@ -283,7 +293,9 @@ class School(models.Model):
     )
     plz = models.IntegerField(verbose_name="Postleitzahl", default=4000)
     email = models.EmailField(verbose_name="Email", blank=True, max_length=255)
-    phone_number = models.CharField(verbose_name="Telefonnummer", blank=True, max_length=255)
+    phone_number = models.CharField(
+        verbose_name="Telefonnummer", blank=True, max_length=255
+    )
     mobile = models.CharField(verbose_name="Mobile", blank=True, max_length=255)
 
     class Meta:
@@ -299,7 +311,6 @@ class Person(models.Model):
     """teacher, deputies and managers of the school"""
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
-    schools = models.ManyToManyField(School, related_name='school_persons')
     initials = models.CharField(max_length=255, verbose_name="Kürzel", blank=True)
     first_name = models.CharField(max_length=255, verbose_name="Vorname")
     last_name = models.CharField(max_length=255, verbose_name="Nachname")
@@ -319,11 +330,20 @@ class Person(models.Model):
     is_manager = models.BooleanField(
         verbose_name="Leitung/Administration", default=False
     )
-    # years_of_experience = models.IntegerField(
-    #    verbose_name="Erfahrung in Jahren", blank=True, default=1
-    # )
-    gender = models.ForeignKey(Gender, on_delete=models.CASCADE, blank=True, null=True)
-    subjects = models.ManyToManyField(Subject, verbose_name="Fächer", related_name="person_subjects", blank=True)
+    send_email = models.BooleanField(
+        verbose_name="Kommunikation mit Email erwünscht", default=True
+    )
+    send_sms = models.BooleanField(
+        verbose_name="Kommunikation mit SMS erwünscht", default=True
+    )
+
+    gender = models.ForeignKey(
+        Gender,
+        verbose_name="Geschlecht",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
 
     available_from_date = models.DateField(
         verbose_name="Verfügbar von", blank=True, null=True
@@ -368,30 +388,38 @@ class Person(models.Model):
         max_length=500, verbose_name="Bemerkungen", blank=True
     )
 
-    notify_mail_flag = models.BooleanField( verbose_name="Benachrichtigung per Mail", default=False)
-    notify_sms_flag = models.BooleanField( verbose_name="Benachrichtigung per SMS", default=False)
+    notify_mail_flag = models.BooleanField(
+        verbose_name="Benachrichtigung per Mail", default=False
+    )
+    notify_sms_flag = models.BooleanField(
+        verbose_name="Benachrichtigung per SMS", default=False
+    )
 
     subjects = models.ManyToManyField(
         "Subject", related_name="person_subjects", blank=True
     )  # Many-to-many relationship
 
-    @property 
+    @property
     def formal_salutation(self):
         if self.gender.id == 1:
             return f"Sehr geehrter Herr {self.last_name}"
         else:
             return f"Sehr geehrte Frau {self.last_name}"
-    
-    @property 
+
+    @property
     def informal_salutation(self):
         if self.gender.id == 1:
-            return f"Lieber{self.first_name}"
+            return f"Lieber {self.first_name}"
         else:
             return f"Liebe {self.first_name}"
-        
+
     @property
     def fullname(self):
         return f"{self.last_name} {self.first_name}"
+
+    @property
+    def first_last_name(self):
+        return f"{self.first_name} {self.last_name}"
 
     class Meta:
         verbose_name = "Person"
@@ -400,6 +428,22 @@ class Person(models.Model):
 
     def __str__(self):
         return f"{self.last_name} {self.first_name} {self.year_of_birth}"
+
+
+class Semester(models.Model):
+    """Semester, e.g. HS2021, FS2022"""
+
+    name = models.CharField(max_length=255, verbose_name="Name")
+    start_date = models.DateField(verbose_name="Start Date")
+    end_date = models.DateField(verbose_name="End Date")
+
+    class Meta:
+        verbose_name = "Semester"
+        verbose_name_plural = "Semester"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
 
 
 class TeacherManager(models.Manager):
@@ -438,10 +482,22 @@ class Teacher(Person):
         unique_day_numbers = (
             Timetable.objects.filter(teacher=self)
             .values_list("day", flat=True)
-            .distinct().order_by('day')
+            .distinct()
+            .order_by("day")
         )
         unique_day_names = [calendar.day_name[day] for day in unique_day_numbers]
         return unique_day_names
+
+    def get_school(self):
+        # Erste Schule, an der der Lehrer unterrichtet
+        school = (
+            Timetable.objects.filter(teacher=self)
+            .values_list("school", flat=True)
+            .distinct()
+            .first()  # Get the first school ID
+        )
+        return School.objects.get(pk=school) if school else None
+
 
 class CandidateManager(models.Manager):
     def get_queryset(self):
@@ -499,7 +555,9 @@ class Substitution(models.Model):
     classes = models.TextField(verbose_name="Klassen", blank=True, max_length=500)
     levels = models.TextField(verbose_name="Stufen", blank=True, max_length=500)
     subjects = models.TextField(verbose_name="Fächer", blank=True, max_length=500)
-    summary = models.TextField(verbose_name="Zusammenfassung", blank=True, max_length=1000)
+    summary = models.TextField(
+        verbose_name="Zusammenfassung", blank=True, max_length=1000
+    )
 
     mo_am = models.BooleanField(verbose_name="Montag Vormittag", default=False)
     mo_pm = models.BooleanField(verbose_name="Montag Nachmittag", default=False)
@@ -512,7 +570,9 @@ class Substitution(models.Model):
     fr_am = models.BooleanField(verbose_name="Freitag Vormittag", default=False)
     fr_pm = models.BooleanField(verbose_name="Freitag Nachmittag", default=False)
 
-    selection_comment = models.TextField(verbose_name="Kommentar zur Besetzung", blank=True, max_length=500)
+    selection_comment = models.TextField(
+        verbose_name="Kommentar zur Besetzung", blank=True, max_length=500
+    )
     status = models.ForeignKey(
         SubstitutionStatus,
         on_delete=models.SET_DEFAULT,
@@ -525,6 +585,9 @@ class Substitution(models.Model):
     class Meta:
         verbose_name = "Stellvertretung"
         verbose_name_plural = "Stellvertretungen"
+
+    def url(self):
+        return reverse("school_management:substitution_detail", args=[self.pk])
 
     def __str__(self):
         return f"{self.teacher.fullname} - {self.start_date} - {self.end_date}"
@@ -557,6 +620,9 @@ class SchoolClass(models.Model):
 class Timetable(models.Model):
     """timetable template for a teacher: all periods for a week. the tempalte is used to create the timetable"""
 
+    semester = models.ForeignKey(
+        Semester, on_delete=models.CASCADE, related_name="timetable_semesters"
+    )
     teacher = models.ForeignKey(
         Person, on_delete=models.CASCADE, related_name="lessons_template_teachers"
     )
@@ -619,10 +685,16 @@ class SubstitutionCandidate(models.Model):
     rating = models.IntegerField(verbose_name="Bewertung", default=1)
     comments = models.TextField(verbose_name="Bemerkungen", blank=True)
     selected = models.BooleanField(verbose_name="Ausgewählt", default=False)
-    invited_date = models.DateField(verbose_name="Einladungsdatum", blank=True, null=True)
+    invited_date = models.DateField(
+        verbose_name="Einladungsdatum", blank=True, null=True
+    )
     selected_date = models.DateField(verbose_name="Zusage", blank=True, null=True)
-    accepted_date = models.DateField(verbose_name="Bestätigung am", blank=True, null=True)
-    record_created_date = models.DateField(default=timezone.now, verbose_name="Erstellt am")
+    accepted_date = models.DateField(
+        verbose_name="Bestätigung am", blank=True, null=True
+    )
+    record_created_date = models.DateField(
+        default=timezone.now, verbose_name="Erstellt am"
+    )
 
     class Meta:
         verbose_name = "Vertretung-KandidatIn"
@@ -672,15 +744,30 @@ class VacationDay(models.Model):
 
 
 class Communication(models.Model):
-    substitution = models.ForeignKey(Substitution, on_delete=models.CASCADE, related_name="substitution")
-    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, related_name="candidate")
-    type = models.ForeignKey(CommunicationType, on_delete=models.CASCADE, related_name="communication_type")
+    substitution = models.ForeignKey(
+        Substitution, on_delete=models.CASCADE, related_name="substitution"
+    )
+    candidate = models.ForeignKey(
+        Candidate, on_delete=models.CASCADE, related_name="candidate"
+    )
+    type = models.ForeignKey(
+        CommunicationType, on_delete=models.CASCADE, related_name="communication_type"
+    )
     request_date = models.DateField(verbose_name="Gesendet am", default=timezone.now)
-    request_text = models.TextField(verbose_name="Anfrage", blank=True, max_length=500)    
+    request_text = models.TextField(verbose_name="Anfrage", blank=True, max_length=500)
     response_text = models.TextField(verbose_name="Antwort", blank=True, max_length=500)
     response_date = models.DateField(verbose_name="Antwort am", blank=True, null=True)
-    response_type = models.ForeignKey(CommunicationResponseType, on_delete=models.CASCADE, related_name="communication_response_type") 
-    
+    response_type = models.ForeignKey(
+        CommunicationResponseType,
+        on_delete=models.CASCADE,
+        related_name="communication_response_type",
+        null=True,
+        blank=True,
+    )
+
+    def subject(self):
+        return f"Stellvertretung {self.substitution.id}, {self.substitution.school.name}, {self.substitution.start_date.strftime('%d.%m.%Y')}-{self.substitution.end_date.strftime('%d.%m.%Y')} {self.candidate.fullname}"
+
     def __str__(self):
         return f"{self.request_date} {self.candidate.fullname}"
 

@@ -8,250 +8,804 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Certificate',
+            name="Certificate",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
             ],
         ),
         migrations.CreateModel(
-            name='Course',
+            name="Course",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Kursname')),
-                ('description', models.TextField(blank=True, verbose_name='Description')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Kursname")),
+                (
+                    "description",
+                    models.TextField(blank=True, verbose_name="Description"),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='DayOfWeek',
+            name="DayOfWeek",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Wochentag')),
-                ('short_name', models.CharField(max_length=255, verbose_name='Kürzel')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Wochentag")),
+                ("short_name", models.CharField(max_length=255, verbose_name="Kürzel")),
             ],
         ),
         migrations.CreateModel(
-            name='Gender',
+            name="Gender",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Geschlecht')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Geschlecht")),
             ],
         ),
         migrations.CreateModel(
-            name='Level',
+            name="Level",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Stufen-Name')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Stufen-Name")),
             ],
         ),
         migrations.CreateModel(
-            name='Location',
+            name="Location",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
             ],
         ),
         migrations.CreateModel(
-            name='Period',
+            name="Period",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('start_time', models.TimeField(verbose_name='Start Time')),
-                ('end_time', models.TimeField(verbose_name='End Date')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("start_time", models.TimeField(verbose_name="Start Time")),
+                ("end_time", models.TimeField(verbose_name="End Date")),
             ],
         ),
         migrations.CreateModel(
-            name='SchoolPersonRole',
+            name="SchoolPersonRole",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
             ],
         ),
         migrations.CreateModel(
-            name='SchoolYear',
+            name="SchoolYear",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('end_date', models.DateField(verbose_name='Letzter Schultag')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("end_date", models.DateField(verbose_name="Letzter Schultag")),
             ],
         ),
         migrations.CreateModel(
-            name='SubstitutionCause',
+            name="SubstitutionCause",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
             ],
         ),
         migrations.CreateModel(
-            name='TimeOfDay',
+            name="TimeOfDay",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Tageszeit')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Tageszeit")),
             ],
         ),
         migrations.CreateModel(
-            name='Person',
+            name="Person",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('first_name', models.CharField(max_length=255, verbose_name='Vorame')),
-                ('last_name', models.CharField(max_length=255, verbose_name='Nachname')),
-                ('email', models.EmailField(blank=True, max_length=254, verbose_name='Email')),
-                ('phone_number', models.CharField(blank=True, max_length=20, verbose_name='Phone Number')),
-                ('year_of_birth', models.CharField(blank=True, max_length=255, verbose_name='Geburtsjahr')),
-                ('cv_text', models.TextField(blank=True, verbose_name='CV Text')),
-                ('cv_file', models.FileField(blank=True, upload_to='cv/', verbose_name='Curriculum')),
-                ('is_teacher', models.BooleanField(default=False, verbose_name='Lehrer')),
-                ('is_candidate', models.BooleanField(default=False, verbose_name='Kandidat')),
-                ('is_leitung', models.BooleanField(default=False, verbose_name='Leitung/Administration')),
-                ('years_of_experience', models.IntegerField(blank=True, default=1, verbose_name='Erfahrung')),
-                ('description', models.TextField(blank=True, max_length=500, verbose_name='Bemerkungen')),
-                ('gender', models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='school_management.gender', verbose_name='Geschlecht')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("first_name", models.CharField(max_length=255, verbose_name="Vorame")),
+                (
+                    "last_name",
+                    models.CharField(max_length=255, verbose_name="Nachname"),
+                ),
+                (
+                    "email",
+                    models.EmailField(blank=True, max_length=254, verbose_name="Email"),
+                ),
+                (
+                    "phone_number",
+                    models.CharField(
+                        blank=True, max_length=20, verbose_name="Phone Number"
+                    ),
+                ),
+                (
+                    "year_of_birth",
+                    models.CharField(
+                        blank=True, max_length=255, verbose_name="Geburtsjahr"
+                    ),
+                ),
+                ("cv_text", models.TextField(blank=True, verbose_name="CV Text")),
+                (
+                    "cv_file",
+                    models.FileField(
+                        blank=True, upload_to="cv/", verbose_name="Curriculum"
+                    ),
+                ),
+                (
+                    "is_teacher",
+                    models.BooleanField(default=False, verbose_name="Lehrer"),
+                ),
+                (
+                    "is_candidate",
+                    models.BooleanField(default=False, verbose_name="Kandidat"),
+                ),
+                (
+                    "is_leitung",
+                    models.BooleanField(
+                        default=False, verbose_name="Leitung/Administration"
+                    ),
+                ),
+                (
+                    "years_of_experience",
+                    models.IntegerField(
+                        blank=True, default=1, verbose_name="Erfahrung"
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(
+                        blank=True, max_length=500, verbose_name="Bemerkungen"
+                    ),
+                ),
+                (
+                    "gender",
+                    models.ForeignKey(
+                        default=1,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="school_management.gender",
+                        verbose_name="Geschlecht",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='PersonCertificate',
+            name="PersonCertificate",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('year', models.CharField(blank=True, max_length=255, null=True, verbose_name='Jahr')),
-                ('certificate', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='candidates_person', to='school_management.certificate')),
-                ('person', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='certificates', to='school_management.person')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "year",
+                    models.CharField(
+                        blank=True, max_length=255, null=True, verbose_name="Jahr"
+                    ),
+                ),
+                (
+                    "certificate",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="candidates_person",
+                        to="school_management.certificate",
+                    ),
+                ),
+                (
+                    "person",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="certificates",
+                        to="school_management.person",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='School',
+            name="School",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Schule')),
-                ('address', models.CharField(max_length=255, verbose_name='Adresse')),
-                ('url', models.URLField(blank=True, verbose_name='Webseite')),
-                ('plz', models.IntegerField(default=4000, verbose_name='Postleitzahl')),
-                ('level', models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='levels', to='school_management.level', verbose_name='Stufe')),
-                ('location', models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='locations', to='school_management.location', verbose_name='Ort')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Schule")),
+                ("address", models.CharField(max_length=255, verbose_name="Adresse")),
+                ("url", models.URLField(blank=True, verbose_name="Webseite")),
+                ("plz", models.IntegerField(default=4000, verbose_name="Postleitzahl")),
+                (
+                    "level",
+                    models.ForeignKey(
+                        default=1,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="levels",
+                        to="school_management.level",
+                        verbose_name="Stufe",
+                    ),
+                ),
+                (
+                    "location",
+                    models.ForeignKey(
+                        default=1,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="locations",
+                        to="school_management.location",
+                        verbose_name="Ort",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='SchoolClass',
+            name="SchoolClass",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('year', models.IntegerField(default=1, verbose_name='Jahr')),
-                ('school_year', models.IntegerField(default=1, verbose_name='Schuljahr')),
-                ('contact_person', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='class_persons', to='school_management.person')),
-                ('level', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='class_levels', to='school_management.level')),
-                ('school', models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='class_schools', to='school_management.school')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                ("year", models.IntegerField(default=1, verbose_name="Jahr")),
+                (
+                    "school_year",
+                    models.IntegerField(default=1, verbose_name="Schuljahr"),
+                ),
+                (
+                    "contact_person",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="class_persons",
+                        to="school_management.person",
+                    ),
+                ),
+                (
+                    "level",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="class_levels",
+                        to="school_management.level",
+                    ),
+                ),
+                (
+                    "school",
+                    models.ForeignKey(
+                        default=1,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="class_schools",
+                        to="school_management.school",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='SchoolPerson',
+            name="SchoolPerson",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('description', models.TextField(blank=True, verbose_name='Bemerkungen')),
-                ('person', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='school_persons', to='school_management.person')),
-                ('school', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='school_person_schools', to='school_management.school')),
-                ('role', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='school_person_roles', to='school_management.schoolpersonrole')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(blank=True, verbose_name="Bemerkungen"),
+                ),
+                (
+                    "person",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="school_persons",
+                        to="school_management.person",
+                    ),
+                ),
+                (
+                    "school",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="school_person_schools",
+                        to="school_management.school",
+                    ),
+                ),
+                (
+                    "role",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="school_person_roles",
+                        to="school_management.schoolpersonrole",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Subject',
+            name="Subject",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('description', models.TextField(blank=True, verbose_name='Description')),
-                ('school_year', models.IntegerField(default=1, verbose_name='Schuljahr')),
-                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='school_management.course', verbose_name='Kurs')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                (
+                    "description",
+                    models.TextField(blank=True, verbose_name="Description"),
+                ),
+                (
+                    "school_year",
+                    models.IntegerField(default=1, verbose_name="Schuljahr"),
+                ),
+                (
+                    "course",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="school_management.course",
+                        verbose_name="Kurs",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='PersonSubject',
+            name="PersonSubject",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('experience', models.IntegerField(blank=True, default=1, verbose_name='Erfahrung')),
-                ('description', models.TextField(blank=True, verbose_name='Description')),
-                ('person', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='personsubject_persons', to='school_management.person')),
-                ('subject', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='personsubject_subjects', to='school_management.subject')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "experience",
+                    models.IntegerField(
+                        blank=True, default=1, verbose_name="Erfahrung"
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(blank=True, verbose_name="Description"),
+                ),
+                (
+                    "person",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="personsubject_persons",
+                        to="school_management.person",
+                    ),
+                ),
+                (
+                    "subject",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="personsubject_subjects",
+                        to="school_management.subject",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='LessonTemplate',
+            name="LessonTemplate",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('frequency', models.IntegerField(default=1, verbose_name='Alle n Wochen')),
-                ('day', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lesson_template_days', to='school_management.dayofweek')),
-                ('period', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lesson_template_periods', to='school_management.period')),
-                ('teacher', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lessons_template_teachers', to='school_management.person')),
-                ('school', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lesson_template_schools', to='school_management.school')),
-                ('school_class', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lesson_template_school_classes', to='school_management.schoolclass')),
-                ('subject', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lesson_template_subjects', to='school_management.subject')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "frequency",
+                    models.IntegerField(default=1, verbose_name="Alle n Wochen"),
+                ),
+                (
+                    "day",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="lesson_template_days",
+                        to="school_management.dayofweek",
+                    ),
+                ),
+                (
+                    "period",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="lesson_template_periods",
+                        to="school_management.period",
+                    ),
+                ),
+                (
+                    "teacher",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="lessons_template_teachers",
+                        to="school_management.person",
+                    ),
+                ),
+                (
+                    "school",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="lesson_template_schools",
+                        to="school_management.school",
+                    ),
+                ),
+                (
+                    "school_class",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="lesson_template_school_classes",
+                        to="school_management.schoolclass",
+                    ),
+                ),
+                (
+                    "subject",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="lesson_template_subjects",
+                        to="school_management.subject",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Lesson',
+            name="Lesson",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateField(verbose_name='Date')),
-                ('period', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lesson_periods', to='school_management.period')),
-                ('teacher', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lesson_teachers', to='school_management.person')),
-                ('school', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lesson_schools', to='school_management.school')),
-                ('school_class', models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_school_classes', to='school_management.schoolclass')),
-                ('subject', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='subjects', to='school_management.subject')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("date", models.DateField(verbose_name="Date")),
+                (
+                    "period",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="lesson_periods",
+                        to="school_management.period",
+                    ),
+                ),
+                (
+                    "teacher",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="lesson_teachers",
+                        to="school_management.person",
+                    ),
+                ),
+                (
+                    "school",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="lesson_schools",
+                        to="school_management.school",
+                    ),
+                ),
+                (
+                    "school_class",
+                    models.ForeignKey(
+                        default=1,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="lesson_school_classes",
+                        to="school_management.schoolclass",
+                    ),
+                ),
+                (
+                    "subject",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="subjects",
+                        to="school_management.subject",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Substitution',
+            name="Substitution",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('start_date', models.DateField(verbose_name='Fällt aus von')),
-                ('end_date', models.DateField(verbose_name='Fällt aus bis')),
-                ('end_period', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='end_periods', to='school_management.period', verbose_name='Bis Lektion')),
-                ('start_period', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='start_periods', to='school_management.period', verbose_name='Von Lektion')),
-                ('teacher', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='teacher_substitutions', to='school_management.person', verbose_name='Lehrkraft')),
-                ('cause', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='substitution_causes', to='school_management.substitutioncause', verbose_name='Begründung')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("start_date", models.DateField(verbose_name="Fällt aus von")),
+                ("end_date", models.DateField(verbose_name="Fällt aus bis")),
+                (
+                    "end_period",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="end_periods",
+                        to="school_management.period",
+                        verbose_name="Bis Lektion",
+                    ),
+                ),
+                (
+                    "start_period",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="start_periods",
+                        to="school_management.period",
+                        verbose_name="Von Lektion",
+                    ),
+                ),
+                (
+                    "teacher",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="teacher_substitutions",
+                        to="school_management.person",
+                        verbose_name="Lehrkraft",
+                    ),
+                ),
+                (
+                    "cause",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="substitution_causes",
+                        to="school_management.substitutioncause",
+                        verbose_name="Begründung",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='SubstitutionPeriod',
+            name="SubstitutionPeriod",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('deputy', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='substitution_deputies', to='school_management.person')),
-                ('lesson', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='substitution_lessons', to='school_management.lesson')),
-                ('substitution', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='substitution_subjects', to='school_management.substitution')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "deputy",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="substitution_deputies",
+                        to="school_management.person",
+                    ),
+                ),
+                (
+                    "lesson",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="substitution_lessons",
+                        to="school_management.lesson",
+                    ),
+                ),
+                (
+                    "substitution",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="substitution_subjects",
+                        to="school_management.substitution",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='period',
-            name='time_of_day',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='school_management.timeofday', verbose_name='Tageszeit'),
+            model_name="period",
+            name="time_of_day",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="school_management.timeofday",
+                verbose_name="Tageszeit",
+            ),
         ),
         migrations.CreateModel(
-            name='Availability',
+            name="Availability",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date_from', models.DateField(verbose_name='Von')),
-                ('date_to', models.DateField(verbose_name='Bis')),
-                ('day_of_week', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='availabilities_days', to='school_management.dayofweek')),
-                ('candidate', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='availabilities', to='school_management.person', verbose_name='Kandidat*in')),
-                ('time_of_day', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='availabilities_time_of_day', to='school_management.timeofday')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("date_from", models.DateField(verbose_name="Von")),
+                ("date_to", models.DateField(verbose_name="Bis")),
+                (
+                    "day_of_week",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="availabilities_days",
+                        to="school_management.dayofweek",
+                    ),
+                ),
+                (
+                    "candidate",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="availabilities",
+                        to="school_management.person",
+                        verbose_name="Kandidat*in",
+                    ),
+                ),
+                (
+                    "time_of_day",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="availabilities_time_of_day",
+                        to="school_management.timeofday",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='VacationTemplate',
+            name="VacationTemplate",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date_from', models.DateField(verbose_name='Von')),
-                ('date_to', models.DateField(verbose_name='Bis')),
-                ('description', models.TextField(blank=True, verbose_name='Bemerkungen')),
-                ('timeofday', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='vacation_time_of_day', to='school_management.timeofday')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("date_from", models.DateField(verbose_name="Von")),
+                ("date_to", models.DateField(verbose_name="Bis")),
+                (
+                    "description",
+                    models.TextField(blank=True, verbose_name="Bemerkungen"),
+                ),
+                (
+                    "timeofday",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="vacation_time_of_day",
+                        to="school_management.timeofday",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='VacationDay',
+            name="VacationDay",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateField(verbose_name='Datum')),
-                ('vacation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='vacation_templates', to='school_management.vacationtemplate')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("date", models.DateField(verbose_name="Datum")),
+                (
+                    "vacation",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="vacation_templates",
+                        to="school_management.vacationtemplate",
+                    ),
+                ),
             ],
         ),
     ]

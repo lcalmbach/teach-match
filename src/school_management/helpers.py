@@ -7,6 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from .models import SubstitutionCandidate
 
+
 def get_week_days(start_date, end_date):
     """
     Returns a list of unique weekdays between the given start_date and end_date (inclusive).
@@ -51,34 +52,34 @@ class SubstitutionHelper:
 
     def get_matching_half_days(self, candidate):
         result = 0
-        result += 1 if self.substitution.mo_am and candidate.availability_mo_am else 0 
-        result += 1 if self.substitution.mo_pm and candidate.availability_mo_pm else 0 
-        result += 1 if self.substitution.tu_am and candidate.availability_tu_am else 0 
-        result += 1 if self.substitution.tu_pm and candidate.availability_tu_pm else 0 
-        result += 1 if self.substitution.we_am and candidate.availability_we_am else 0 
-        result += 1 if self.substitution.we_pm and candidate.availability_we_pm else 0 
-        result += 1 if self.substitution.th_am and candidate.availability_th_am else 0 
-        result += 1 if self.substitution.th_pm and candidate.availability_th_pm else 0 
-        result += 1 if self.substitution.fr_am and candidate.availability_fr_am else 0 
-        result += 1 if self.substitution.fr_pm and candidate.availability_fr_pm else 0 
+        result += 1 if self.substitution.mo_am and candidate.availability_mo_am else 0
+        result += 1 if self.substitution.mo_pm and candidate.availability_mo_pm else 0
+        result += 1 if self.substitution.tu_am and candidate.availability_tu_am else 0
+        result += 1 if self.substitution.tu_pm and candidate.availability_tu_pm else 0
+        result += 1 if self.substitution.we_am and candidate.availability_we_am else 0
+        result += 1 if self.substitution.we_pm and candidate.availability_we_pm else 0
+        result += 1 if self.substitution.th_am and candidate.availability_th_am else 0
+        result += 1 if self.substitution.th_pm and candidate.availability_th_pm else 0
+        result += 1 if self.substitution.fr_am and candidate.availability_fr_am else 0
+        result += 1 if self.substitution.fr_pm and candidate.availability_fr_pm else 0
 
         return result
 
     def get_half_days(self):
         result = 0
-        result += 1 if self.substitution.mo_am else 0 
-        result += 1 if self.substitution.mo_pm else 0 
-        result += 1 if self.substitution.tu_am else 0 
-        result += 1 if self.substitution.tu_pm else 0 
-        result += 1 if self.substitution.we_am else 0 
-        result += 1 if self.substitution.we_pm else 0 
-        result += 1 if self.substitution.th_am else 0 
-        result += 1 if self.substitution.th_pm else 0 
-        result += 1 if self.substitution.fr_am else 0 
-        result += 1 if self.substitution.fr_pm else 0 
+        result += 1 if self.substitution.mo_am else 0
+        result += 1 if self.substitution.mo_pm else 0
+        result += 1 if self.substitution.tu_am else 0
+        result += 1 if self.substitution.tu_pm else 0
+        result += 1 if self.substitution.we_am else 0
+        result += 1 if self.substitution.we_pm else 0
+        result += 1 if self.substitution.th_am else 0
+        result += 1 if self.substitution.th_pm else 0
+        result += 1 if self.substitution.fr_am else 0
+        result += 1 if self.substitution.fr_pm else 0
 
         return result
-    
+
     def init(self):
         Lesson = apps.get_model("school_management", "Timetable")
         SchoolClass = apps.get_model("school_management", "SchoolClass")
@@ -89,7 +90,7 @@ class SubstitutionHelper:
         self.lessons = Lesson.objects.filter(
             teacher=self.substitution.teacher,
             day__in=self.days_in_substitution,
-        ).order_by('day__id', 'period__id')
+        ).order_by("day__id", "period__id")
         self.classes = SchoolClass.objects.filter(
             id__in=self.lessons.values_list("school_class_id", flat=True)
         )
@@ -118,24 +119,23 @@ class SubstitutionHelper:
 
     def get_halfdays(self):
         periods = [
-                    {"d": lesson.day_id, "t": lesson.period.time_of_day_id}
-                    for lesson in self.lessons
+            {"d": lesson.day_id, "t": lesson.period.time_of_day_id}
+            for lesson in self.lessons
         ]
         result = {
-            'mo_am': {"d": 0, "t": 0} in periods,
-            'mo_pm': {"d": 0, "t": 1} in periods,
-            'tu_am': {"d": 1, "t": 0} in periods,
-            'tu_pm': {"d": 1, "t": 1} in periods,
-            'we_am': {"d": 2, "t": 0} in periods,
-            'we_pm': {"d": 2, "t": 1} in periods,
-            'th_am': {"d": 3, "t": 0} in periods,
-            'th_pm': {"d": 3, "t": 1} in periods,
-            'fr_am': {"d": 4, "t": 0} in periods,
-            'fr_pm': {"d": 4, "t": 1} in periods,
+            "mo_am": {"d": 0, "t": 0} in periods,
+            "mo_pm": {"d": 0, "t": 1} in periods,
+            "tu_am": {"d": 1, "t": 0} in periods,
+            "tu_pm": {"d": 1, "t": 1} in periods,
+            "we_am": {"d": 2, "t": 0} in periods,
+            "we_pm": {"d": 2, "t": 1} in periods,
+            "th_am": {"d": 3, "t": 0} in periods,
+            "th_pm": {"d": 3, "t": 1} in periods,
+            "fr_am": {"d": 4, "t": 0} in periods,
+            "fr_pm": {"d": 4, "t": 1} in periods,
         }
         return result
 
-                         
     def get_candidates(self):
         def assign_rating(number, max_number, max_rating=20):
             if number >= max_number:
@@ -144,7 +144,9 @@ class SubstitutionHelper:
 
         SubstitutionCandidate.objects.filter(substitution=self.substitution).delete()
         candidate = apps.get_model("school_management", "Candidate")
-        substitution_candidate = apps.get_model("school_management", "SubstitutionCandidate")
+        substitution_candidate = apps.get_model(
+            "school_management", "SubstitutionCandidate"
+        )
         candidates = candidate.objects.filter(
             available_from_date__lt=self.substitution.start_date,
             available_to_date__gt=self.substitution.end_date,
@@ -156,14 +158,28 @@ class SubstitutionHelper:
         for c in candidates:
             matching_half_days = self.get_matching_half_days(c)
             if matching_half_days > 0:
-                num_experiences = SubstitutionCandidate.objects.filter(candidate=c, accepted_date__isnull=False).count()
-                matching_subjects = len(set(c.subjects.all()).intersection(self.subjects))
-                num_experiences_in_school = SubstitutionCandidate.objects.filter(candidate=c, accepted_date__isnull=False, substitution__school=self.substitution.school).count()
+                num_experiences = SubstitutionCandidate.objects.filter(
+                    candidate=c, accepted_date__isnull=False
+                ).count()
+                matching_subjects = len(
+                    set(c.subjects.all()).intersection(self.subjects)
+                )
+                num_experiences_in_school = SubstitutionCandidate.objects.filter(
+                    candidate=c,
+                    accepted_date__isnull=False,
+                    substitution__school=self.substitution.school,
+                ).count()
                 # num_experiences_with_class = random.randint(1, 2)
                 # num_experiences_with_subjects = num_experiences_in_school
-                
-                rating = matching_half_days / half_days * 30 if matching_half_days > 0 else 0
-                rating = matching_subjects / len(self.subjects) * 30 if matching_subjects > 0 else 0
+
+                rating = (
+                    matching_half_days / half_days * 30 if matching_half_days > 0 else 0
+                )
+                rating = (
+                    matching_subjects / len(self.subjects) * 30
+                    if matching_subjects > 0
+                    else 0
+                )
 
                 rating += assign_rating(num_experiences, 6, 20)
                 rating += assign_rating(num_experiences_in_school, 3, 20)
@@ -175,39 +191,39 @@ class SubstitutionHelper:
                     matching_subjects=matching_subjects,
                     num_experiences=num_experiences,
                     num_experiences_in_school=num_experiences_in_school,
-                    #num_experiences_with_class=num_experiences_with_class,
-                    #num_experiences_with_subjects=num_experiences_with_subjects,
-                    rating=rating
+                    # num_experiences_with_class=num_experiences_with_class,
+                    # num_experiences_with_subjects=num_experiences_with_subjects,
+                    rating=rating,
                 )
                 result.append(sc)
         return result
 
     def send_email(self, subject, body):
         # Gmail credentials
-        gmail_user = os.getenv('GMAIL_USER')
-        gmail_password = os.getenv('GMAIL_PASSWORD')
+        gmail_user = os.getenv("GMAIL_USER")
+        gmail_password = os.getenv("GMAIL_PASSWORD")
 
         # Create the email
         to_email = self.substitution.school.email
         msg = MIMEMultipart()
-        msg['From'] = gmail_user
-        msg['To'] = to_email
-        msg['Subject'] = subject
-        msg.attach(MIMEText(body, 'plain'))
+        msg["From"] = gmail_user
+        msg["To"] = to_email
+        msg["Subject"] = subject
+        msg.attach(MIMEText(body, "plain"))
         # Connect to the Gmail server
         try:
-            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server = smtplib.SMTP("smtp.gmail.com", 587)
             server.starttls()
             server.login(gmail_user, gmail_password)
             text = msg.as_string()
             print(gmail_user, to_email, text)
             server.sendmail(gmail_user, to_email, text)
-            print('Email sent successfully')
+            print("Email sent successfully")
         except Exception as e:
-            print(f'Failed to send email: {e}')
+            print(f"Failed to send email: {e}")
         finally:
             server.quit()
-            
+
     def assign_values(self):
         self.substitution.classes = ",".join([cls.name for cls in self.classes])
         self.substitution.levels = ",".join([lvl.name_short for lvl in self.levels])
@@ -215,15 +231,30 @@ class SubstitutionHelper:
         # if self.substitution.summary is None or self.substitution.summary == "":
         self.substitution.summary = self.get_summary()
         self.substitution.subjects = ",".join([sbj.name_short for sbj in self.subjects])
-        
-        SubstitutionCandidate = apps.get_model("school_management", "SubstitutionCandidate")
-        SubstitutionCandidate.objects.all().filter(substitution=self.substitution).delete()
+
+        SubstitutionCandidate = apps.get_model(
+            "school_management", "SubstitutionCandidate"
+        )
+        SubstitutionCandidate.objects.all().filter(
+            substitution=self.substitution
+        ).delete()
 
         candidates = self.get_candidates()
         self.substitution.substitution_candidates.set(candidates)
 
         halfdays = self.get_halfdays()
-        am_pm_keys = ["mo_am", "tu_am", "we_am", "th_am", "fr_am", "mo_pm", "tu_pm", "we_pm", "th_pm", "fr_pm"]
+        am_pm_keys = [
+            "mo_am",
+            "tu_am",
+            "we_am",
+            "th_am",
+            "fr_am",
+            "mo_pm",
+            "tu_pm",
+            "we_pm",
+            "th_pm",
+            "fr_pm",
+        ]
         for key in am_pm_keys:
             setattr(self.substitution, key, halfdays.get(key))
 

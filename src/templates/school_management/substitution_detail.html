@@ -157,26 +157,28 @@
                     <th>Anz. Erfahrungen (20)</th>
                     <th>Anz. Erfahrungen Schule (20)</th>
                     <th>Rating</th>
-                    <th>Auswahl für SMS</th>
+                    <th>Datum Einladung</th>
+
                 </tr>
             </thead>
             <tbody>
                 {% for x in candidates %}
-                <tr>
+                <tr> 
                     <td><a href="{% url 'school_management:candidate_detail' pk=x.candidate.pk %}">{{ x.candidate.last_name }} {{ x.candidate.first_name }}</a></td>
-                    <td>{{x.matching_half_days}}/{{halfdays}}</td>
-                    <td>{{x.matching_subjects}}/{{x.subjects|length}}</td>
-                    <td>{{x.num_experiences}}</td>
-                    <td>{{x.num_experiences_in_school}}</td>
+                    <td>{{ x.matching_half_days}}/{{halfdays}}</td>
+                    <td>{{ x.matching_subjects}}/{{x.subjects|length}}</td>
+                    <td>{{ x.num_experiences}}</td>
+                    <td>{{ x.num_experiences_in_school}}</td>
                     <td>{{ x.rating }}</td>
+                    <td>{{ x.invited_date }}</td>
                     <td>
-                      <input type="checkbox" name="selected_candidates" value="{{ x.candidate.pk }}" {% if x.candidate.selected %}checked{% endif %}>
+                      <a href="{% url 'school_management:invite_candidates' x.id %}" class="btn btn-secondary">Einladung</a>
                   </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <button type="button" class="btn btn-secondary" onclick="history.back()">Selektierte Kandidatinnen einladen</button>
+        
     </div>
 
     <div class="tab-pane fade" id="applications" role="tabpanel" aria-labelledby="applications-tab">

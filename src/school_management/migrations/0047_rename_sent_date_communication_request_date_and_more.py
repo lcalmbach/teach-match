@@ -6,18 +6,21 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('school_management', '0046_communicationtype_alter_person_school_communication_and_more'),
+        (
+            "school_management",
+            "0046_communicationtype_alter_person_school_communication_and_more",
+        ),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='communication',
-            old_name='sent_date',
-            new_name='request_date',
+            model_name="communication",
+            old_name="sent_date",
+            new_name="request_date",
         ),
         migrations.RenameField(
-            model_name='communication',
-            old_name='application_text',
-            new_name='request_text',
+            model_name="communication",
+            old_name="application_text",
+            new_name="request_text",
         ),
     ]

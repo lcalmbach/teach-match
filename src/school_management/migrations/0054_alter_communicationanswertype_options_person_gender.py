@@ -7,17 +7,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('school_management', '0053_communicationanswertype_communication_answer_type'),
+        ("school_management", "0053_communicationanswertype_communication_answer_type"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='communicationanswertype',
-            options={'ordering': ['name'], 'verbose_name': 'AntwortTyp', 'verbose_name_plural': 'Kommunikations Antworttypen'},
+            name="communicationanswertype",
+            options={
+                "ordering": ["name"],
+                "verbose_name": "AntwortTyp",
+                "verbose_name_plural": "Kommunikations Antworttypen",
+            },
         ),
         migrations.AddField(
-            model_name='person',
-            name='gender',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='school_management.gender'),
+            model_name="person",
+            name="gender",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="school_management.gender",
+            ),
         ),
     ]

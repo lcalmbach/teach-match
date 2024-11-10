@@ -24,7 +24,6 @@ class Command(BaseCommand):
         """
         model.objects.all().delete()
 
-    
     def handle(self, *args, **kwargs):
         for substitution in Substitution.objects.all():
             helper = SubstitutionHelper(substitution)

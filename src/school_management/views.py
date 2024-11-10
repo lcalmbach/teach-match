@@ -14,6 +14,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .texte import texte
+from twilio.rest import Client
 
 from .models import (
     School,
@@ -21,6 +22,7 @@ from .models import (
     Teacher,
     Candidate,
     Substitution,
+    Subject,
     Timetable,
     Location,
     Level,
@@ -30,7 +32,8 @@ from .models import (
     Application,
     CommunicationType,
     Communication,
-    CommunicationResponseType
+    CommunicationResponseType,
+    CommunicationTypeEnum,
 )
 from .forms import (
     SchoolForm,
@@ -42,7 +45,6 @@ from .forms import (
     ApplicationForm,
     ResponseForm,
     ApplicationFullForm,
-
 )
 from django.views.generic import ListView  # Import the necessary module
 from django.urls import reverse_lazy
@@ -81,9 +83,9 @@ class SchoolListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context[
-            "locations"
-        ] = Location.objects.all()  # Pass all locations to the template
+        context["locations"] = (
+            Location.objects.all()
+        )  # Pass all locations to the template
         context["levels"] = Level.objects.all()  # Pass all locations to the template
         return context
 
@@ -128,7 +130,6 @@ class CandidateListView(ListView):
         last_name_filter = self.request.GET.get("last_name_filter", "")
         year_filter = self.request.GET.get("year_filter", "")
 
-        
         # Apply filters if present
         if first_name_filter:
             queryset = queryset.filter(first_name__icontains=first_name_filter)
@@ -149,12 +150,13 @@ class CandidateDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         candidate = context["candidate"]
         all_subjects = []
-        for substitution_candidate in SubstitutionCandidate.objects.filter(candidate=candidate, selected_date__isnull=False):
+        for substitution_candidate in SubstitutionCandidate.objects.filter(
+            candidate=candidate, selected_date__isnull=False
+        ):
             h = SubstitutionHelper(substitution_candidate.substitution)
             all_subjects += h.subjects
-        context['taught_subjects']= dict(Counter([x.name for x in all_subjects]))
-        context['dateidates']= dict(Counter([x.name for x in all_subjects]))
-        print(candidate.subjects.all)
+        context["taught_subjects"] = dict(Counter([x.name for x in all_subjects]))
+        context["dateidates"] = dict(Counter([x.name for x in all_subjects]))
         return context
 
 
@@ -168,15 +170,15 @@ class CandidateEditView(LoginRequiredMixin, UpdateView):
         self.object = self.get_object()
         form = self.get_form()
 
-        action = request.POST.get('action')
+        action = request.POST.get("action")
         if form.is_valid():
-            if action == 'save':
+            if action == "save":
                 self.object = form.save(commit=False)
                 self.object.save()
                 return self.form_valid(form)
-            elif action == 'delete':
+            elif action == "delete":
                 self.object.delete()
-                messages.success(request, 'Das Profil wurde erfolgreich gelöscht.')
+                messages.success(request, "Das Profil wurde erfolgreich gelöscht.")
                 return redirect(self.success_url)
         else:
             print("Form invalid")
@@ -186,9 +188,9 @@ class CandidateEditView(LoginRequiredMixin, UpdateView):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Add the candidate object to the context
-        context['candidate'] = self.object
+        context["candidate"] = self.object
         return context
-    
+
     def form_valid(self, form):
         form.save()
         return redirect(self.success_url)
@@ -208,9 +210,15 @@ class TeacherListView(ListView):
     def get_queryset(self):
         # Get unique combinations of teacher and school from the Timetable model
         queryset = (
-            Timetable.objects
-            .select_related('teacher', 'school')
-            .values('teacher__id', 'teacher__first_name', 'teacher__last_name', 'teacher__phone_number', 'teacher__email', 'school__name')
+            Timetable.objects.select_related("teacher", "school")
+            .values(
+                "teacher__id",
+                "teacher__first_name",
+                "teacher__last_name",
+                "teacher__phone_number",
+                "teacher__email",
+                "school__name",
+            )
             .distinct()
         )
         print(queryset)
@@ -218,10 +226,12 @@ class TeacherListView(ListView):
 
         # Apply filters if present
         if name_filter:
-            queryset = queryset.filter(teacher__person__last_name__icontains=name_filter)
+            queryset = queryset.filter(
+                teacher__person__last_name__icontains=name_filter
+            )
 
         # Order by teacher's last name
-        queryset = queryset.order_by('teacher__last_name')
+        queryset = queryset.order_by("teacher__last_name")
 
         return queryset
 
@@ -237,10 +247,16 @@ class TeacherDetailView(DetailView):
         context["lessons"] = teacher.lessons_template_teachers.all().order_by(
             "day_id", "period_id"
         )
+        context["schools"] = list(
+            Timetable.objects.filter(teacher=teacher)
+            .values_list("school__name", flat=True)
+            .distinct()
+        )
+        print(context["schools"])
         context["subjects"] = teacher.get_unique_subjects()
         context["classes"] = teacher.get_unique_classes()
         day_list = teacher.get_unique_days()
-        context['days'] = f"{len(day_list)}, ({', '.join(day_list)})"
+        context["days"] = f"{len(day_list)}, ({', '.join(day_list)})"
         return context
 
 
@@ -248,37 +264,35 @@ class TeacherEditView(LoginRequiredMixin, UpdateView):
     model = Teacher
     form_class = TeacherForm
     template_name = "school_management/teacher_edit.html"
-    success_url = reverse_lazy("teacher_list")
+    success_url = reverse_lazy("school_management:teacher_list")
 
 
 class SubstitutionCandidatesListView(ListView):
     model = Substitution
-    context_object_name = "substitutions"  
-    template_name = "school_management/substitution_candidates_list.html"  # Path to the template
+    context_object_name = "substitutions"
+    template_name = (
+        "school_management/substitution_candidates_list.html"  # Path to the template
+    )
     success_url = reverse_lazy("school_management/substitution_candidates_list")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context[
-            "status"
-        ] = SubstitutionStatus.objects.all()
-        
+        context["status"] = SubstitutionStatus.objects.all()
+
         context["schools"] = School.objects.all().order_by("name")
-        context[
-            "levels"
-        ] = Level.objects.all().order_by("order")
+        context["subjects"] = Subject.objects.all().order_by("name")
+        context["levels"] = Level.objects.all().order_by("order")
         return context
-    
+
     def post(self, request, *args, **kwargs):
         form = SubstitutionEditForm(request.POST)
-        action = request.POST.get('action')
-        print(action,form.is_valid())
-        if action == 'send_email':
-            id = request.POST.get('substitution_id')
+        action = request.POST.get("action")
+        if action == "send_email":
+            id = request.POST.get("substitution_id")
             substitution = Substitution.objects.get(pk=id)
             helper = SubstitutionHelper(substitution)
-            subject = f'Bewerbung für Vertretung {id}'
-            message = f'This is a test email body for substitution {id} sent by {self.request.user.username}'
+            subject = f"Bewerbung für Vertretung {id}"
+            message = f"This is a test email body for substitution {id} sent by {self.request.user.username}"
             helper.send_email(subject, message)
         return redirect(self.success_url)
 
@@ -289,6 +303,7 @@ class SubstitutionCandidatesListView(ListView):
         date_from_filter = self.request.GET.get("date_from_filter", "")
         date_to_filter = self.request.GET.get("date_to_filter", "")
         status_filter = self.request.GET.get("status_filter", "")
+        subject_filter = self.request.GET.get("subject_filter", "")
         day_filters = {
             "mo_am_filter": self.request.GET.get("mo_am_filter"),
             "tu_am_filter": self.request.GET.get("tu_am_filter"),
@@ -313,12 +328,8 @@ class SubstitutionCandidatesListView(ListView):
             queryset = queryset.filter(start_date__gt=date_from_filter)
         if date_to_filter:
             queryset = queryset.filter(end_date__lt=date_to_filter)
-        if status_filter:
-            queryset = queryset.filter(status_id=status_filter)
-        for key, value in day_filters.items():
-            if value == "1":
-                field_name = key.replace("_filter", "")
-                queryset = queryset.filter(**{field_name: True})
+        if subject_filter:
+            queryset = queryset.filter(subjects__icontains=subject_filter)
 
         queryset = queryset.order_by("start_date")
         return queryset
@@ -329,13 +340,15 @@ class SubstitutionAdminListView(ListView):
     context_object_name = (
         "substitutions"  # The name of the variable to be used in the template
     )
-    template_name = "school_management/substitution_admin_list.html"  # Path to the template
+    template_name = (
+        "school_management/substitution_admin_list.html"  # Path to the template
+    )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context[
-            "status"
-        ] = SubstitutionStatus.objects.all()  # Pass all locations to the template
+        context["status"] = (
+            SubstitutionStatus.objects.all()
+        )  # Pass all locations to the template
         context["schools"] = School.objects.all()  # Pass all locations to the template
         return context
 
@@ -359,7 +372,6 @@ class SubstitutionAdminListView(ListView):
             "th_pm_filter": self.request.GET.get("th_pm_filter"),
             "fr_pm_filter": self.request.GET.get("fr_pm_filter"),
         }
-        print(id_filter)
         # Apply filters if present
         if id_filter:
             queryset = queryset.filter(pk=id_filter)
@@ -367,8 +379,8 @@ class SubstitutionAdminListView(ListView):
             queryset = queryset.filter(school_id=school_filter)
         if teacher_filter:
             queryset = queryset.filter(
-                Q(teacher__last_name__icontains=teacher_filter) |
-                Q(teacher__first_name__icontains=teacher_filter)
+                Q(teacher__last_name__icontains=teacher_filter)
+                | Q(teacher__first_name__icontains=teacher_filter)
             )
         if date_from_filter:
             queryset = queryset.filter(start_date__gt=date_from_filter)
@@ -381,7 +393,7 @@ class SubstitutionAdminListView(ListView):
                 field_name = key.replace("_filter", "")
                 queryset = queryset.filter(**{field_name: True})
 
-        queryset = queryset.order_by("start_date").order_by('-id')
+        queryset = queryset.order_by("start_date").order_by("-id")
         return queryset
 
 
@@ -389,18 +401,20 @@ class SubstitutionDetailView(DetailView):
     model = Substitution
     template_name = "school_management/substitution_detail.html"
     context_object_name = "substitution"
-    
 
     def get_context_data(self, **kwargs):
         substitution = self.get_object()
         substitution_helper = SubstitutionHelper(substitution)
         context = super().get_context_data(**kwargs)
-        context['completed_by'] = SubstitutionCandidate.objects.filter(substitution=substitution, selected_date__isnull=False).order_by("selected_date")
-        context['timetable'] = substitution_helper.lessons
-        context['candidates'] = SubstitutionCandidate.objects.filter(substitution=substitution).order_by('-rating')
-        context['halfdays'] = substitution_helper.get_half_days()
-        context['applications'] = Application.objects.filter(substitution=substitution)
-        print(context['halfdays'])
+        context["completed_by"] = SubstitutionCandidate.objects.filter(
+            substitution=substitution, selected_date__isnull=False
+        ).order_by("selected_date")
+        context["timetable"] = substitution_helper.lessons
+        context["candidates"] = SubstitutionCandidate.objects.filter(
+            substitution=substitution
+        ).order_by("-rating")
+        context["halfdays"] = substitution_helper.get_half_days()
+        context["applications"] = Application.objects.filter(substitution=substitution)
         return context
 
 
@@ -408,13 +422,44 @@ class SubstitutionCreateView(CreateView):
     model = Substitution
     form_class = SubstitutionCreateForm
     template_name = "school_management/substitution_create.html"
-    
+
     def form_valid(self, form):
         self.object = form.save()
         helper = SubstitutionHelper(self.object)
         helper.assign_values()
         self.object.save()
-        return redirect(reverse('school_management:substitution_detail', kwargs={'pk': self.object.pk}))
+        return redirect(
+            reverse(
+                "school_management:substitution_detail", kwargs={"pk": self.object.pk}
+            )
+        )
+
+
+class SubstitutionCreateWithTeacherView(CreateView):
+    model = Substitution
+    form_class = SubstitutionCreateForm
+    template_name = "school_management/substitution_create.html"
+
+    def get_initial(self):
+        initial = super().get_initial()
+        teacher_id = self.kwargs.get("teacher_id")
+        if teacher_id:
+            teacher = get_object_or_404(Teacher, id=teacher_id)
+            school = teacher.get_school()
+            initial["teacher"] = teacher
+            initial["school"] = school
+        return initial
+
+    def form_valid(self, form):
+        self.object = form.save()
+        helper = SubstitutionHelper(self.object)
+        helper.assign_values()
+        self.object.save()
+        return redirect(
+            reverse(
+                "school_management:substitution_detail", kwargs={"pk": self.object.pk}
+            )
+        )
 
 
 class SubstitutionEditView(UpdateView):
@@ -431,26 +476,28 @@ class SubstitutionEditView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         substitution = self.get_object()
-        context['applications'] = Application.objects.filter(substitution=substitution)
+        context["applications"] = Application.objects.filter(substitution=substitution)
         return context
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_form()
 
-        action = request.POST.get('action')
-        
+        action = request.POST.get("action")
+
         if form.is_valid():
-            if action == 'save':
+            if action == "save":
                 self.object = form.save(commit=False)
                 helper = SubstitutionHelper(self.object)
                 helper.assign_values()
 
                 self.object.save()
                 return self.form_valid(form)
-            elif action == 'delete':
+            elif action == "delete":
                 self.object.delete()
-                messages.success(request, 'Die Stellvertretung wurde erfolgreich gelöscht.')
+                messages.success(
+                    request, "Die Stellvertretung wurde erfolgreich gelöscht."
+                )
                 return redirect(self.get_success_url())  # Use method call here
         else:
             print("Form invalid")
@@ -458,11 +505,13 @@ class SubstitutionEditView(UpdateView):
 
     def get_success_url(self):
         if self.object:
-            return reverse('school_management:substitution_detail', kwargs={'pk': self.object.pk})
+            return reverse(
+                "school_management:substitution_detail", kwargs={"pk": self.object.pk}
+            )
         else:
             # Handle the case where the object is None
-            return reverse('school_management:substitution_list')  # Or any fallback URL
-    
+            return reverse("school_management:substitution_list")  # Or any fallback URL
+
     def form_valid(self, form):
         form.save()
         return redirect(self.get_success_url())  # Use method call here
@@ -474,11 +523,12 @@ class SubstitutionEditView(UpdateView):
         return self.render_to_response(context)
 
 
-
 class ApplicationCreateView(View):
     def post(self, request, *args, **kwargs):
-        substitution_id = request.POST.get('substitution')
-        success_url = reverse('school_management:application_create', kwargs={'id': substitution_id})
+        substitution_id = request.POST.get("substitution")
+        success_url = reverse(
+            "school_management:application_create", kwargs={"id": substitution_id}
+        )
         substitution = get_object_or_404(Substitution, id=substitution_id)
         candidate = get_object_or_404(Person, user=request.user)
         application_type = get_object_or_404(CommunicationType, id=1)
@@ -489,87 +539,90 @@ class ApplicationCreateView(View):
             candidate=candidate,
             type=application_type,
             request_date=timezone.now(),
-            request_text=request.POST.get('request_text', '')
+            request_text=request.POST.get("request_text", ""),
         )
         application.save()
 
-
         # Determine the action and perform the corresponding task
-        action = request.POST.get('action')
-        if action == 'apply':
+        action = request.POST.get("action")
+        if action == "apply":
             # Send email logic here
-            subject = f'Bewerbung für Vertretung {substitution_id} ({application.substitution.school.name}, {application.substitution.start_date} - {application.substitution.end_date}, Vertrung von {application.substitution.teacher.fullname})'
+            subject = f"Bewerbung für Vertretung {substitution_id} ({application.substitution.school.name}, {application.substitution.start_date} - {application.substitution.end_date}, Vertrung von {application.substitution.teacher.fullname})"
             message = application.request_text
             message += f'<br><br><a href="http://127.0.0.1:8000/school_management/candidates/{candidate.id}/">{candidate.fullname}</a>'
             message += f'Link: <a href="http://stellvertretungen.bs.ch/school_management/application/{application.id}/edit/">Bewerbung bearbeiten</a'
             helper = SubstitutionHelper(substitution)
             helper.send_email(subject, message)
 
-            messages.success(request, 'Ihre Bewerbung wurde erfolgreich abgeschickt.')
-            success_url = reverse('school_management:substitution_candidates_list')
+            messages.success(request, "Ihre Bewerbung wurde erfolgreich abgeschickt.")
+            success_url = reverse("school_management:substitution_candidates_list")
 
         # Redirect to a success page or similar
-        
+
         return redirect(success_url)
 
     def get(self, request, *args, **kwargs):
         candidate = get_object_or_404(Person, user=request.user)
         form = ApplicationForm()
-        
-        substitution_id = kwargs.get('id')
-        substitution = get_object_or_404(Substitution, id=substitution_id)  # Ensure substitution is fetched here
-        
-        context = {
-            'form': form,
-            'substitution': substitution,
-            'candidate': candidate,
-            'username': request.user.username,
-            'substitution_id': substitution_id,
-        }
-        return render(request, 'school_management/application_create.html', context)
 
+        substitution_id = kwargs.get("id")
+        substitution = get_object_or_404(
+            Substitution, id=substitution_id
+        )  # Ensure substitution is fetched here
+
+        context = {
+            "form": form,
+            "substitution": substitution,
+            "candidate": candidate,
+            "username": request.user.username,
+            "substitution_id": substitution_id,
+        }
+        return render(request, "school_management/application_create.html", context)
 
 
 class ApplicationResponseView(View):
     def post(self, request, *args, **kwargs):
-        application_id = request.POST.get('application_id')
-        success_url = reverse('school_management:application_response', kwargs={'id': application_id})
+        application_id = request.POST.get("application_id")
+        success_url = reverse(
+            "school_management:application_response", kwargs={"id": application_id}
+        )
         application = get_object_or_404(Application, id=application_id)
         author = get_object_or_404(Person, user=request.user)
         candidate = application.candidate
         # Ensure that type is set to 1 for applications
         application_type = get_object_or_404(CommunicationType, id=1)
 
-        application.response_date=timezone.now()
-        application.response_text=request.POST.get('response_text', '')
+        application.response_date = timezone.now()
+        application.response_text = request.POST.get("response_text", "")
         application.save()
 
         # Determine the action and perform the corresponding task
-        action = request.POST.get('action')
-        if action == 'apply':
+        action = request.POST.get("action")
+        if action == "apply":
             # Send email logic here
-            subject = f'Ihre Bewerbung für Vertretung {application_id} ({application.substitution.school.name}, {application.substitution.start_date} - {application.substitution.end_date}, Vertrung von {application.substitution.teacher.fullname})'
+            subject = f"Ihre Bewerbung für Vertretung {application_id} ({application.substitution.school.name}, {application.substitution.start_date} - {application.substitution.end_date}, Vertrung von {application.substitution.teacher.fullname})"
             message = application.response_text
             helper = SubstitutionHelper(application.substitution)
             helper.send_email(subject, message)
 
-            messages.success(request, 'Ihre Bewerbung wurde erfolgreich abgeschickt.')
-            success_url = reverse('school_management:substitution_candidates_list')
+            messages.success(request, "Ihre Bewerbung wurde erfolgreich abgeschickt.")
+            success_url = reverse("school_management:substitution_candidates_list")
 
         return redirect(success_url)
 
     def get(self, request, *args, **kwargs):
         form = ResponseForm()
-        application = get_object_or_404(Application, id=kwargs.get('id'))  # Ensure substitution is fetched here
+        application = get_object_or_404(
+            Application, id=kwargs.get("id")
+        )  # Ensure substitution is fetched here
         author = get_object_or_404(Person, user=request.user)
         context = {
-            'form': form,
-            'application': application,
-            'username': request.user.username,
-            'author': author.fullname
+            "form": form,
+            "application": application,
+            "username": request.user.username,
+            "author": author.fullname,
         }
-        return render(request, 'school_management/application_response.html', context)
-
+        return render(request, "school_management/application_response.html", context)
 
 
 class InvitationCreateView(LoginRequiredMixin, CreateView):
@@ -581,33 +634,52 @@ class InvitationCreateView(LoginRequiredMixin, CreateView):
     )  # Redirect to school list view after saving
 
 
-
 def admin_tasks(request):
-    return render(request, 'school_management/admin_tasks.html')
+    return render(request, "school_management/admin_tasks.html")
 
 
 def calculate_teacher_availability(request):
     # Fetch all teachers and their schedules
     teachers = Teacher.objects.all()
     schedules = Timetable.objects.filter(teacher__in=teachers)
-    
+
     # Example calculation logic
     availability = {}
     for teacher in teachers:
-        teacher.availability_mo_am = schedules.filter(teacher=teacher, day_id=1, period__time_of_day__id=0).exists()
-        teacher.availability_mo_pm = schedules.filter(teacher=teacher, day_id=1, period__time_of_day__id=1).exists()
-        teacher.availability_th_am = schedules.filter(teacher=teacher, day_id=4, period__time_of_day__id=0).exists()
-        teacher.availability_th_pm = schedules.filter(teacher=teacher, day_id=4, period__time_of_day__id=1).exists()
-        teacher.availability_tu_am = schedules.filter(teacher=teacher, day_id=2, period__time_of_day__id=0).exists()
-        teacher.availability_tu_pm = schedules.filter(teacher=teacher, day_id=2, period__time_of_day__id=1).exists()
-        teacher.availability_we_am = schedules.filter(teacher=teacher, day_id=3, period__time_of_day__id=0).exists()
-        teacher.availability_we_pm = schedules.filter(teacher=teacher, day_id=3, period__time_of_day__id=1).exists()
-        teacher.availability_fr_am = schedules.filter(teacher=teacher, day_id=5, period__time_of_day__id=0).exists()
-        teacher.availability_fr_pm = schedules.filter(teacher=teacher, day_id=5, period__time_of_day__id=1).exists()
+        teacher.availability_mo_am = schedules.filter(
+            teacher=teacher, day_id=1, period__time_of_day__id=0
+        ).exists()
+        teacher.availability_mo_pm = schedules.filter(
+            teacher=teacher, day_id=1, period__time_of_day__id=1
+        ).exists()
+        teacher.availability_th_am = schedules.filter(
+            teacher=teacher, day_id=4, period__time_of_day__id=0
+        ).exists()
+        teacher.availability_th_pm = schedules.filter(
+            teacher=teacher, day_id=4, period__time_of_day__id=1
+        ).exists()
+        teacher.availability_tu_am = schedules.filter(
+            teacher=teacher, day_id=2, period__time_of_day__id=0
+        ).exists()
+        teacher.availability_tu_pm = schedules.filter(
+            teacher=teacher, day_id=2, period__time_of_day__id=1
+        ).exists()
+        teacher.availability_we_am = schedules.filter(
+            teacher=teacher, day_id=3, period__time_of_day__id=0
+        ).exists()
+        teacher.availability_we_pm = schedules.filter(
+            teacher=teacher, day_id=3, period__time_of_day__id=1
+        ).exists()
+        teacher.availability_fr_am = schedules.filter(
+            teacher=teacher, day_id=5, period__time_of_day__id=0
+        ).exists()
+        teacher.availability_fr_pm = schedules.filter(
+            teacher=teacher, day_id=5, period__time_of_day__id=1
+        ).exists()
         teacher.save()
 
     messages.success(request, "Die Verfügbarkeit der Lehrer wurde aktualisiert")
-    return redirect('school_management:admin_tasks')
+    return redirect("school_management:admin_tasks")
 
 
 class ApplicationListView(ListView):
@@ -620,8 +692,12 @@ class ApplicationListView(ListView):
         application_filter = self.request.GET.get("application_filter", "")
         substitution_filter = self.request.GET.get("substitution_filter", "")
         candidate_filter = self.request.GET.get("candidate_filter", "")
-        substitution_date_filter_from = self.request.GET.get("substitution_date_filter_from", "")
-        substitution_date_filter_to = self.request.GET.get("substitution_date_filter_to", "")
+        substitution_date_filter_from = self.request.GET.get(
+            "substitution_date_filter_from", ""
+        )
+        substitution_date_filter_to = self.request.GET.get(
+            "substitution_date_filter_to", ""
+        )
         response_filter = self.request.GET.get("response_filter", "")
 
         if substitution_filter:
@@ -630,26 +706,30 @@ class ApplicationListView(ListView):
             queryset = queryset.filter(id=application_filter)
         if candidate_filter:
             queryset = queryset.filter(
-                Q(candidate__first_name__icontains=candidate_filter) |
-                Q(candidate__last_name__icontains=candidate_filter)
+                Q(candidate__first_name__icontains=candidate_filter)
+                | Q(candidate__last_name__icontains=candidate_filter)
             )
         if substitution_date_filter_from:
-            queryset = queryset.filter(substitution__start_date__gte=substitution_date_filter_from)
+            queryset = queryset.filter(
+                substitution__start_date__gte=substitution_date_filter_from
+            )
         if substitution_date_filter_to:
-            queryset = queryset.filter(substitution__start_date__lte=substitution_date_filter_to)
+            queryset = queryset.filter(
+                substitution__start_date__lte=substitution_date_filter_to
+            )
         if response_filter:
             queryset = queryset.filter(response_type_id=response_filter)
-        
-        queryset = queryset.order_by('-request_date')
+
+        queryset = queryset.order_by("-request_date")
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Add response codes to the context
-        context['responses'] = CommunicationResponseType.objects.all()
+        context["responses"] = CommunicationResponseType.objects.all()
         return context
 
-    
+
 class ApplicationDetailView(DetailView):
     model = Application
     template_name = "school_management/application_detail.html"
@@ -659,6 +739,7 @@ class ApplicationDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         return context
 
+
 class ApplicationEditView(LoginRequiredMixin, UpdateView):
     model = Application
     form_class = ApplicationFullForm
@@ -667,43 +748,65 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        
+
         # Define the 'antworten' dictionary
-        context['antworten'] = {
-            'bestaetigung': 'Ihre Anfrage wurde bestätigt.',
-            'absage': 'Leider müssen wir Ihre Anfrage ablehnen.',
-            'annahme': 'Ihre Anfrage wurde angenommen.'
+        context["antworten"] = {
+            "bestaetigung": "Ihre Anfrage wurde bestätigt.",
+            "absage": "Leider müssen wir Ihre Anfrage ablehnen.",
+            "annahme": "Ihre Anfrage wurde angenommen.",
         }
-        
+
         return context
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_form()
-        action = request.POST.get('action')  
+        action = request.POST.get("action")
 
         if form.is_valid():
-            response_text = request.POST.get('response_text')
-            response_type_id = request.POST.get('response_type')  
+            response_text = request.POST.get("response_text")
+            response_type_id = request.POST.get("response_type")
             response_type = CommunicationResponseType.objects.get(pk=response_type_id)
-            response_date = request.POST.get('response_date')
+            response_date = request.POST.get("response_date")
 
             # Modify the application object and save it
             application = form.save(commit=False)
             application.response_text = response_text
-            application.response_type = response_type  # Assign the actual CommunicationResponseType instance
+            application.response_type = (
+                response_type  # Assign the actual CommunicationResponseType instance
+            )
             application.response_date = response_date
             application.save()
 
-            if action == 'send':
-                self.send_email(application)
+            if action == "send":
+                if application.candidate.send_email:
+                    self.send_email(application)
+                if application.candidate.send_sms:
+                    self.send_sms(application)
 
             return redirect(self.get_success_url())
         else:
             return self.form_invalid(form)
 
+    def send_sms(self, application):
+        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_ACCOUNT_TOKEN)
+        body = f"""
+            {application.subject()}
+            {application.response_text}
+            Weitere Informationen unter:
+            {settings.BASE_URL}{reverse('school_management:application_detail', kwargs={'pk': application.id})}
+            """.strip()
+        message = client.messages.create(
+            body=body,
+            from_=settings.TWILIO_PHONE_NUMBER,
+            to=application.candidate.phone_number,
+        )
+
+        print(f"Message sent with SID: {message.sid}")
+        messages.success(self.request, "Deine Email wurde erfolgreich versandt.")
+
     def send_email(self, application):
-        subject = 'Betreff'  # Set your subject here
+        subject = "Betreff"  # Set your subject here
         message = application.response_text
         recipient = application.candidate.email
 
@@ -714,6 +817,7 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
             [recipient],
             fail_silently=False,
         )
+        messages.success(self.request, "Deine SMS wurde erfolgreich versandt.")
 
     def get_success_url(self):
         return reverse("school_management:application_edit", args=[self.object.id])
@@ -721,9 +825,18 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
 
 class CandidateCreateView(CreateView):
     model = Person
-    fields = ['first_name', 'last_name', 'email', 'phone_number', 'subjects', 'is_candidate']  # Include relevant fields
-    template_name = 'school_management/candidate_form.html'
-    success_url = reverse_lazy('school_management:candidate_list')  # Redirect to a list of candidates or another view after creation
+    fields = [
+        "first_name",
+        "last_name",
+        "email",
+        "phone_number",
+        "subjects",
+        "is_candidate",
+    ]  # Include relevant fields
+    template_name = "school_management/candidate_form.html"
+    success_url = reverse_lazy(
+        "school_management:candidate_list"
+    )  # Redirect to a list of candidates or another view after creation
 
     def form_valid(self, form):
         # Ensure that the person is marked as a candidate
@@ -733,9 +846,50 @@ class CandidateCreateView(CreateView):
 
 class CandidateDeleteView(DeleteView):
     model = Person
-    template_name = 'school_management/candidate_confirm_delete.html'
-    success_url = reverse_lazy('school_management:candidate_list')  # Redirect to a list of candidates after deletion
+    template_name = "school_management/candidate_confirm_delete.html"
+    success_url = reverse_lazy(
+        "school_management:candidate_list"
+    )  # Redirect to a list of candidates after deletion
 
     def get_queryset(self):
         # Ensure that only candidates can be deleted via this view
         return super().get_queryset().filter(is_candidate=True)
+
+
+def invite_candidates(request, id):
+    selected_candidate = get_object_or_404(SubstitutionCandidate, id=id)
+    author = get_object_or_404(Person, user=request.user)
+    # Check if an invitation already exists for this candidate and substitution
+    invitation, created = Communication.objects.get_or_create(
+        type=CommunicationType.objects.get(pk=CommunicationTypeEnum.EINLADUNG.value),
+        candidate=selected_candidate.candidate,
+        substitution=selected_candidate.substitution,
+        defaults={
+            "request_date": timezone.now(),
+            "request_text": texte["default_invitiation_email"].format(
+                selected_candidate.candidate.informal_salutation,
+                selected_candidate.substitution.school.name,
+                selected_candidate.substitution.url(),
+                selected_candidate.substitution.school.email,
+                selected_candidate.substitution.school.phone_number,
+                author.first_last_name,
+            ),
+        },
+    )
+
+    # If it's a POST request, process the submitted form data
+    if request.method == "POST":
+        form = InvitationForm(request.POST, instance=invitation)
+        if form.is_valid():
+            form.save()  # Save the form data (updates the invitation if necessary)
+            return render(request, "success.html")  # Redirect to a success page
+    else:
+        # Prepopulate the form with the invitation instance
+        form = InvitationForm(instance=invitation)
+
+    context = {
+        "substitution": selected_candidate.substitution,
+        "candidate": selected_candidate.candidate,
+        "form": form,
+    }
+    return render(request, "school_management/invite_candidates.html", context)

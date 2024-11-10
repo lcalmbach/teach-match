@@ -8,19 +8,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('school_management', '0044_rename_vacationtemplate_vacation'),
+        ("school_management", "0044_rename_vacationtemplate_vacation"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='person',
-            name='user',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="person",
+            name="user",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='person',
-            name='username',
-            field=models.CharField(blank=True, max_length=255, verbose_name='Benutzername'),
+            model_name="person",
+            name="username",
+            field=models.CharField(
+                blank=True, max_length=255, verbose_name="Benutzername"
+            ),
         ),
     ]

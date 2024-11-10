@@ -6,27 +6,31 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('school_management', '0051_remove_schoolclass_contact_person'),
+        ("school_management", "0051_remove_schoolclass_contact_person"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='person',
-            name='username',
+            model_name="person",
+            name="username",
         ),
         migrations.AddField(
-            model_name='person',
-            name='notify_mail_flag',
-            field=models.BooleanField(default=False, verbose_name='Benachrichtigung per Mail'),
+            model_name="person",
+            name="notify_mail_flag",
+            field=models.BooleanField(
+                default=False, verbose_name="Benachrichtigung per Mail"
+            ),
         ),
         migrations.AddField(
-            model_name='person',
-            name='notify_sms_flag',
-            field=models.BooleanField(default=False, verbose_name='Benachrichtigung per SMS'),
+            model_name="person",
+            name="notify_sms_flag",
+            field=models.BooleanField(
+                default=False, verbose_name="Benachrichtigung per SMS"
+            ),
         ),
         migrations.AlterField(
-            model_name='person',
-            name='available_from_date',
-            field=models.DateField(blank=True, null=True, verbose_name='Verfügbar von'),
+            model_name="person",
+            name="available_from_date",
+            field=models.DateField(blank=True, null=True, verbose_name="Verfügbar von"),
         ),
     ]

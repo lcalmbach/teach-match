@@ -5,6 +5,7 @@ crispy-bootstrap5
 django_widget_tweaks
 django-crispy-forms
 django_bootstrap5
+django-environ
 PyMuPDF
 pandas
 gunicorn

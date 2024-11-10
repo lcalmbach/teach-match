@@ -6,18 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('school_management', '0001_initial'),
+        ("school_management", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='substitution',
-            name='description',
-            field=models.TextField(blank=True, max_length=500, verbose_name='Beschreibung'),
+            model_name="substitution",
+            name="description",
+            field=models.TextField(
+                blank=True, max_length=500, verbose_name="Beschreibung"
+            ),
         ),
         migrations.AlterField(
-            model_name='personsubject',
-            name='description',
-            field=models.TextField(blank=True, max_length=500, verbose_name='Description'),
+            model_name="personsubject",
+            name="description",
+            field=models.TextField(
+                blank=True, max_length=500, verbose_name="Description"
+            ),
         ),
     ]

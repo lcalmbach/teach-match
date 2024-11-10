@@ -3,7 +3,7 @@
 {% block content %}
   <div class="info-container">
     <h2>Bewerbung</h2>
-    <table class="info-table">
+    <table class="table">
         <tr>
             <th>Stellvertretung Dauer:</th>
             <td>{{ application.substitution.start_date }} bis {{ application.substitution.end_date }}</td>
@@ -36,10 +36,6 @@
     </table>
     <br>
     <a href="javascript:history.back()" class="btn btn-primary">Zurück</a>
-    <a href="{% url 'school_management:application_edit' pk=application.pk %}" class="btn btn-primary" action="confirm">Bestätigen</a>
-    <a href="{% url 'school_management:application_edit' pk=application.pk %}" class="btn btn-primary" action="accept">Annehmen</a>
-    <a href="{% url 'school_management:application_edit' pk=application.pk %}" class="btn btn-primary" action="reject">Ablehnen</a>
-    <a href="{% url 'school_management:application_edit' pk=application.pk %}" class="btn btn-primary" action="edit">Editieren</a>
   </div> 
 </div>
 

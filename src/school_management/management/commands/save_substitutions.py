@@ -15,8 +15,8 @@ from school_management.helpers import SubstitutionHelper
 
 today = datetime.now()
 end_of_year = datetime(today.year, 12, 31)
-all_days, all_periods = [],[]
-        
+all_days, all_periods = [], []
+
 
 def generate_date_list(year):
     start_date = datetime(year, 1, 1)
@@ -44,7 +44,7 @@ class Command(BaseCommand):
 
     def add_substitutions(self, faker):
         print("Creating substitutions...")
-        
+
         try:
             for s in Substitution.objects.all():
                 helper = SubstitutionHelper(s)
@@ -60,7 +60,6 @@ class Command(BaseCommand):
         global all_days
         global all_periods
         faker = Faker("de_DE")
-        
+
         for subtitution in Substitution.objects.all():
             subtitution.save()
-

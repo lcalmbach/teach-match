@@ -13,26 +13,29 @@ from .forms import TeacherForm, CandidateForm
 
 from school_management.models import Person
 
+
 def user_login(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            user = authenticate(request, username=data['username'], password=data['password'])
+            user = authenticate(
+                request, username=data["username"], password=data["password"]
+            )
             person = Person.objects.get(user=user)
             if user is not None:
                 if user.is_active:
                     login(request, user)
                     messages.info(request, f"Willkommen {person.first_name}.")
-                    return redirect('index')
+                    return redirect("index")
                 else:
-                    return HttpResponse('Disabled account')
+                    return HttpResponse("Disabled account")
             else:
-                return HttpResponse('Invalid login')
+                return HttpResponse("Invalid login")
     else:
         form = LoginForm()
 
-    return render(request, 'login_account/login.html', {'form': form})
+    return render(request, "login_account/login.html", {"form": form})
 
 
 @login_required
@@ -45,45 +48,47 @@ def user_logout(request):
     except Person.DoesNotExist:
         logout(request)
         messages.info(request, f"Auf Wiedersehen.")
-    return redirect('index')
+    return redirect("index")
+
 
 @login_required
 def user_profile_old(request):
-    print(request.method )
+    print(request.method)
     user = request.user
     try:
         person = Person.objects.get(user=user)
     except Person.DoesNotExist:
         messages.error(request, "Profile not found.")
-        return redirect('some_error_page')  # Handle the error appropriately
+        return redirect("some_error_page")  # Handle the error appropriately
 
-    if request.method == 'POST':
+    if request.method == "POST":
         profile_form_valid = False
         password_change_form_valid = False
-        
+
         if person.is_teacher:
             form = TeacherForm(request.POST, instance=person)
         elif person.is_candidate:
             form = CandidateForm(request.POST, instance=person)
         else:
             messages.error(request, "Invalid profile type.")
-            return redirect('some_error_page')
+            return redirect("some_error_page")
 
         password_change_form = PasswordChangeForm(request.user, request.POST)
 
         if form.is_valid():
             form.save()
             profile_form_valid = True
-            messages.success(request, "Profile updated successfully.")
-        
+
         if password_change_form.is_valid():
             user = password_change_form.save()
-            update_session_auth_hash(request, user)  # Important to keep the user logged in
+            update_session_auth_hash(
+                request, user
+            )  # Important to keep the user logged in
             password_change_form_valid = True
             messages.success(request, "Password changed successfully.")
 
         if profile_form_valid or password_change_form_valid:
-            return redirect('profile')  # Redirect to a profile success page
+            return redirect("profile")  # Redirect to a profile success page
     else:
         if person.is_teacher:
             form = TeacherForm(instance=person)
@@ -91,44 +96,45 @@ def user_profile_old(request):
             form = CandidateForm(instance=person)
         else:
             messages.error(request, "Invalid profile type.")
-            return redirect('some_error_page')
+            return redirect("some_error_page")
 
         password_change_form = PasswordChangeForm(request.user)
 
-    return render(request, 'login_account/profile.html', {
-        'form': form,
-        'password_change_form': password_change_form
-    })
+    return render(
+        request,
+        "login_account/profile.html",
+        {"form": form, "password_change_form": password_change_form},
+    )
+
 
 @login_required
 def user_profile(request):
-    print(request.method )
+    print(request.method)
     user = request.user
     try:
         person = Person.objects.get(user=user)
     except Person.DoesNotExist:
         messages.error(request, "Profile not found.")
-        return redirect('some_error_page')  # Handle the error appropriately
+        return redirect("some_error_page")  # Handle the error appropriately
 
-    if request.method == 'POST':
+    if request.method == "POST":
         profile_form_valid = False
         password_change_form_valid = False
-        
+
         if person.is_teacher:
             form = TeacherForm(request.POST, instance=person)
         elif person.is_candidate:
             form = CandidateForm(request.POST, instance=person)
         else:
             messages.error(request, "Invalid profile type.")
-            return redirect('some_error_page')
+            return redirect("some_error_page")
 
         if form.is_valid():
             form.save()
             profile_form_valid = True
             messages.success(request, "Profile updated successfully.")
-            return redirect('school_management:candidate_detail', pk=person.pk)
+            return redirect("school_management:candidate_detail", pk=person.pk)
 
-            
     else:
         if person.is_teacher:
             form = TeacherForm(instance=person)
@@ -136,11 +142,12 @@ def user_profile(request):
             form = CandidateForm(instance=person)
         else:
             messages.error(request, "Invalid profile type.")
-            return redirect('some_error_page')
+            return redirect("some_error_page")
 
     password_change_form = PasswordChangeForm(request.user)
 
-    return render(request, 'login_account/profile.html', {
-        'form': form,
-        'password_change_form': password_change_form
-    })
+    return render(
+        request,
+        "login_account/profile.html",
+        {"form": form, "password_change_form": password_change_form},
+    )
