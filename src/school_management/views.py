@@ -790,12 +790,12 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
 
     def send_sms(self, application):
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_ACCOUNT_TOKEN)
-        body = f"""
-            {application.subject()}
-            {application.response_text}
-            Weitere Informationen unter:
-            {settings.BASE_URL}{reverse('school_management:application_detail', kwargs={'pk': application.id})}
-            """.strip()
+        body = (
+            f"{application.subject()}\n"
+            f"{application.response_text}\n"
+            "Weitere Informationen unter:\n"
+            f"{settings.BASE_URL}{reverse('school_management:application_detail', kwargs={'pk': application.id})}\n"
+        ).strip()
         message = client.messages.create(
             body=body,
             from_=settings.TWILIO_PHONE_NUMBER,
