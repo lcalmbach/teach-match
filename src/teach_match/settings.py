@@ -24,12 +24,16 @@ BASE_URL = "https://teach-match-471e96400251.herokuapp.com/"
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-env = environ.Env()
-environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+env_file = os.path.join(BASE_DIR, ".env")
+if os.path.exists(env_file):
+    env = environ.Env()
+    environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+
 SECRET_KEY = env(
     "DJANGO_SECRET_KEY"
-)  # os.environ.get('DJANGO_SECRET_KEY', 'lthz&jt*rosx3+04vb$&+gx@cl_o494e_*f#%3u_@ha34i3y^&')
+)
+if not SECRET_KEY:
+    raise ValueError("The DJANGO_SECRET_KEY environment variable must be set!")
 TWILIO_ACCOUNT_SID = env("TWILIO_ACCOUNT_SID")
 TWILIO_ACCOUNT_TOKEN = env("TWILIO_ACCOUNT_TOKEN")
 TWILIO_PHONE_NUMBER = env("TWILIO_PHONE_NUMBER")
