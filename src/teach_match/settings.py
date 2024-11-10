@@ -24,30 +24,32 @@ BASE_URL = "https://teach-match-471e96400251.herokuapp.com/"
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
+# Initialize environment variables
+env = environ.Env()
+
+# Check if a .env file exists (useful for local development)
 env_file = os.path.join(BASE_DIR, ".env")
 if os.path.exists(env_file):
-    env = environ.Env()
-    environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+    environ.Env.read_env(env_file)
 
-SECRET_KEY = env(
-    "DJANGO_SECRET_KEY"
-)
+# Set the secret key (raise an error if missing)
+SECRET_KEY = env("DJANGO_SECRET_KEY", default=None)
 if not SECRET_KEY:
     raise ValueError("The DJANGO_SECRET_KEY environment variable must be set!")
-TWILIO_ACCOUNT_SID = env("TWILIO_ACCOUNT_SID")
-TWILIO_ACCOUNT_TOKEN = env("TWILIO_ACCOUNT_TOKEN")
-TWILIO_PHONE_NUMBER = env("TWILIO_PHONE_NUMBER")
 
-env = environ.Env()
-environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+# Set other environment variables with optional defaults for local testing
+TWILIO_ACCOUNT_SID = env("TWILIO_ACCOUNT_SID", default=None)
+TWILIO_ACCOUNT_TOKEN = env("TWILIO_ACCOUNT_TOKEN", default=None)
+TWILIO_PHONE_NUMBER = env("TWILIO_PHONE_NUMBER", default=None)
+if not TWILIO_ACCOUNT_SID or not TWILIO_ACCOUNT_TOKEN or not TWILIO_PHONE_NUMBER:
+    raise ValueError("All Twilio environment variables must be set!")
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-
 # Application definition
-
 INSTALLED_APPS = [
     "login_account.apps.LoginAccountConfig",
     "widget_tweaks",
