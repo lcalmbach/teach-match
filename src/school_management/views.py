@@ -43,6 +43,7 @@ from .forms import (
     TeacherForm,
     InvitationForm,
     ApplicationForm,
+    ApplicationRequestForm,
     ResponseForm,
     ApplicationFullForm,
 )
@@ -221,7 +222,6 @@ class TeacherListView(ListView):
             )
             .distinct()
         )
-        print(queryset)
         name_filter = self.request.GET.get("name_filter", "")
 
         # Apply filters if present
@@ -252,7 +252,6 @@ class TeacherDetailView(DetailView):
             .values_list("school__name", flat=True)
             .distinct()
         )
-        print(context["schools"])
         context["subjects"] = teacher.get_unique_subjects()
         context["classes"] = teacher.get_unique_classes()
         day_list = teacher.get_unique_days()
@@ -524,52 +523,64 @@ class SubstitutionEditView(UpdateView):
 
 
 class ApplicationCreateView(View):
+
     def post(self, request, *args, **kwargs):
-        substitution_id = request.POST.get("substitution")
-        success_url = reverse(
-            "school_management:application_create", kwargs={"id": substitution_id}
-        )
-        substitution = get_object_or_404(Substitution, id=substitution_id)
-        candidate = get_object_or_404(Person, user=request.user)
-        application_type = get_object_or_404(CommunicationType, id=1)
+        form = ApplicationForm(request.POST)
+        if form.is_valid():
+            substitution_id = request.POST.getlist("substitution")[0] 
+            substitution = get_object_or_404(Substitution, id=substitution_id)
+            candidate = get_object_or_404(Person, user=request.user)
+            application_type = get_object_or_404(CommunicationType, id=1)
 
-        # Create the Application instance
-        application = Application(
-            substitution=substitution,
-            candidate=candidate,
-            type=application_type,
-            request_date=timezone.now(),
-            request_text=request.POST.get("request_text", ""),
-        )
-        application.save()
+            # Create the Application instance
+            application = Application(
+                substitution=substitution,
+                response_type = CommunicationResponseType.objects.get(pk=4),
+                candidate=candidate,
+                type=application_type,
+                request_date=timezone.now(),
+                request_text=form.cleaned_data["request_text"],
+            )
+            application.save()
 
-        # Determine the action and perform the corresponding task
-        action = request.POST.get("action")
-        if action == "apply":
-            # Send email logic here
-            subject = f"Bewerbung für Vertretung {substitution_id} ({application.substitution.school.name}, {application.substitution.start_date} - {application.substitution.end_date}, Vertrung von {application.substitution.teacher.fullname})"
-            message = application.request_text
-            message += f'<br><br><a href="http://127.0.0.1:8000/school_management/candidates/{candidate.id}/">{candidate.fullname}</a>'
-            message += f'Link: <a href="http://stellvertretungen.bs.ch/school_management/application/{application.id}/edit/">Bewerbung bearbeiten</a'
-            helper = SubstitutionHelper(substitution)
-            helper.send_email(subject, message)
+            # Determine the action and perform the corresponding task
+            action = request.POST.get("action")
+            if action == "apply":
+                # Send email logic here
+                subject = f"Bewerbung für Vertretung {substitution_id} ({application.substitution.school.name}, {application.substitution.start_date} - {application.substitution.end_date}, Vertretung von {application.substitution.teacher.fullname})"
+                message = application.request_text
+                message += f'<br><br><a href="{settings.BASE_URL}/school_management/candidates/{candidate.id}/">{candidate.fullname}</a>'
+                message += f'Link: <a href="{settings.BASE_URL}/school_management/application/{application.id}/edit/">Bewerbung bearbeiten</a>'
+                helper = SubstitutionHelper(substitution)
+                helper.send_email(subject, message)
 
-            messages.success(request, "Ihre Bewerbung wurde erfolgreich abgeschickt.")
-            success_url = reverse("school_management:substitution_candidates_list")
+                messages.success(request, "Ihre Bewerbung wurde erfolgreich abgeschickt.")
+                success_url = reverse("school_management:substitution_candidates_list")
+            else:
+                success_url = reverse(
+                    "school_management:application_create", kwargs={"id": substitution_id}
+                )
 
-        # Redirect to a success page or similar
-
-        return redirect(success_url)
+            return redirect(success_url)
+        else:
+            messages.error(request, "Das Formular enthält Fehler.")
+            return redirect(reverse("school_management:application_create"))
+        
 
     def get(self, request, *args, **kwargs):
         candidate = get_object_or_404(Person, user=request.user)
-        form = ApplicationForm()
+        
 
         substitution_id = kwargs.get("id")
         substitution = get_object_or_404(
             Substitution, id=substitution_id
         )  # Ensure substitution is fetched here
-
+        initial_data = {
+            "substitution": substitution,
+            "candidate": candidate,
+            "request_text": "Hier können Sie Ihre Nachricht eingeben...",
+        }
+        form = ApplicationRequestForm(initial=initial_data)
         context = {
             "form": form,
             "substitution": substitution,
@@ -579,6 +590,8 @@ class ApplicationCreateView(View):
         }
         return render(request, "school_management/application_create.html", context)
 
+
+    
 
 class ApplicationResponseView(View):
     def post(self, request, *args, **kwargs):
@@ -748,12 +761,13 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-
+        application = self.object
+        school = application.substitution.school
         # Define the 'antworten' dictionary
         context["antworten"] = {
-            "bestaetigung": "Ihre Anfrage wurde bestätigt.",
-            "absage": "Leider müssen wir Ihre Anfrage ablehnen.",
-            "annahme": "Ihre Anfrage wurde angenommen.",
+            "bestaetigung": texte['antwort_bewerbung']['bestaetigung'],
+            "absage": texte['antwort_bewerbung']['absage'],
+            "annahme": texte['antwort_bewerbung']['annahme'].format(school.phone_number, school.email),
         }
 
         return context
@@ -832,7 +846,7 @@ class CandidateCreateView(CreateView):
         "phone_number",
         "subjects",
         "is_candidate",
-    ]  # Include relevant fields
+    ]
     template_name = "school_management/candidate_form.html"
     success_url = reverse_lazy(
         "school_management:candidate_list"

@@ -21,6 +21,20 @@ class SchoolForm(forms.ModelForm):
         fields = "__all__"
 
 
+class ApplicationRequestForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        fields = ["request_text", "substitution", "candidate"]  # Include other fields if necessary
+        labels = {
+            "request_text": "Mitteilung",
+        }
+        widgets = {
+            "request_text": forms.Textarea(attrs={"rows": 4}),
+            "substitution": forms.HiddenInput(),
+            "candidate": forms.HiddenInput(),
+        }
+
+
 class InvitationForm(forms.ModelForm):
     class Meta:
         model = Invitation

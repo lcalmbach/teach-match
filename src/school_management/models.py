@@ -756,13 +756,14 @@ class Communication(models.Model):
     request_date = models.DateField(verbose_name="Gesendet am", default=timezone.now)
     request_text = models.TextField(verbose_name="Anfrage", blank=True, max_length=500)
     response_text = models.TextField(verbose_name="Antwort", blank=True, max_length=500)
-    response_date = models.DateField(verbose_name="Antwort am", blank=True, null=True)
+    response_date = models.DateField(verbose_name="Antwort am", blank=True, null=True, default=timezone.now)
     response_type = models.ForeignKey(
         CommunicationResponseType,
         on_delete=models.CASCADE,
         related_name="communication_response_type",
         null=True,
         blank=True,
+        default=default_communication_response_type(),
     )
 
     def subject(self):
