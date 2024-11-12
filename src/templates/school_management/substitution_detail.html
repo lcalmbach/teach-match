@@ -211,13 +211,17 @@
                 <tr>
                     <th>Kandidat</th>
                     <th>Bemerkungen</th>
+                    <th>Bewerbung vom</th>
+                    <th>Zusage am</th>
                 </tr>
             </thead>
             <tbody>
-                {% for x in completed_by %}
+                {% for x in confirmed %}
                   <tr>
                       <td><a href="{% url 'school_management:candidate_detail' pk=x.candidate.pk %}">{{ x.candidate.fullname }}</a></td>
                       <td>{{ x.comments }}</td>
+                      <td>{{ x.request_date }}</td>
+                      <td>{{ x.response_date }}</td>
                   </tr>
                 {% endfor %}
             </tbody>

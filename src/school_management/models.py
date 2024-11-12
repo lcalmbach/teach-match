@@ -7,6 +7,7 @@ from django.urls import reverse
 from datetime import datetime
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
 from enum import Enum
 
 try:
@@ -19,9 +20,15 @@ class CommunicationTypeEnum(Enum):
     BEWERBUNG = 1
     EINLADUNG = 2
 
+class CommunicationResponseTypeEnum(Enum):
+    BESTAETIGUNG = 1
+    ABSAGE = 2
+    ZUSAGE = 3
+    OFFEN = 4
+
 
 def default_communication_response_type():
-    return CommunicationResponseType.objects.get(pk=4)
+    return CommunicationResponseType.objects.get(pk=CommunicationResponseTypeEnum.OFFEN.value)
 
 
 def get_cv_upload_path(instance, filename):
@@ -763,12 +770,16 @@ class Communication(models.Model):
         related_name="communication_response_type",
         null=True,
         blank=True,
-        default=default_communication_response_type(),
+        default=default_communication_response_type,
     )
+    comments = models.TextField(verbose_name="Kommentar", blank=True, max_length=500)
+    rating = models.IntegerField(verbose_name="Bewertung", default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
+
 
     def subject(self):
         return f"Stellvertretung {self.substitution.id}, {self.substitution.school.name}, {self.substitution.start_date.strftime('%d.%m.%Y')}-{self.substitution.end_date.strftime('%d.%m.%Y')} {self.candidate.fullname}"
 
+    
     def __str__(self):
         return f"{self.request_date} {self.candidate.fullname}"
 
@@ -784,6 +795,13 @@ class Application(Communication):
     class Meta:
         proxy = True
 
+    def star_rating(self):
+        if self.rating is None:
+            return "No rating"
+        return "★" * self.rating + "☆" * (5 - self.rating)
+
+    def __str__(self):
+        return f"{self.request_date} {self.candidate.fullname}"
 
 class InvitationManager(models.Manager):
     def get_queryset(self):

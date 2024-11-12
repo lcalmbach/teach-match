@@ -25,11 +25,16 @@
       {% csrf_token %}
       {{ form|crispy }}
       
-      <!-- Action buttons -->
-       <span>
-        <button type="submit" name="action" value="send" class="btn btn-secondary">Antwort Senden</button>
+      
+      <div class="form-group">
+        {% if form.instance.response_type == 4 %}
+          <button type="submit" name="action" value="send" class="btn btn-primary">Antwort Senden</button>
+        {% else %}  
+          <button type="submit" name="action" value="save" class="btn btn-primary">Speichern</button>
+        {% endif %}
         <button type="button" class="btn btn-secondary" onclick="history.back()">Zurück</button>
-        &nbsp;&nbsp;
+      </div>
+      &nbsp;&nbsp;
     </form>
   </div>
 </div>

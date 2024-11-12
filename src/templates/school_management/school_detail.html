@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="info-container">
-  <table class="info-table">
+  <table class="table">
     <tr>
       <th>Name:</th>
       <td>{{ school.name }}</td>
@@ -130,7 +130,7 @@
       <tbody>
           {% for teacher in teachers %}
           <tr>
-              <td>
+              <td>☆☆☆☆☆
                   <a href="{% url 'school_management:teacher_detail' pk=teacher.id %}">{{ teacher.fullname }}</a>
               </td>
               <td>
@@ -168,14 +168,13 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th>Klassenlehrer*In</th>
           </tr>
         </thead>
         <tbody>
           {% for school_class in school_classes %}
-          <tr>
-            <td>{{ school_class.name }}</td>
-          </tr>
+            <tr>
+              <td>{{ school_class.name }}</td>
+            </tr>
           {% endfor %}
         </tbody>
       </table>

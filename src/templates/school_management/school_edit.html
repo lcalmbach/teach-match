@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load static %}
+<div class="col-md-6 offset-md-3">
+  <h2>Schule bearbeiten</h2>
+  <div class="form-container">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form|crispy }}
+      
+      <div class="form-group">
+      <button type="submit" name="action" value="save" class="btn btn-primary">Speichern</button>
+      <button type="button" class="btn btn-secondary" onclick="history.back()">Zurück</button>
+    </form>
+  </div>
+</div>
+
+{% endblock content %}

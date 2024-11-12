@@ -14,6 +14,9 @@ from .models import (
 )
 import fitz  # PyMuPDF
 
+class StarRatingWidget(forms.RadioSelect):
+    """Custom widget to render star rating."""
+    template_name = 'widgets/star_rating.html'
 
 class SchoolForm(forms.ModelForm):
     class Meta:
@@ -70,7 +73,13 @@ class ApplicationForm(forms.ModelForm):
 class ApplicationFullForm(forms.ModelForm):
     class Meta:
         model = Application
-        fields = ["response_text", "response_date", "response_type"]
+        fields = [
+            "response_text",
+            "response_date",
+            "response_type",
+            "comments",
+            "rating",  # Add the rating field
+        ]
 
         widgets = {
             "request_date": forms.DateInput(
@@ -79,12 +88,21 @@ class ApplicationFullForm(forms.ModelForm):
             "response_date": forms.DateInput(
                 attrs={"type": "date", "class": "form-control"}, format="%Y-%m-%d"
             ),
+            "rating": StarRatingWidget(choices=[  # Add choices for star ratings
+                (1, "★"),
+                (2, "★★"),
+                (3, "★★★"),
+                (4, "★★★★"),
+                (5, "★★★★★"),
+            ]),
         }
 
         labels = {
             "request_text": "Bewerbung Text",
             "request_date": "Bewerbung gesendet am",
             "response_date": "Antwort am",
+            "rating": "Bewertung der Stellvertretung",
+            "comments": "Bemerkungen zum Ablauf der Stellvertretung",
         }
 
 

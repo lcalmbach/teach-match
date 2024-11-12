@@ -21,7 +21,7 @@
             <td>{{ application.request_text  }}</td>
         </tr>
         <tr>
-            <th>Antwort:</th>
+            <th>Antwort Typ:</th>
             <td>{{ application.response_type  }}</td>
         </tr>
         <tr>
@@ -32,7 +32,16 @@
             <th>Antwort Text:</th>
             <td>{{ application.response_text }}</td>
         </tr>
-        </tr>
+        {% if application.response_type_id == 3 %}
+            <tr>
+                <th>Bemerkungen zum Ablauf der Stellvertretung :</th>
+                <td>{{ application.comments }}</td>
+            </tr>
+            <tr>
+                <th>Bewertung:</th>
+                <td>{{ application.star_rating }}</td>
+            </tr>
+        {% endif %}
     </table>
     <br>
     <a href="javascript:history.back()" class="btn btn-primary">Zurück</a>

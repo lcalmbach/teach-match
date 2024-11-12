@@ -31,9 +31,10 @@ from .models import (
     Invitation,
     Application,
     CommunicationType,
+    CommunicationTypeEnum,
     Communication,
     CommunicationResponseType,
-    CommunicationTypeEnum,
+    CommunicationResponseTypeEnum,
 )
 from .forms import (
     SchoolForm,
@@ -115,7 +116,7 @@ class SchoolEditView(LoginRequiredMixin, UpdateView):
     template_name = "school_management/school_edit.html"
     success_url = reverse_lazy(
         "school_list"
-    )  # Redirect to school list view after saving
+    )
 
 
 class CandidateListView(ListView):
@@ -414,6 +415,7 @@ class SubstitutionDetailView(DetailView):
         ).order_by("-rating")
         context["halfdays"] = substitution_helper.get_half_days()
         context["applications"] = Application.objects.filter(substitution=substitution)
+        context["confirmed"] = Application.objects.filter(substitution=substitution, response_type_id=CommunicationResponseTypeEnum.ZUSAGE.value)
         return context
 
 
