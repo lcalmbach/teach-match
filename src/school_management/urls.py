@@ -98,7 +98,7 @@ urlpatterns = [
         name="application_detail",
     ),
     path(
-        "applications/<int:pk>/edit/",
+        "applications/edit/<int:pk>/",
         ApplicationEditView.as_view(),
         name="application_edit",
     ),

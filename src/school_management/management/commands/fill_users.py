@@ -21,12 +21,6 @@ def generate_unique_username(existing_usernames):
             return username
 
 
-# Example usage
-existing_usernames = ["abcde", "fghij", "klmno"]
-new_username = generate_unique_username(existing_usernames)
-print("Generated unique username:", new_username)
-
-
 class Command(BaseCommand):
     help = "Create a user for each person in the Person table"
 

@@ -1,9 +1,10 @@
-{% load static %}
+
 {% load custom_filters %}
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <title>{% block title %}{% endblock %}</title>
+  {% load static %}  
+  <title>{% block title %}{% endblock %}</title>
     {% load django_bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />

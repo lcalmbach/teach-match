@@ -69,16 +69,62 @@ class ApplicationForm(forms.ModelForm):
             ),
         }
 
+class ApplicationResponseForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        fields = [
+            "response_type",
+            "response_text",
+            "response_date",
+        ]
+
+        widgets = {
+            "request_date": forms.DateInput(
+                attrs={"type": "date", "class": "form-control"}, format="%Y-%m-%d"
+            ),
+            "response_date": forms.DateInput(
+                attrs={"type": "date", "class": "form-control"}, format="%Y-%m-%d"
+            ),
+        }
+
+        labels = {
+            "request_text": "Bewerbung Text",
+            "request_date": "Bewerbung gesendet am",
+            "response_date": "Antwort am",
+        }
+
+class ApplicationRatingForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        fields = [
+            "rating",  
+            "comments",
+        ]
+
+        widgets = {
+            "rating": StarRatingWidget(choices=[  # Add choices for star ratings
+                (1, "★"),
+                (2, "★★"),
+                (3, "★★★"),
+                (4, "★★★★"),
+                (5, "★★★★★"),
+            ]),
+        }
+
+        labels = {
+            "rating": "Bewertung der Stellvertretung",
+            "comments": "Bemerkungen zum Ablauf der Stellvertretung",
+        }
 
 class ApplicationFullForm(forms.ModelForm):
     class Meta:
         model = Application
         fields = [
+            "response_type",
             "response_text",
             "response_date",
-            "response_type",
+            "rating",  
             "comments",
-            "rating",  # Add the rating field
         ]
 
         widgets = {

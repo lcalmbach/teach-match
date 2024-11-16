@@ -60,7 +60,7 @@ teach_match/templates/school_management/school_list.html
                 <td>{{ a.request_date }}</td> 
                 <td>{{ a.response_date}}</td> 
                 <td>{{ a.response_type.name }}</td> 
-                <td><a href="{% url 'school_management:application_edit' pk=a.pk %}" title="Bewerbung editieren"><i class="fas fa-edit"></i></a></td>
+                <td><a href="{% url 'school_management:application_edit' pk=a.pk %}" title="Bewerbung beantworten"><i class="fas fa-edit"></i></a></td>
             </tr>
             {% endfor %}
         </tbody>

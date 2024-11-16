@@ -36,10 +36,9 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     const response_type = document.getElementById('id_response_type');
     const response_text = document.getElementById('id_response_text');
-    const response_date = document.getElementById('id_response_date');
 
     // Define the default texts based on the response type
     const antworten = {
@@ -48,26 +47,28 @@
       '3': '{{ antworten.annahme|escapejs }}'
     };
 
-    // Function to update response text and date
+    // Function to update response text
     function updateResponseFields() {
       const selectedType = response_type.value;
       if (antworten[selectedType]) {
         response_text.value = antworten[selectedType];
-
-        // Set the current date
-        const now = new Date();
-        const month = String(now.getMonth() + 1).padStart(2, '0'); // Get month (0-11), add 1 and pad with 0
-        const day = String(now.getDate()).padStart(2, '0'); // Get day and pad with 0
-        const year = now.getFullYear(); // Get year
-        response_date.value = `${year}-${month}-${day}`;
       }
     }
 
-    // Attach the function to the change event of the response_type dropdown
-    response_type.addEventListener('change', updateResponseFields);
+    // Track whether the dropdown has been interacted with
+    let dropdownInteracted = false;
 
-    // Call the function on page load if a response type is pre-selected
-    updateResponseFields();
+    // Mark the dropdown as interacted when the user focuses on it
+    response_type.addEventListener('focus', function () {
+      dropdownInteracted = true;
+    });
+
+    // Update response text only if the dropdown has been interacted with
+    response_type.addEventListener('change', function () {
+      if (dropdownInteracted) {
+        updateResponseFields();
+      }
+    });
   });
 </script>
 

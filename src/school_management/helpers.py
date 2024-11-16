@@ -202,6 +202,7 @@ class SubstitutionHelper:
         # Gmail credentials
         gmail_user = os.getenv("GMAIL_USER")
         gmail_password = os.getenv("GMAIL_PASSWORD")
+        result = False
 
         # Create the email
         to_email = self.substitution.school.email
@@ -218,20 +219,19 @@ class SubstitutionHelper:
             text = msg.as_string()
             print(gmail_user, to_email, text)
             server.sendmail(gmail_user, to_email, text)
-            print("Email sent successfully")
+            result = True
         except Exception as e:
             print(f"Failed to send email: {e}")
         finally:
             server.quit()
+            return result
 
     def assign_values(self):
-        self.substitution.classes = ",".join([cls.name for cls in self.classes])
-        self.substitution.levels = ",".join([lvl.name_short for lvl in self.levels])
-        self.substitution.subjects = ",".join([sbj.name_short for sbj in self.subjects])
-        # if self.substitution.summary is None or self.substitution.summary == "":
+        self.substitution.classes = ", ".join([cls.name for cls in self.classes])
+        self.substitution.levels = ", ".join([lvl.name_short for lvl in self.levels])
+        self.substitution.subjects = ", ".join([sbj.name for sbj in self.subjects])
+        self.substitution.cl = self.days
         self.substitution.summary = self.get_summary()
-        self.substitution.subjects = ",".join([sbj.name_short for sbj in self.subjects])
-
         SubstitutionCandidate = apps.get_model(
             "school_management", "SubstitutionCandidate"
         )

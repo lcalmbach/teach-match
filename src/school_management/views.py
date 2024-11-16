@@ -46,7 +46,8 @@ from .forms import (
     ApplicationForm,
     ApplicationRequestForm,
     ResponseForm,
-    ApplicationFullForm,
+    # ApplicationFullForm,
+    ApplicationResponseForm
 )
 from django.views.generic import ListView  # Import the necessary module
 from django.urls import reverse_lazy
@@ -593,34 +594,42 @@ class ApplicationCreateView(View):
         return render(request, "school_management/application_create.html", context)
 
 
-    
-
 class ApplicationResponseView(View):
     def post(self, request, *args, **kwargs):
+        print(2143)
         application_id = request.POST.get("application_id")
         success_url = reverse(
-            "school_management:application_response", kwargs={"id": application_id}
+            "school_management:application_edit", kwargs={"id": application_id}
         )
         application = get_object_or_404(Application, id=application_id)
-        author = get_object_or_404(Person, user=request.user)
-        candidate = application.candidate
-        # Ensure that type is set to 1 for applications
-        application_type = get_object_or_404(CommunicationType, id=1)
 
-        application.response_date = timezone.now()
-        application.response_text = request.POST.get("response_text", "")
-        application.save()
-
+        if not application.response_date:
+            print("Response date not set")
+            
+            application.response_text = request.POST.get("response_text", "")
+            application_type = get_object_or_404(CommunicationType, id=1)
+        
         # Determine the action and perform the corresponding task
         action = request.POST.get("action")
-        if action == "apply":
+        print(12354)
+        if action == "send_mail":
             # Send email logic here
             subject = f"Ihre Bewerbung für Vertretung {application_id} ({application.substitution.school.name}, {application.substitution.start_date} - {application.substitution.end_date}, Vertrung von {application.substitution.teacher.fullname})"
-            message = application.response_text
             helper = SubstitutionHelper(application.substitution)
-            helper.send_email(subject, message)
+            application.response_text = request.POST.get("response_text")
+            application.response_date = timezone.now()
+            application.response_type = request.POST.get("response_type")
+            application.author = get_object_or_404(Person, user=request.user)
+            print(application.response_text)
+            if helper.send_email(subject, application.response_text):
+                messages.success(request, "Ihre Bewerbung wurde erfolgreich abgeschickt.")
+                application.save()
+                success_url = reverse("school_management:substitution_candidates_list")
+            else:
+                messages.error(request, "Beim Versenden der Email ist ein Fehler aufgetreten.")
 
-            messages.success(request, "Ihre Bewerbung wurde erfolgreich abgeschickt.")
+        if action == "save":
+            application.save()
             success_url = reverse("school_management:substitution_candidates_list")
 
         return redirect(success_url)
@@ -629,7 +638,7 @@ class ApplicationResponseView(View):
         form = ResponseForm()
         application = get_object_or_404(
             Application, id=kwargs.get("id")
-        )  # Ensure substitution is fetched here
+        )
         author = get_object_or_404(Person, user=request.user)
         context = {
             "form": form,
@@ -637,7 +646,7 @@ class ApplicationResponseView(View):
             "username": request.user.username,
             "author": author.fullname,
         }
-        return render(request, "school_management/application_response.html", context)
+        return render(request, "school_management/application_edit.html", context)
 
 
 class InvitationCreateView(LoginRequiredMixin, CreateView):
@@ -757,7 +766,7 @@ class ApplicationDetailView(DetailView):
 
 class ApplicationEditView(LoginRequiredMixin, UpdateView):
     model = Application
-    form_class = ApplicationFullForm
+    form_class = ApplicationResponseForm
     template_name = "school_management/application_edit.html"
 
     def get_context_data(self, **kwargs):
@@ -775,33 +784,28 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        self.object = self.get_object()  # Retrieve the existing object
         form = self.get_form()
-        action = request.POST.get("action")
+        action = request.POST.get("action")  # Determine the action from the form
 
         if form.is_valid():
-            response_text = request.POST.get("response_text")
-            response_type_id = request.POST.get("response_type")
-            response_type = CommunicationResponseType.objects.get(pk=response_type_id)
-            response_date = request.POST.get("response_date")
-
-            # Modify the application object and save it
-            application = form.save(commit=False)
-            application.response_text = response_text
-            application.response_type = (
-                response_type  # Assign the actual CommunicationResponseType instance
-            )
-            application.response_date = response_date
-            application.save()
-
+            application = form.save(commit=False)  # Get the object without saving to the DB
+            print(application.response_text)
+            # Handle manual updates if needed (e.g., response_date, response_type)
             if action == "send":
+                application.response_date = timezone.now() 
                 if application.candidate.send_email:
                     self.send_email(application)
                 if application.candidate.send_sms:
                     self.send_sms(application)
 
+            # Save the updated object to the database
+            application.save()
+
+            # Redirect to the success URL
             return redirect(self.get_success_url())
         else:
+            # If the form is invalid, return the form with errors
             return self.form_invalid(form)
 
     def send_sms(self, application):
@@ -835,8 +839,9 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
         )
         messages.success(self.request, "Deine SMS wurde erfolgreich versandt.")
 
+    
     def get_success_url(self):
-        return reverse("school_management:application_edit", args=[self.object.id])
+        return reverse("school_management:application_list")
 
 
 class CandidateCreateView(CreateView):

@@ -62,4 +62,6 @@ class Command(BaseCommand):
         faker = Faker("de_DE")
 
         for subtitution in Substitution.objects.all():
+            helper = SubstitutionHelper(subtitution)
+            helper.assign_values()
             subtitution.save()

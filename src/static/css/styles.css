@@ -93,3 +93,14 @@ td.button-cell {
 .float-right {
     float: right;
   }
+
+.btn-custom-green {
+    background-color: #66b06c; /* Darker green */
+    color: white;
+    border-color: #66b06c;
+}
+
+.btn-custom-green:hover {
+    background-color: #579a5f; /* Even darker on hover */
+    border-color: #579a5f;
+}

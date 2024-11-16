@@ -64,10 +64,6 @@
             </h5>
             <table class="faint-green-bg">
                 <tr>
-                    <th scope="row" style="width: 30%;">Stufe:</th>
-                    <td style="width: 70%;">{{ substitution.levels }}</td>
-                </tr>
-                <tr>
                     <th scope="row" style="width: 30%;">Dauer:</th>
                     <td style="width: 70%;">{{ substitution.start_date|date:"d.m" }} ({{substitution.start_date|weekday}}) - {{ substitution.end_date|date:"d.m.y" }} ({{substitution.end_date|weekday}})</td>
                 </tr>
@@ -103,22 +99,28 @@
                     <td style="width: 70%;">{{ substitution.subjects }}</td>
                 </tr>
                 <tr>
+                    <th scope="row" style="width: 30%;">Klassen:</th>
+                    <td style="width: 70%;">{{ substitution.levels }}</td>
+                </tr>
+                <tr>
                     <th scope="row" style="width: 30%;">Ort:</th>
                     <td style="width: 70%;">{{ substitution.school.location }}</td>
                 </tr>
             </table>
             
-            <button class="btn btn-link mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ substitution.id }}" aria-expanded="false" aria-controls="collapse{{ substitution.id }}">
-                Weitere Infos
-            </button>
-            <div class="collapse" id="collapse{{ substitution.id }}">
-                <div class="card card-body">
-                    <p>{{substitution.summary}}</p>
+            {% if substitution.summary %}
+                <button class="btn btn-link mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ substitution.id }}" aria-expanded="false" aria-controls="collapse{{ substitution.id }}">
+                    Weitere Infos
+                </button>
+                <div class="collapse" id="collapse{{ substitution.id }}">
+                    <div class="card card-body">
+                        <p>{{substitution.summary}}</p>
+                    </div>
                 </div>
-            </div>
+            {% endif %}
             {% if user.is_authenticated %}
                 <br>
-                <a href="{% url 'school_management:application_create' substitution.id %}" class="btn btn-outline-primary me-2">
+                <a href="{% url 'school_management:application_create' substitution.id %}" class="btn btn-custom-green float-right me-2">
                         Bewerben
                     </a>
                 </a>
