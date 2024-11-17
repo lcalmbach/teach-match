@@ -2,6 +2,7 @@ import os
 import calendar
 import locale
 
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from datetime import datetime
@@ -15,6 +16,11 @@ try:
 except locale.Error:
     locale.setlocale(locale.LC_TIME, "C")
 
+from .texte import texte
+
+class SubstitutionStatusEnum(Enum):
+    IN_ARBEIT = 1
+    ABGESCHLOSSEN = 2
 
 class CommunicationTypeEnum(Enum):
     BEWERBUNG = 1
@@ -389,10 +395,10 @@ class Person(models.Model):
         verbose_name="Freitag Nachmittag", default=False
     )
     availability_comment = models.TextField(
-        max_length=500, verbose_name="Bemerkungen zur Verfügbarkeit", blank=True
+        max_length=1000, verbose_name="Bemerkungen zur Verfügbarkeit", blank=True
     )
     description = models.TextField(
-        max_length=500, verbose_name="Bemerkungen", blank=True
+        max_length=1000, verbose_name="Bemerkungen", blank=True
     )
 
     notify_mail_flag = models.BooleanField(
@@ -546,10 +552,10 @@ class Substitution(models.Model):
         verbose_name="Teilübernahme möglich", default=False
     )
     comment_subsitution = models.TextField(
-        verbose_name="Anmerkung zum Vikariat", blank=True, max_length=500
+        verbose_name="Anmerkung zum Vikariat", blank=True, max_length=1000
     )
     comment_class = models.TextField(
-        verbose_name="Anmerkung zur Klasse", blank=True, max_length=500
+        verbose_name="Anmerkung zur Klasse", blank=True, max_length=1000
     )
     minimum_qualification = models.ForeignKey(
         Qualification,
@@ -559,9 +565,9 @@ class Substitution(models.Model):
         default=1,
     )
     # für die Anzeige
-    classes = models.TextField(verbose_name="Klassen", blank=True, max_length=500)
-    levels = models.TextField(verbose_name="Stufen", blank=True, max_length=500)
-    subjects = models.TextField(verbose_name="Fächer", blank=True, max_length=500)
+    classes = models.TextField(verbose_name="Klassen", blank=True, max_length=1000)
+    levels = models.TextField(verbose_name="Stufen", blank=True, max_length=1000)
+    subjects = models.TextField(verbose_name="Fächer", blank=True, max_length=1000)
     summary = models.TextField(
         verbose_name="Zusammenfassung", blank=True, max_length=1000
     )
@@ -578,7 +584,7 @@ class Substitution(models.Model):
     fr_pm = models.BooleanField(verbose_name="Freitag Nachmittag", default=False)
 
     selection_comment = models.TextField(
-        verbose_name="Kommentar zur Besetzung", blank=True, max_length=500
+        verbose_name="Kommentar zur Besetzung", blank=True, max_length=1000
     )
     status = models.ForeignKey(
         SubstitutionStatus,
@@ -593,9 +599,14 @@ class Substitution(models.Model):
         verbose_name = "Stellvertretung"
         verbose_name_plural = "Stellvertretungen"
 
+    @property
     def url(self):
         return reverse("school_management:substitution_detail", args=[self.pk])
 
+    @property
+    def ref_no(self):
+        return f"#{self.id}"
+    
     def __str__(self):
         return f"{self.teacher.fullname} - {self.start_date} - {self.end_date}"
 
@@ -761,8 +772,8 @@ class Communication(models.Model):
         CommunicationType, on_delete=models.CASCADE, related_name="communication_type"
     )
     request_date = models.DateField(verbose_name="Gesendet am", default=timezone.now)
-    request_text = models.TextField(verbose_name="Anfrage", blank=True, max_length=500)
-    response_text = models.TextField(verbose_name="Antwort", blank=True, max_length=500)
+    request_text = models.TextField(verbose_name="Anfrage", blank=True, max_length=1000)
+    response_text = models.TextField(verbose_name="Antwort", blank=True, max_length=1000)
     response_date = models.DateField(verbose_name="Antwort am", blank=True, null=True, default=timezone.now)
     response_type = models.ForeignKey(
         CommunicationResponseType,
@@ -772,7 +783,7 @@ class Communication(models.Model):
         blank=True,
         default=default_communication_response_type,
     )
-    comments = models.TextField(verbose_name="Kommentar", blank=True, max_length=500)
+    comments = models.TextField(verbose_name="Kommentar", blank=True, max_length=1000)
     rating = models.IntegerField(verbose_name="Bewertung", default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
 
 
@@ -800,6 +811,20 @@ class Application(Communication):
             return "No rating"
         return "★" * self.rating + "☆" * (5 - self.rating)
 
+    @property
+    def response_sms_text(self):
+        link = settings.BASE_URL + reverse("school_management:application_detail", args=[self.pk])
+        school = self.substitution.school.name
+        ref = self.substitution.ref_no
+        result = ''
+        if self.response_type_id == CommunicationResponseTypeEnum.BESTAETIGUNG.value:
+            result = texte['antwort_sms']['bestaetigung'].format(link, ref, school)
+        elif self.response_type_id == CommunicationResponseTypeEnum.ABSAGE.value:
+            result = texte['antwort_sms']['annahme'].format(link, ref, school)
+        elif self.response_type_id == CommunicationResponseTypeEnum.ZUSAGE.value:
+            result = texte['antwort_sms']['absage'].format(link, ref, school)
+        return result
+        
     def __str__(self):
         return f"{self.request_date} {self.candidate.fullname}"
 

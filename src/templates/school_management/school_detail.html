@@ -85,7 +85,6 @@
 
   <!-- Tab content -->
   <div class="tab-content" id="myTabContent">
-    
     <div
       class="tab-pane fade show active"
       id="substitutions"
@@ -130,7 +129,7 @@
       <tbody>
           {% for teacher in teachers %}
           <tr>
-              <td>☆☆☆☆☆
+              <td>
                   <a href="{% url 'school_management:teacher_detail' pk=teacher.id %}">{{ teacher.fullname }}</a>
               </td>
               <td>

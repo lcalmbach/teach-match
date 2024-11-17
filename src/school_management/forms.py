@@ -94,6 +94,16 @@ class ApplicationResponseForm(forms.ModelForm):
         }
 
 class ApplicationRatingForm(forms.ModelForm):
+    """
+    ApplicationRatingForm is a Django ModelForm for the Application model, used to rate and comment on an application.
+    Attributes:
+        Meta:
+            model (Application): The model that this form is associated with.
+            fields (list): The fields to include in the form, which are "rating" and "comments".
+            widgets (dict): Custom widgets for the form fields. The "rating" field uses a StarRatingWidget with choices for 1 to 5 stars.
+            labels (dict): Custom labels for the form fields. The "rating" field is labeled "Bewertung der Stellvertretung" and the "comments" field is labeled "Bemerkungen zum Ablauf der Stellvertretung".
+    """
+
     class Meta:
         model = Application
         fields = [

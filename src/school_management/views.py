@@ -35,6 +35,7 @@ from .models import (
     Communication,
     CommunicationResponseType,
     CommunicationResponseTypeEnum,
+    SubstitutionStatusEnum,
 )
 from .forms import (
     SchoolForm,
@@ -526,7 +527,6 @@ class SubstitutionEditView(UpdateView):
 
 
 class ApplicationCreateView(View):
-
     def post(self, request, *args, **kwargs):
         form = ApplicationForm(request.POST)
         if form.is_valid():
@@ -573,7 +573,6 @@ class ApplicationCreateView(View):
     def get(self, request, *args, **kwargs):
         candidate = get_object_or_404(Person, user=request.user)
         
-
         substitution_id = kwargs.get("id")
         substitution = get_object_or_404(
             Substitution, id=substitution_id
@@ -611,7 +610,6 @@ class ApplicationResponseView(View):
         
         # Determine the action and perform the corresponding task
         action = request.POST.get("action")
-        print(12354)
         if action == "send_mail":
             # Send email logic here
             subject = f"Ihre Bewerbung für Vertretung {application_id} ({application.substitution.school.name}, {application.substitution.start_date} - {application.substitution.end_date}, Vertrung von {application.substitution.teacher.fullname})"
@@ -620,7 +618,6 @@ class ApplicationResponseView(View):
             application.response_date = timezone.now()
             application.response_type = request.POST.get("response_type")
             application.author = get_object_or_404(Person, user=request.user)
-            print(application.response_text)
             if helper.send_email(subject, application.response_text):
                 messages.success(request, "Ihre Bewerbung wurde erfolgreich abgeschickt.")
                 application.save()
@@ -768,17 +765,21 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
     model = Application
     form_class = ApplicationResponseForm
     template_name = "school_management/application_edit.html"
-
+    
+    
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
+        current_user_name = Person.objects.get(user=self.request.user).first_last_name
         context = super().get_context_data(**kwargs)
         application = self.object
         school = application.substitution.school
-        # Define the 'antworten' dictionary
+        ref = application.substitution.ref_no
+        greeting = f"{application.candidate.informal_salutation}\n"
+        link = f'{settings.BASE_URL}{reverse("school_management:application_detail", args=[application.pk])}'
         context["antworten"] = {
-            "bestaetigung": texte['antwort_bewerbung']['bestaetigung'],
-            "absage": texte['antwort_bewerbung']['absage'],
-            "annahme": texte['antwort_bewerbung']['annahme'].format(school.phone_number, school.email),
+            "bestaetigung": texte['antwort_email']['bestaetigung'].format(greeting, link, current_user_name, school.name),
+            "absage": texte['antwort_email']['absage'].format(greeting, current_user_name, school.name),
+            "annahme": texte['antwort_email']['annahme'].format(greeting, school.phone_number, school.email, link, current_user_name, school.name),
         }
 
         return context
@@ -798,11 +799,11 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
                     self.send_email(application)
                 if application.candidate.send_sms:
                     self.send_sms(application)
-
-            # Save the updated object to the database
+                # close the substitution if the response is positive
+                if application.response_type.id == CommunicationResponseTypeEnum.ZUSAGE.value:
+                    application.substitution.status = SubstitutionStatus.objects.get(pk=SubstitutionStatusEnum.ABGESCHLOSSEN.value)
+                    application.substitution.save()
             application.save()
-
-            # Redirect to the success URL
             return redirect(self.get_success_url())
         else:
             # If the form is invalid, return the form with errors
@@ -810,14 +811,8 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
 
     def send_sms(self, application):
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_ACCOUNT_TOKEN)
-        body = (
-            f"{application.subject()}\n"
-            f"{application.response_text}\n"
-            "Weitere Informationen unter:\n"
-            f"{settings.BASE_URL}{reverse('school_management:application_detail', kwargs={'pk': application.id})}\n"
-        ).strip()
         message = client.messages.create(
-            body=body,
+            body=application.response_sms_text,
             from_=settings.TWILIO_PHONE_NUMBER,
             to=application.candidate.phone_number,
         )
@@ -825,8 +820,9 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
         print(f"Message sent with SID: {message.sid}")
         messages.success(self.request, "Deine Email wurde erfolgreich versandt.")
 
+
     def send_email(self, application):
-        subject = "Betreff"  # Set your subject here
+        subject = f"Stellvertretung {application.substitution.ref_no} / {application.substitution.school.name}"
         message = application.response_text
         recipient = application.candidate.email
 
@@ -890,7 +886,7 @@ def invite_candidates(request, id):
             "request_text": texte["default_invitiation_email"].format(
                 selected_candidate.candidate.informal_salutation,
                 selected_candidate.substitution.school.name,
-                selected_candidate.substitution.url(),
+                selected_candidate.substitution.url,
                 selected_candidate.substitution.school.email,
                 selected_candidate.substitution.school.phone_number,
                 author.first_last_name,
