@@ -47,9 +47,8 @@ class InvitationForm(forms.ModelForm):
             "request_text": "Einladungstext",
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, selected_candidate_id=None, **kwargs):
         super().__init__(*args, **kwargs)
-        # Disable the candidate field
         self.fields["candidate"].disabled = True
 
 
@@ -389,3 +388,12 @@ class TeacherForm(forms.ModelForm):
             ),
             Submit("submit", "Speichern", css_class="btn btn-primary"),
         )
+
+class ConfirmationForm(forms.Form):
+    comment = forms.CharField(
+        required=False,
+        widget=forms.Textarea(
+            attrs={"rows": 4, "placeholder": "Optional: Füge hier einen Kommentar hinzu..."}
+        ),
+        label="Kommentar",
+    )

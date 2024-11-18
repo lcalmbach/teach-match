@@ -22,12 +22,12 @@ Mit freundlichen Grüssen
         "betreff": "Deine Bewerbung auf eine Stellvertratung an der Schule {}, ref {}",
 
         "text": """{}
-An der Schule {} ist eine Stellvertretung frei, die perfekt zu deinem Profil passt. [Hier]({}) findest du alle wichtigen Informationen zu diesem Vikariat.  
+An unserer Schule {} ist eine Stellvertretung frei, die perfekt zu deinem Profil passt. <a href="{}">Hier</a> findest du alle wichtigen Informationen zu diesem Vikariat.  
 
 Falls du Interesse hast, melde dich gerne per E-Mail ({}) oder telefonisch ({}) bei uns. Wir freuen uns auf deine Rückmeldung!
 
 Mit freundlichen Grüssen
-{} / {}"""
+{}"""
     },
 
     "antwort_sms": {
@@ -35,11 +35,12 @@ Mit freundlichen Grüssen
 {} / {}""",
         "annahme": """Glückwunsch! Du hast die Stelle. Details: {}
 {} / {}""",
-        "absage": """Danke für Deine Bewerbung! Die Stelle ist vergeben. Infos: {}
+        "absage": """Danke für Deine Bewerbung! Die Stelle ist leider schon vergeben. Infos: {}
 {} / {}""",
-    "einladung_sms": """Wir haben ein passendes Vikariat für Dich! Infos und Bewerbung: {}
-{} / {}"""
+    
     
     },
+    
+    "einladung_sms": """Wir haben ein passendes Vikariat für Dich! Infos und Bewerbung: {}\nViki-match.ch"""
 
 }

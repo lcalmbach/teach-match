@@ -3,10 +3,11 @@
 
 {% block content %}
     <div class="info-container">
-        <h1>Einladung für Stellvertretung {{ substitution.id }}</h1>
+        <h1>Einladung für Stellvertretung #{{ substitution.id }}</h1>
 
         <form method="post">
             {% csrf_token %}
+            <input type="hidden" name="selected_candidate_id" value="{{ selected_candidate.id }}">
             {{ form|crispy }}  <!-- Render the form as a Crispy form -->
             <button type="submit" class="btn btn-primary">Einladungen abschicken</button>
         </form>

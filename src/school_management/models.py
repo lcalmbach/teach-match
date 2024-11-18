@@ -21,6 +21,7 @@ from .texte import texte
 class SubstitutionStatusEnum(Enum):
     IN_ARBEIT = 1
     ABGESCHLOSSEN = 2
+    BESETZT = 3
 
 class CommunicationTypeEnum(Enum):
     BEWERBUNG = 1
@@ -601,7 +602,7 @@ class Substitution(models.Model):
 
     @property
     def url(self):
-        return reverse("school_management:substitution_detail", args=[self.pk])
+        return settings.BASE_URL + reverse("school_management:substitution_detail", args=[self.pk])
 
     @property
     def ref_no(self):
@@ -719,7 +720,7 @@ class SubstitutionCandidate(models.Model):
         verbose_name_plural = "Vertretung-Kandidaten"
 
     def __str__(self):
-        return f"{self.candidate.fullname} - {self.rating}"
+        return f"{self.candidate.fullname} - #{self.substitution.pk}"
 
 
 class Vacation(models.Model):

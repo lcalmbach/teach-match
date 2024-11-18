@@ -1,9 +1,11 @@
+from django.utils.timezone import now
 from django.forms import modelformset_factory
 from django.http import HttpResponse
 from django.views import View
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import DetailView, UpdateView, CreateView, DeleteView
+from django.views.generic.edit import FormView
 from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
@@ -46,8 +48,7 @@ from .forms import (
     InvitationForm,
     ApplicationForm,
     ApplicationRequestForm,
-    ResponseForm,
-    # ApplicationFullForm,
+    ConfirmationForm,
     ApplicationResponseForm
 )
 from django.views.generic import ListView  # Import the necessary module
@@ -593,63 +594,10 @@ class ApplicationCreateView(View):
         return render(request, "school_management/application_create.html", context)
 
 
-class ApplicationResponseView(View):
-    def post(self, request, *args, **kwargs):
-        print(2143)
-        application_id = request.POST.get("application_id")
-        success_url = reverse(
-            "school_management:application_edit", kwargs={"id": application_id}
-        )
-        application = get_object_or_404(Application, id=application_id)
-
-        if not application.response_date:
-            print("Response date not set")
-            
-            application.response_text = request.POST.get("response_text", "")
-            application_type = get_object_or_404(CommunicationType, id=1)
-        
-        # Determine the action and perform the corresponding task
-        action = request.POST.get("action")
-        if action == "send_mail":
-            # Send email logic here
-            subject = f"Ihre Bewerbung für Vertretung {application_id} ({application.substitution.school.name}, {application.substitution.start_date} - {application.substitution.end_date}, Vertrung von {application.substitution.teacher.fullname})"
-            helper = SubstitutionHelper(application.substitution)
-            application.response_text = request.POST.get("response_text")
-            application.response_date = timezone.now()
-            application.response_type = request.POST.get("response_type")
-            application.author = get_object_or_404(Person, user=request.user)
-            if helper.send_email(subject, application.response_text):
-                messages.success(request, "Ihre Bewerbung wurde erfolgreich abgeschickt.")
-                application.save()
-                success_url = reverse("school_management:substitution_candidates_list")
-            else:
-                messages.error(request, "Beim Versenden der Email ist ein Fehler aufgetreten.")
-
-        if action == "save":
-            application.save()
-            success_url = reverse("school_management:substitution_candidates_list")
-
-        return redirect(success_url)
-
-    def get(self, request, *args, **kwargs):
-        form = ResponseForm()
-        application = get_object_or_404(
-            Application, id=kwargs.get("id")
-        )
-        author = get_object_or_404(Person, user=request.user)
-        context = {
-            "form": form,
-            "application": application,
-            "username": request.user.username,
-            "author": author.fullname,
-        }
-        return render(request, "school_management/application_edit.html", context)
-
-
 class InvitationCreateView(LoginRequiredMixin, CreateView):
     model = Invitation
     form_class = InvitationForm
-    template_name = "school_management/invitation_create.html"
+    template_name = "school_management/invite_candidates.html"
     success_url = reverse_lazy(
         "school_list"
     )  # Redirect to school list view after saving
@@ -791,8 +739,6 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
 
         if form.is_valid():
             application = form.save(commit=False)  # Get the object without saving to the DB
-            print(application.response_text)
-            # Handle manual updates if needed (e.g., response_date, response_type)
             if action == "send":
                 application.response_date = timezone.now() 
                 if application.candidate.send_email:
@@ -873,40 +819,152 @@ class CandidateDeleteView(DeleteView):
         return super().get_queryset().filter(is_candidate=True)
 
 
-def invite_candidates(request, id):
-    selected_candidate = get_object_or_404(SubstitutionCandidate, id=id)
-    author = get_object_or_404(Person, user=request.user)
-    # Check if an invitation already exists for this candidate and substitution
-    invitation, created = Communication.objects.get_or_create(
-        type=CommunicationType.objects.get(pk=CommunicationTypeEnum.EINLADUNG.value),
-        candidate=selected_candidate.candidate,
-        substitution=selected_candidate.substitution,
-        defaults={
-            "request_date": timezone.now(),
-            "request_text": texte["default_invitiation_email"].format(
-                selected_candidate.candidate.informal_salutation,
-                selected_candidate.substitution.school.name,
-                selected_candidate.substitution.url,
-                selected_candidate.substitution.school.email,
-                selected_candidate.substitution.school.phone_number,
-                author.first_last_name,
-            ),
-        },
-    )
+class InviteCandidatesView(FormView):
+    template_name = "school_management/invite_candidates.html"
+    form_class = InvitationForm
 
-    # If it's a POST request, process the submitted form data
-    if request.method == "POST":
-        form = InvitationForm(request.POST, instance=invitation)
-        if form.is_valid():
-            form.save()  # Save the form data (updates the invitation if necessary)
-            return render(request, "success.html")  # Redirect to a success page
-    else:
-        # Prepopulate the form with the invitation instance
-        form = InvitationForm(instance=invitation)
+    def dispatch(self, request, *args, **kwargs):
+        # Initialize instance variables for candidate and substitution
+        self.selected_candidate = get_object_or_404(SubstitutionCandidate, id=self.kwargs["id"])
+        self.author = get_object_or_404(Person, user=request.user)
+        self.substitution = self.selected_candidate.substitution
+        self.candidate = self.selected_candidate.candidate
+        return super().dispatch(request, *args, **kwargs)
 
-    context = {
-        "substitution": selected_candidate.substitution,
-        "candidate": selected_candidate.candidate,
-        "form": form,
-    }
-    return render(request, "school_management/invite_candidates.html", context)
+    def get_initial(self):
+        # Prepare or fetch the invitation
+        invitation_type = CommunicationType.objects.get(pk=CommunicationTypeEnum.EINLADUNG.value)
+        self.invitation, created = Communication.objects.get_or_create(
+            type=invitation_type,
+            candidate=self.candidate,
+            substitution=self.substitution,
+            defaults={"request_date": now()},
+        )
+        #  Ensure the request_text includes the invitation ID in the link
+        if created:
+            print(123)
+            link = f"{settings.BASE_URL}{reverse('school_management:invitation_accept', kwargs={'id': self.invitation.id})}"
+            print(link)
+            self.invitation.request_text = texte["einladung_email"]["text"].format(
+                self.candidate.informal_salutation,
+                self.substitution.school.name,
+                link,
+                self.substitution.school.email,
+                self.substitution.school.phone_number,
+                self.author.first_last_name,
+            )
+            self.invitation.save()
+
+    def get_form_kwargs(self):
+        # Add the invitation instance to the form
+        kwargs = super().get_form_kwargs()
+        self.get_initial()  # Ensure self.invitation is populated
+        kwargs["instance"] = self.invitation
+        return kwargs
+
+    def form_valid(self, form):
+        form.save()
+
+        # Send email to the candidate
+        if self.candidate.send_email:
+            self.send_invitation_email()
+        
+        if self.candidate.send_sms:
+            self.send_invitation_sms()
+
+        self.invitation.request_date = now()
+        self.invitation.save()
+        self.selected_candidate.invited_date = now()
+        self.selected_candidate.save()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        print("Form is invalid")
+        print(form.errors)
+        return super().form_invalid(form)
+
+    def send_invitation_email(self):
+        # Prepare email details
+        recipient_email = self.invitation.candidate.email
+        subject = texte['einladung_email']['betreff']
+        body = self.invitation.request_text
+
+        # Send the email
+        try:
+            send_mail(
+                subject=subject,
+                message=None,  # Plain-text fallback
+                html_message=body,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[recipient_email],
+                fail_silently=False,
+            )
+            messages.success(self.request, f"Einladung per E-Mail an {recipient_email} versandt.")
+        except Exception as e:
+            messages.error(self.request, f"Fehler beim Senden der Einladung: {e}")
+
+    def send_invitation_sms(self):
+        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_ACCOUNT_TOKEN)
+        message = client.messages.create(
+            body=texte['einladung_sms'].format(self.substitution.url),
+            from_=settings.TWILIO_PHONE_NUMBER,
+            to=self.candidate.phone_number,
+        )
+        print(f"Message sent with SID: {message.sid}")
+        messages.success(self.request, "Deine Email wurde erfolgreich versandt.")
+    
+    def get_success_url(self):
+        # Redirect to the substitution detail page
+        return reverse(
+            "school_management:substitution_detail",
+            kwargs={"pk": self.substitution.id},
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["substitution"] = self.substitution
+        context["candidate"] = self.candidate
+        context["selected_candidate_id"] = self.selected_candidate.id
+        
+        return context
+
+
+class AcceptInvitationView(FormView):
+    template_name = "school_management/invitation_accept.html"
+    form_class = ConfirmationForm
+
+    def dispatch(self, request, *args, **kwargs):
+        # Retrieve the SubstitutionCandidate instance
+        print(kwargs["id"])
+        self.invitation = get_object_or_404(Invitation, id=kwargs["id"])
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        # Pass context data for the template
+        context = super().get_context_data(**kwargs)
+        context["substitution"] = self.invitation.substitution
+        context["candidate"] = self.invitation.candidate
+        return context
+
+    def form_valid(self, form):
+        # Get the action (accept/decline) from the POST data
+        action = self.request.POST.get("action")
+        if action == "accept":
+            # Update the candidate's acceptance status
+            self.invitation.response_date = timezone.now()
+            self.invitation.save()
+
+            messages.success(self.request, "Vielen Dank! Du hast das Vikariat angenommen.")
+        elif action == "decline":
+            # Update the candidate's decline status
+            self.substitution_candidate.declined_date = timezone.now()
+            self.substitution_candidate.save()
+
+            messages.info(self.request, "Du hast das Vikariat abgelehnt.")
+        else:
+            messages.error(self.request, "Ungültige Aktion. Bitte wähle eine Option.")
+
+        # Redirect to a success or detail page
+        return redirect(
+            reverse("index")
+        )

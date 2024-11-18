@@ -142,61 +142,69 @@ class SubstitutionHelper:
                 return max_rating
             return int(number / max_number * max_rating)
 
-        SubstitutionCandidate.objects.filter(substitution=self.substitution).delete()
         candidate = apps.get_model("school_management", "Candidate")
         substitution_candidate = apps.get_model(
             "school_management", "SubstitutionCandidate"
         )
-        candidates = candidate.objects.filter(
-            available_from_date__lt=self.substitution.start_date,
-            available_to_date__gt=self.substitution.end_date,
-            # include subjects filter here!
-        )
-        result = []
-        half_days = self.get_half_days()
+        candidates = SubstitutionCandidate.objects.filter(
+            substitution=self.substitution
+        ).values_list("candidate", flat=True)
+        print(candidates)
+        if  candidates is None:
+            candidates = candidate.objects.filter(
+                available_from_date__lt=self.substitution.start_date,
+                available_to_date__gt=self.substitution.end_date,
+                # include subjects filter here!
+            )
+            result = []
+            half_days = self.get_half_days()
 
-        for c in candidates:
-            matching_half_days = self.get_matching_half_days(c)
-            if matching_half_days > 0:
-                num_experiences = SubstitutionCandidate.objects.filter(
-                    candidate=c, accepted_date__isnull=False
-                ).count()
-                matching_subjects = len(
-                    set(c.subjects.all()).intersection(self.subjects)
-                )
-                num_experiences_in_school = SubstitutionCandidate.objects.filter(
-                    candidate=c,
-                    accepted_date__isnull=False,
-                    substitution__school=self.substitution.school,
-                ).count()
-                # num_experiences_with_class = random.randint(1, 2)
-                # num_experiences_with_subjects = num_experiences_in_school
+            for c in candidates:
+                matching_half_days = self.get_matching_half_days(c)
+                if matching_half_days > 0:
+                    num_experiences = SubstitutionCandidate.objects.filter(
+                        candidate=c, accepted_date__isnull=False
+                    ).count()
+                    matching_subjects = len(
+                        set(c.subjects.all()).intersection(self.subjects)
+                    )
+                    num_experiences_in_school = SubstitutionCandidate.objects.filter(
+                        candidate=c,
+                        accepted_date__isnull=False,
+                        substitution__school=self.substitution.school,
+                    ).count()
+                    # num_experiences_with_class = random.randint(1, 2)
+                    # num_experiences_with_subjects = num_experiences_in_school
 
-                rating = (
-                    matching_half_days / half_days * 30 if matching_half_days > 0 else 0
-                )
-                rating = (
-                    matching_subjects / len(self.subjects) * 30
-                    if matching_subjects > 0
-                    else 0
-                )
+                    rating = (
+                        matching_half_days / half_days * 30 if matching_half_days > 0 else 0
+                    )
+                    rating = (
+                        matching_subjects / len(self.subjects) * 30
+                        if matching_subjects > 0
+                        else 0
+                    )
 
-                rating += assign_rating(num_experiences, 6, 20)
-                rating += assign_rating(num_experiences_in_school, 3, 20)
+                    rating += assign_rating(num_experiences, 6, 20)
+                    rating += assign_rating(num_experiences_in_school, 3, 20)
 
-                sc = substitution_candidate.objects.create(
-                    candidate=c,
-                    substitution=self.substitution,
-                    matching_half_days=matching_half_days,
-                    matching_subjects=matching_subjects,
-                    num_experiences=num_experiences,
-                    num_experiences_in_school=num_experiences_in_school,
-                    # num_experiences_with_class=num_experiences_with_class,
-                    # num_experiences_with_subjects=num_experiences_with_subjects,
-                    rating=rating,
-                )
-                result.append(sc)
-        return result
+                    sc = substitution_candidate.objects.create(
+                        candidate=c,
+                        substitution=self.substitution,
+                        matching_half_days=matching_half_days,
+                        matching_subjects=matching_subjects,
+                        num_experiences=num_experiences,
+                        num_experiences_in_school=num_experiences_in_school,
+                        # num_experiences_with_class=num_experiences_with_class,
+                        # num_experiences_with_subjects=num_experiences_with_subjects,
+                        rating=rating,
+                    )
+                    result.append(sc)
+            return result
+        else:
+            return candidates
+        
+
 
     def send_email(self, subject, body):
         # Gmail credentials
@@ -210,7 +218,10 @@ class SubstitutionHelper:
         msg["From"] = gmail_user
         msg["To"] = to_email
         msg["Subject"] = subject
-        msg.attach(MIMEText(body, "plain"))
+
+        # Attach the email body as HTML
+        msg.attach(MIMEText(body, "html"))
+
         # Connect to the Gmail server
         try:
             server = smtplib.SMTP("smtp.gmail.com", 587)
@@ -225,6 +236,7 @@ class SubstitutionHelper:
         finally:
             server.quit()
             return result
+
 
     def assign_values(self):
         self.substitution.classes = ", ".join([cls.name for cls in self.classes])
