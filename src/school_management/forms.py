@@ -305,12 +305,6 @@ class SubstitutionEditForm(forms.ModelForm):
         self.fields["end_date"].input_formats = ["%Y-%m-%d"]
         status = self.initial.get("status") or self.instance.status
 
-        # Conditionally remove the substitution_comment field if status is not 'closed'
-        print(status)
-        if status != 2:
-            print(123)
-            self.fields.pop("selection_comment")
-
 
 class TeacherForm(forms.ModelForm):
     class Meta:

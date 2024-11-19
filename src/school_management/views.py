@@ -233,11 +233,21 @@ class TeacherListView(ListView):
             .distinct()
         )
         name_filter = self.request.GET.get("name_filter", "")
+        first_name_filter = self.request.GET.get("first_name_filter", "")
+        school_name_filter = self.request.GET.get("school_name_filter", "")
 
         # Apply filters if present
         if name_filter:
             queryset = queryset.filter(
-                teacher__person__last_name__icontains=name_filter
+                teacher__last_name__icontains=name_filter
+            )
+        if first_name_filter:
+            queryset = queryset.filter(
+                teacher__first_name__icontains=first_name_filter
+            )
+        if school_name_filter:
+            queryset = queryset.filter(
+                school__name__icontains=school_name_filter
             )
 
         # Order by teacher's last name

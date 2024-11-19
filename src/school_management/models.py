@@ -585,9 +585,6 @@ class Substitution(models.Model):
     fr_am = models.BooleanField(verbose_name="Freitag Vormittag", default=False)
     fr_pm = models.BooleanField(verbose_name="Freitag Nachmittag", default=False)
 
-    selection_comment = models.TextField(
-        verbose_name="Kommentar zur Besetzung", blank=True, max_length=1000
-    )
     status = models.ForeignKey(
         SubstitutionStatus,
         on_delete=models.SET_DEFAULT,
