@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+
+<div class="info-container">
+    <h2>Durchführung für Stellvertretung #{{substituion}}</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="form-group">
+        <button type="submit" name="action" value="save" class="btn btn-primary">Speichern</button>
+        <button type="button" class="btn btn-secondary" onclick="history.back()">Zurück</button>
+    </form>
+</div>
+
+{% endblock content %}

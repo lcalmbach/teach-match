@@ -6,7 +6,7 @@
       {% csrf_token %} {{ form|crispy }}
       <div class="form-footer">
         <button type="button" class="btn btn-secondary" onclick="history.back()">Zurück</button>
-        <button type="submit" class="btn btn-primary">Speichern</button>
+        <button type="submit" name="action" value="save" class="btn btn-primary">Speichern</button>
         <a href="{% url 'school_management:candidate_create' %}" class="btn btn-success">Neu</a>
         <a href="{% url 'school_management:candidate_delete' candidate.pk %}" class="btn btn-danger"
    onclick="return confirm('Möchten Sie diesen Eintrag wirklich löschen?');">Löschen</a>

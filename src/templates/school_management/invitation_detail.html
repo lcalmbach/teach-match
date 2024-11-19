@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+  <div class="info-container">
+    <h2>Einladung für Stellvertretung #{{ invitation.substitution.id }}</h2>
+    <table class="table">
+        <tr>
+            <th>Stellvertretung Dauer:</th>
+            <td>{{ invitation.substitution.start_date }} bis {{ invitation.substitution.end_date }}</td>
+        </tr>
+        <tr>
+            <th>Kandidat*in:</th>
+            <td>{{ invitation.candidate.fullname }}</td>
+        </tr>
+        <tr>
+            <th>Einladung am:</th>
+            <td>{{ invitation.request_date }}</td>
+        </tr>
+        <tr>
+            <th>Einladungstext:</th>
+            <td>{{ invitation.request_text  }}</td>
+        </tr>
+        <tr>
+            <th>Antwort Typ:</th>
+            <td>{{ invitation.response_type  }}</td>
+        </tr>
+        <tr>
+            <th>Antwort Datum:</th>
+            <td>{{ invitation.response_date  }}</td>
+        </tr>
+        <tr>
+            <th>Antwort Text:</th>
+            <td>{{ invitation.response_text }}</td>
+        </tr>
+    </table>
+    <br>
+    <a href="javascript:history.back()" class="btn btn-primary">Zurück</a>
+  </div> 
+</div>
+
+{% endblock content %}

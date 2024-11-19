@@ -24,6 +24,8 @@ from .views import (
     CandidateCreateView,
     CandidateDeleteView,
     InviteCandidatesView,
+    InvitationDetailView,
+    AddExecutedByView
 )
 
 app_name = "school_management"
@@ -94,6 +96,11 @@ urlpatterns = [
         name="application_detail",
     ),
     path(
+        "invitations/<int:pk>/",
+        InvitationDetailView.as_view(),
+        name="invitation_detail",
+    ),
+    path(
         "applications/edit/<int:pk>/",
         ApplicationEditView.as_view(),
         name="application_edit",
@@ -103,5 +110,11 @@ urlpatterns = [
         "candidate/delete/<int:pk>/",
         CandidateDeleteView.as_view(),
         name="candidate_delete",
-    )
+    ),
+    path(
+        "substitution/<int:substitution_id>/add_executed_by/",
+        AddExecutedByView.as_view(),
+        name="add_executed_by",
+    ),
+
 ]

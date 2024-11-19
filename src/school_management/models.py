@@ -535,7 +535,7 @@ class Substitution(models.Model):
         verbose_name="Schule",
     )
     teacher = models.ForeignKey(
-        Person,
+        Teacher,
         on_delete=models.CASCADE,
         related_name="teacher_substitutions",
         verbose_name="Lehrkraft",
@@ -565,10 +565,11 @@ class Substitution(models.Model):
         verbose_name="Mindestabschluss",
         default=1,
     )
+    
     # für die Anzeige
-    classes = models.TextField(verbose_name="Klassen", blank=True, max_length=1000)
-    levels = models.TextField(verbose_name="Stufen", blank=True, max_length=1000)
-    subjects = models.TextField(verbose_name="Fächer", blank=True, max_length=1000)
+    classes_cli = models.TextField(verbose_name="Klassen", blank=True, max_length=1000)
+    levels_cli = models.TextField(verbose_name="Stufen", blank=True, max_length=1000)
+    subjects_cli = models.TextField(verbose_name="Fächer", blank=True, max_length=1000)
     summary = models.TextField(
         verbose_name="Zusammenfassung", blank=True, max_length=1000
     )
@@ -599,6 +600,32 @@ class Substitution(models.Model):
     class Meta:
         verbose_name = "Stellvertretung"
         verbose_name_plural = "Stellvertretungen"
+
+    @property
+    def availability(self):
+        # Get the availability as a dictionary
+        return {
+            "availabilitymo_am": self.availability_mo_am,
+            "mo_pm": self.availability_mo_pm,
+            "tu_am": self.availability_tu_am,
+            "tu_pm": self.availability_tu_pm,
+            "we_am": self.availability_we_am,
+            "we_pm": self.availability_we_pm,
+            "th_am": self.availability_th_am,
+            "th_pm": self.availability_th_pm,
+            "fr_am": self.availability_fr_am,
+            "fr_pm": self.availability_fr_pm,
+        }
+
+    @availability.setter
+    def availability(self, value):
+        print(value)
+        for key, val in value.items():
+            x = 'availability_' + key
+            print(x)
+            print(hasattr(self, x))
+            if hasattr(self, x):  
+                setattr(self, x, val)
 
     @property
     def url(self):
@@ -671,6 +698,40 @@ class Timetable(models.Model):
     def __str__(self):
         return f"{self.day.name_short} {self.period} {self.subject.name}"
 
+class SubstitutionLesson(models.Model):
+    """timetable for a teacher: all periods for a week. the template is used to create the timetable"""
+
+    substitution = models.ForeignKey(
+        Substitution, on_delete=models.CASCADE, related_name="substitution_lessons"
+    )
+    
+    candidate = models.ForeignKey(
+        Candidate, on_delete=models.CASCADE, related_name="substitution_lessons_candidates", null=True, blank=True
+    )
+    period = models.ForeignKey(
+        Period, on_delete=models.CASCADE, related_name="lesson_periods"
+    )
+    day = models.ForeignKey(
+        DayOfWeek, on_delete=models.CASCADE, related_name="lesson_days"
+    )
+    subject = models.ForeignKey(
+        Subject, on_delete=models.CASCADE, related_name="lesson_subjects"
+    )
+    school_class = models.ForeignKey(
+        SchoolClass,
+        on_delete=models.CASCADE,
+        related_name="lesson_school_classes",
+    )
+    subject = models.ForeignKey(
+        Subject, on_delete=models.CASCADE, related_name="lesson_subjects"
+    )
+
+    class Meta:
+        verbose_name = "Lektion"
+        verbose_name_plural = "Lektionen"
+
+    def __str__(self):
+        return f"{self.day.name_short} {self.period} {self.subject.name}"
 
 class SubstitutionCandidate(models.Model):
     """Candidates with available for a substitution period and proficiency with the subject of the lessons
@@ -721,6 +782,17 @@ class SubstitutionCandidate(models.Model):
 
     def __str__(self):
         return f"{self.candidate.fullname} - #{self.substitution.pk}"
+
+
+class SubstitutionExecution(models.Model):
+    substitution = models.ForeignKey(
+        Substitution, on_delete=models.CASCADE, related_name="substitution_executions"
+    )
+    candidate = models.ForeignKey(
+        Candidate, on_delete=models.CASCADE, related_name="substitution_executions_candidates"
+    )
+    rating = models.IntegerField(verbose_name="Bewertung", default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
+    comments = models.TextField(verbose_name="Kommentar", blank=True, max_length=1000)
 
 
 class Vacation(models.Model):
@@ -798,7 +870,7 @@ class Communication(models.Model):
 
 class ApplicationManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(type_id=1)
+        return super().get_queryset().filter(type_id=CommunicationTypeEnum.BEWERBUNG.value)
 
 
 class Application(Communication):
@@ -831,7 +903,7 @@ class Application(Communication):
 
 class InvitationManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(type_id=2)
+        return super().get_queryset().filter(type_id=CommunicationTypeEnum.EINLADUNG.value)
 
 
 class Invitation(Communication):
@@ -839,3 +911,6 @@ class Invitation(Communication):
 
     class Meta:
         proxy = True
+
+    def __str__(self):
+        return f"{self.request_date} {self.candidate.fullname}"

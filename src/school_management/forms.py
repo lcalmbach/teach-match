@@ -6,13 +6,10 @@ from .models import (
     Person,
     Substitution,
     Teacher,
-    Candidate,
     Invitation,
     Application,
-    Subject,
-    Communication,
+    SubstitutionExecution
 )
-import fitz  # PyMuPDF
 
 class StarRatingWidget(forms.RadioSelect):
     """Custom widget to render star rating."""
@@ -92,7 +89,7 @@ class ApplicationResponseForm(forms.ModelForm):
             "response_date": "Antwort am",
         }
 
-class ApplicationRatingForm(forms.ModelForm):
+class RatingForm(forms.ModelForm):
     """
     ApplicationRatingForm is a Django ModelForm for the Application model, used to rate and comment on an application.
     Attributes:
@@ -132,7 +129,6 @@ class ApplicationFullForm(forms.ModelForm):
             "response_type",
             "response_text",
             "response_date",
-            "rating",  
             "comments",
         ]
 
@@ -143,20 +139,12 @@ class ApplicationFullForm(forms.ModelForm):
             "response_date": forms.DateInput(
                 attrs={"type": "date", "class": "form-control"}, format="%Y-%m-%d"
             ),
-            "rating": StarRatingWidget(choices=[  # Add choices for star ratings
-                (1, "★"),
-                (2, "★★"),
-                (3, "★★★"),
-                (4, "★★★★"),
-                (5, "★★★★★"),
-            ]),
         }
 
         labels = {
             "request_text": "Bewerbung Text",
             "request_date": "Bewerbung gesendet am",
             "response_date": "Antwort am",
-            "rating": "Bewertung der Stellvertretung",
             "comments": "Bemerkungen zum Ablauf der Stellvertretung",
         }
 
@@ -262,9 +250,9 @@ class SubstitutionCreateForm(forms.ModelForm):
             "th_pm",
             "fr_am",
             "fr_pm",
-            "classes",
-            "subjects",
-            "levels",
+            "classes_cli",
+            "subjects_cli",
+            "levels_cli",
             "summary",
             "comment_subsitution",
         ]
@@ -397,3 +385,19 @@ class ConfirmationForm(forms.Form):
         ),
         label="Kommentar",
     )
+
+
+class SubstitutionExecutionForm(forms.ModelForm):
+    class Meta:
+        model = SubstitutionExecution
+        exclude = ['substitution']
+
+        widgets = {
+            "rating": StarRatingWidget(choices=[  # Add choices for star ratings
+                (1, "★"),
+                (2, "★★"),
+                (3, "★★★"),
+                (4, "★★★★"),
+                (5, "★★★★★"),
+            ])
+        }

@@ -1,4 +1,5 @@
 from django.utils.timezone import now
+from django.http import HttpResponseBadRequest
 from django.forms import modelformset_factory
 from django.http import HttpResponse
 from django.views import View
@@ -38,6 +39,7 @@ from .models import (
     CommunicationResponseType,
     CommunicationResponseTypeEnum,
     SubstitutionStatusEnum,
+    SubstitutionExecution,
 )
 from .forms import (
     SchoolForm,
@@ -49,7 +51,8 @@ from .forms import (
     ApplicationForm,
     ApplicationRequestForm,
     ConfirmationForm,
-    ApplicationResponseForm
+    ApplicationResponseForm,
+    SubstitutionExecutionForm
 )
 from django.views.generic import ListView  # Import the necessary module
 from django.urls import reverse_lazy
@@ -185,6 +188,9 @@ class CandidateEditView(LoginRequiredMixin, UpdateView):
                 self.object.delete()
                 messages.success(request, "Das Profil wurde erfolgreich gelöscht.")
                 return redirect(self.success_url)
+            else:
+                # Handle unknown actions
+                return HttpResponseBadRequest(f"{action}:Unbekannte Aktion.")
         else:
             print("Form invalid")
             return self.form_invalid(form)
@@ -407,6 +413,8 @@ class SubstitutionDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         substitution = self.get_object()
+        subjects = Subject.objects.filter(lesson_subjects__substitution=substitution).distinct()
+
         substitution_helper = SubstitutionHelper(substitution)
         context = super().get_context_data(**kwargs)
         context["completed_by"] = SubstitutionCandidate.objects.filter(
@@ -418,7 +426,9 @@ class SubstitutionDetailView(DetailView):
         ).order_by("-rating")
         context["halfdays"] = substitution_helper.get_half_days()
         context["applications"] = Application.objects.filter(substitution=substitution)
-        context["confirmed"] = Application.objects.filter(substitution=substitution, response_type_id=CommunicationResponseTypeEnum.ZUSAGE.value)
+        context["invitations"] = Invitation.objects.filter(substitution=substitution)
+        context["executed_by"] = SubstitutionExecution.objects.filter(substitution=substitution)
+        context["subjects"] = subjects
         return context
 
 
@@ -481,6 +491,7 @@ class SubstitutionEditView(UpdateView):
         context = super().get_context_data(**kwargs)
         substitution = self.get_object()
         context["applications"] = Application.objects.filter(substitution=substitution)
+        context["invitations"] = Invitation.objects.filter(substitution=substitution)
         return context
 
     def post(self, request, *args, **kwargs):
@@ -708,6 +719,15 @@ class ApplicationDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         return context
 
+class InvitationDetailView(DetailView):
+    model = Invitation
+    template_name = "school_management/invitation_detail.html"
+    context_object_name = "invitation"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
 
 class ApplicationEditView(LoginRequiredMixin, UpdateView):
     model = Application
@@ -799,7 +819,7 @@ class CandidateCreateView(CreateView):
     template_name = "school_management/candidate_form.html"
     success_url = reverse_lazy(
         "school_management:candidate_list"
-    )  # Redirect to a list of candidates or another view after creation
+    )  
 
     def form_valid(self, form):
         # Ensure that the person is marked as a candidate
@@ -935,7 +955,6 @@ class AcceptInvitationView(FormView):
 
     def dispatch(self, request, *args, **kwargs):
         # Retrieve the SubstitutionCandidate instance
-        print(kwargs["id"])
         self.invitation = get_object_or_404(Invitation, id=kwargs["id"])
         return super().dispatch(request, *args, **kwargs)
 
@@ -952,6 +971,7 @@ class AcceptInvitationView(FormView):
         if action == "accept":
             # Update the candidate's acceptance status
             self.invitation.response_date = timezone.now()
+            self.invitation.response_text = form.cleaned_data["comment"]
             self.invitation.save()
 
             messages.success(self.request, "Vielen Dank! Du hast das Vikariat angenommen.")
@@ -968,3 +988,18 @@ class AcceptInvitationView(FormView):
         return redirect(
             reverse("index")
         )
+
+
+class AddExecutedByView(CreateView):
+    model = SubstitutionExecution
+    form_class = SubstitutionExecutionForm
+    template_name = "school_management/substitution_add_executed_by.html"
+
+    def form_valid(self, form):
+        execution_by = form.save(commit=False)
+        substitution_id = self.kwargs.get("substitution_id")
+        execution_by.substitution = get_object_or_404(Substitution, id=substitution_id)
+        execution_by.substitution.status = SubstitutionStatus.objects.get(pk=SubstitutionStatusEnum.BESETZT.value)
+        execution_by.save()
+        execution_by.substitution.save()
+        return redirect("school_management:substitution_detail", pk=substitution_id)

@@ -34,7 +34,7 @@
         </tr>
         <tr>
           <th>Fächer</th>
-          <td>{{ substitution.subjects }}</td>
+          <td>{{ substitution.subjects_cli }}</td>
         </tr>
         <tr>
           <th>Teilübernahme möglich</th>
@@ -71,7 +71,7 @@
         </tr>
         <tr>
           <th>Klasse(n)</th>
-          <td>{{ substitution.classes  }}</td>
+          <td>{{ substitution.classes_cli  }}</td>
         </tr>
         <tr>
           <th>Kommentar zur Stellvertretung</th>
@@ -118,6 +118,9 @@
         <a class="nav-link" id="applications-tab" data-bs-toggle="tab" href="#applications" role="tab" aria-controls="applications" aria-selected="false">Bewerbungen</a>
     </li>
     <li class="nav-item" role="presentation">
+      <a class="nav-link" id="invitations-tab" data-bs-toggle="tab" href="#invitations" role="tab" aria-controls="invitations" aria-selected="false">Einladungen</a>
+    </li>
+    <li class="nav-item" role="presentation">
         <a class="nav-link" id="completedby-tab" data-bs-toggle="tab" href="#completedby" role="tab" aria-controls="completedby" aria-selected="false">Durchführung</a>
     </li>
   </ul>
@@ -151,7 +154,7 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Kandidat</th>
+                    <th>Kandidat*innen</th>
                     <th>Verfügbar Halbtage (30)</th>
                     <th>Fächer (30)</th>
                     <th>Anz. Erfahrungen (20)</th>
@@ -166,11 +169,11 @@
                 <tr> 
                     <td><a href="{% url 'school_management:candidate_detail' pk=x.candidate.pk %}">{{ x.candidate.last_name }} {{ x.candidate.first_name }}</a></td>
                     <td>{{ x.matching_half_days}}/{{halfdays}}</td>
-                    <td>{{ x.matching_subjects}}/{{x.subjects|length}}</td>
-                    <td>{{ x.num_experiences}} {{x.id}}</td>
+                    <td>{{ x.matching_subjects}}/{{subjects|length}}</td>
+                    <td>{{ x.num_experiences}}</td>
                     <td>{{ x.num_experiences_in_school}}</td>
                     <td>{{ x.rating }}</td>
-                    <td>{{ x.invited_date }}</td>
+                    <td>{{ x.invited_date|default:'' }}</td>
                     <td>
                       <a href="{% url 'school_management:invitation_create' x.id %}" class="btn btn-secondary">Einladung</a>
                   </td>
@@ -199,6 +202,30 @@
                     <td>{{ x.request_date }}</td>
                     <td>{{ x.response_date }}</td>
                     <td><a href="{% url 'school_management:application_detail' pk=x.pk %}">{{ x.response_type }}</a></td>
+                </tr>                   
+              {% endfor %}
+          </tbody>
+      </table>
+    </div>
+
+    <div class="tab-pane fade" id="invitations" role="tabpanel" aria-labelledby="invitations-tab">
+      <table class="table table-striped">
+          <thead>
+              <tr>
+                  <th>Einladung an</th>
+                  <th>Einladung vom</th>
+                  <th>Antwort am</th>
+                  <th>Antwort Typ</th>
+                  <th></th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for x in invitations %}                      
+                <tr>
+                    <td><a href="{% url 'school_management:candidate_detail' pk=x.candidate.pk %}">{{ x.candidate.fullname }}</a></td>
+                    <td>{{ x.request_date }}</td>
+                    <td>{{ x.response_date }}</td>
+                    <td><a href="{% url 'school_management:invitation_detail' pk=x.pk %}">{{ x.response_type }}</a></td>
                 </tr>
               {% endfor %}
           </tbody>
@@ -206,22 +233,24 @@
     </div>
 
     <div class="tab-pane fade" id="completedby" role="tabpanel" aria-labelledby="completedby-tab">
+      <br>
+      <div class="d-flex justify-content-between mb-3">
+          <a href="{% url 'school_management:add_executed_by' substitution.id %}" class="btn btn-primary">
+              Durchführung hinzufügen
+          </a>
+      </div>
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Kandidat</th>
                     <th>Bemerkungen</th>
-                    <th>Bewerbung vom</th>
-                    <th>Zusage am</th>
                 </tr>
             </thead>
             <tbody>
-                {% for x in confirmed %}
+                {% for x in executed_by %}
                   <tr>
                       <td><a href="{% url 'school_management:candidate_detail' pk=x.candidate.pk %}">{{ x.candidate.fullname }}</a></td>
                       <td>{{ x.comments }}</td>
-                      <td>{{ x.request_date }}</td>
-                      <td>{{ x.response_date }}</td>
                   </tr>
                 {% endfor %}
             </tbody>

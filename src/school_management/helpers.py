@@ -5,7 +5,7 @@ import random
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from .models import SubstitutionCandidate
+from .models import SubstitutionCandidate, SubstitutionLesson
 
 
 def get_week_days(start_date, end_date):
@@ -148,13 +148,11 @@ class SubstitutionHelper:
         )
         candidates = SubstitutionCandidate.objects.filter(
             substitution=self.substitution
-        ).values_list("candidate", flat=True)
-        print(candidates)
-        if  candidates is None:
+        )
+        if  len(candidates) == 0:
             candidates = candidate.objects.filter(
                 available_from_date__lt=self.substitution.start_date,
                 available_to_date__gt=self.substitution.end_date,
-                # include subjects filter here!
             )
             result = []
             half_days = self.get_half_days()
@@ -163,7 +161,8 @@ class SubstitutionHelper:
                 matching_half_days = self.get_matching_half_days(c)
                 if matching_half_days > 0:
                     num_experiences = SubstitutionCandidate.objects.filter(
-                        candidate=c, accepted_date__isnull=False
+                        candidate=c, 
+                        accepted_date__isnull=False
                     ).count()
                     matching_subjects = len(
                         set(c.subjects.all()).intersection(self.subjects)
@@ -179,7 +178,7 @@ class SubstitutionHelper:
                     rating = (
                         matching_half_days / half_days * 30 if matching_half_days > 0 else 0
                     )
-                    rating = (
+                    rating += (
                         matching_subjects / len(self.subjects) * 30
                         if matching_subjects > 0
                         else 0
@@ -228,7 +227,6 @@ class SubstitutionHelper:
             server.starttls()
             server.login(gmail_user, gmail_password)
             text = msg.as_string()
-            print(gmail_user, to_email, text)
             server.sendmail(gmail_user, to_email, text)
             result = True
         except Exception as e:
@@ -239,21 +237,21 @@ class SubstitutionHelper:
 
 
     def assign_values(self):
-        self.substitution.classes = ", ".join([cls.name for cls in self.classes])
-        self.substitution.levels = ", ".join([lvl.name_short for lvl in self.levels])
-        self.substitution.subjects = ", ".join([sbj.name for sbj in self.subjects])
-        self.substitution.cl = self.days
+        self.substitution.classes_cli = ", ".join([cls.name for cls in self.classes])
+        self.substitution.levels_cli = ", ".join([lvl.name_short for lvl in self.levels])
+        self.substitution.subjects_cli = ", ".join([sbj.name for sbj in self.subjects])
         self.substitution.summary = self.get_summary()
-        SubstitutionCandidate = apps.get_model(
-            "school_management", "SubstitutionCandidate"
-        )
-        SubstitutionCandidate.objects.all().filter(
-            substitution=self.substitution
-        ).delete()
-
         candidates = self.get_candidates()
         self.substitution.substitution_candidates.set(candidates)
-
+        for lesson in self.lessons:
+            SubstitutionLesson.objects.create(
+                substitution=self.substitution,
+                candidate = None,
+                period = lesson.period,
+                day = lesson.day,
+                subject = lesson.subject,
+                school_class = lesson.school_class,
+            )
         halfdays = self.get_halfdays()
         am_pm_keys = [
             "mo_am",
