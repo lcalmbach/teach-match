@@ -18,14 +18,15 @@ from .views import (
     AcceptInvitationView,
     admin_tasks,
     calculate_teacher_availability,
-    ApplicationListView,
+    CommunicationListView,
     ApplicationDetailView,
     ApplicationEditView,
     CandidateCreateView,
     CandidateDeleteView,
     InviteCandidatesView,
     InvitationDetailView,
-    AddExecutedByView
+    AddExecutedByView,
+    InvitationEditView,
 )
 
 app_name = "school_management"
@@ -89,7 +90,7 @@ urlpatterns = [
     ),
     path("invitation/<int:id>/", InviteCandidatesView.as_view(), name="invitation_create"),
     path("invitation_accept/<int:id>/", AcceptInvitationView.as_view(), name="invitation_accept"),
-    path("applications/", ApplicationListView.as_view(), name="application_list"),
+    path("communications/", CommunicationListView.as_view(), name="communication_list"),
     path(
         "applications/<int:pk>/",
         ApplicationDetailView.as_view(),
@@ -104,6 +105,11 @@ urlpatterns = [
         "applications/edit/<int:pk>/",
         ApplicationEditView.as_view(),
         name="application_edit",
+    ),
+    path(
+        "invitations/edit/<int:pk>/",
+        InvitationEditView.as_view(),
+        name="invitation_edit",
     ),
     path("candidate/create/", CandidateCreateView.as_view(), name="candidate_create"),
     path(

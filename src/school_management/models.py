@@ -523,6 +523,7 @@ class Candidate(Person):
 
     class Meta:
         proxy = True
+    
 
 
 class Substitution(models.Model):
@@ -730,6 +731,7 @@ class SubstitutionLesson(models.Model):
     def __str__(self):
         return f"{self.day.name_short} {self.period} {self.subject.name}"
 
+
 class SubstitutionCandidate(models.Model):
     """Candidates with available for a substitution period and proficiency with the subject of the lessons
     The rating is a number from 1 to 100.
@@ -791,6 +793,13 @@ class SubstitutionExecution(models.Model):
     rating = models.IntegerField(verbose_name="Bewertung", default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
     comments = models.TextField(verbose_name="Kommentar", blank=True, max_length=1000)
 
+    def star_rating(self):
+        if self.rating is None:
+            return "No rating"
+        return "★" * self.rating + "☆" * (5 - self.rating)
+    
+    def __str__(self):
+        return f"{self.candidate.fullname} - #{self.substitution.pk}"
 
 class Vacation(models.Model):
     """Teacher vacation"""
@@ -853,8 +862,7 @@ class Communication(models.Model):
         blank=True,
         default=default_communication_response_type,
     )
-    comments = models.TextField(verbose_name="Kommentar", blank=True, max_length=1000)
-    rating = models.IntegerField(verbose_name="Bewertung", default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])
+    comments = models.TextField(verbose_name="Bemerkungen", blank=True, max_length=1000)
 
 
     def subject(self):
@@ -875,11 +883,6 @@ class Application(Communication):
 
     class Meta:
         proxy = True
-
-    def star_rating(self):
-        if self.rating is None:
-            return "No rating"
-        return "★" * self.rating + "☆" * (5 - self.rating)
 
     @property
     def response_sms_text(self):

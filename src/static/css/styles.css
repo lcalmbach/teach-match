@@ -72,19 +72,25 @@ td.button-cell {
     color: silver; /* White text color for brand and links */
 }
 
-.navbar-custom .hover,
-.navbar-custom .active {
-    background-color: #81c784; /* Light green background */
-    color: #004d40; /* Dark green text color */
+.navbar-custom .nav-link.active {
+    background-color: #a5d6a7; /* Lighter shade of green */
+    color: #ffffff; /* White text color */
+    border-radius: 5px; /* Optional rounded corners */
 }
 
+.navbar-custom .nav-link:hover {
+    background-color: #81c784; /* Light green background on hover */
+    color: black; /* White text color */
+}
+
+
+/* miscelleneous styles */
 .toast-success {
     background-color: var(--bs-success);
     color: whitesmoke;
     padding: 1cap; 
     margin: 5px; 
   }
-
 
 .faint-green-bg {
     background-color: #e0ffe0 !important;

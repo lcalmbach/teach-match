@@ -8,7 +8,7 @@ from .models import (
     Teacher,
     Invitation,
     Application,
-    SubstitutionExecution
+    SubstitutionExecution,
 )
 
 class StarRatingWidget(forms.RadioSelect):
@@ -35,6 +35,29 @@ class ApplicationRequestForm(forms.ModelForm):
         }
 
 
+class InvitationEditForm(forms.ModelForm):
+    class Meta:
+        model = Invitation
+        fields = '__all__'
+        labels = {
+            "candidate": "Kandidat*in",
+            "request_text": "Einladungstext",
+            "response_text": "Antwort Kandidat*in",
+        }
+
+        widgets = {
+            "request_date": forms.DateInput(
+                attrs={"type": "date", "class": "form-control"}, format="%Y-%m-%d"
+            )
+        }
+
+    def __init__(self, *args, selected_candidate_id=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["candidate"].disabled = True
+        self.fields["substitution"].disabled = True
+        self.fields["type"].disabled = True
+
+
 class InvitationForm(forms.ModelForm):
     class Meta:
         model = Invitation
@@ -42,6 +65,7 @@ class InvitationForm(forms.ModelForm):
         labels = {
             "candidate": "Kandidat*in",
             "request_text": "Einladungstext",
+            "response_text": "Antwort Kandidat*in",
         }
 
     def __init__(self, *args, selected_candidate_id=None, **kwargs):
@@ -101,7 +125,7 @@ class RatingForm(forms.ModelForm):
     """
 
     class Meta:
-        model = Application
+        model = SubstitutionExecution
         fields = [
             "rating",  
             "comments",
@@ -387,7 +411,7 @@ class SubstitutionExecutionForm(forms.ModelForm):
         exclude = ['substitution']
 
         widgets = {
-            "rating": StarRatingWidget(choices=[  # Add choices for star ratings
+            "rating": StarRatingWidget(choices=[ 
                 (1, "★"),
                 (2, "★★"),
                 (3, "★★★"),

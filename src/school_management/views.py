@@ -52,7 +52,8 @@ from .forms import (
     ApplicationRequestForm,
     ConfirmationForm,
     ApplicationResponseForm,
-    SubstitutionExecutionForm
+    SubstitutionExecutionForm,
+    InvitationEditForm,
 )
 from django.views.generic import ListView  # Import the necessary module
 from django.urls import reverse_lazy
@@ -116,19 +117,25 @@ class SchoolDetailView(DetailView):
         return context
 
 
+
+class InvitationEditView(LoginRequiredMixin, UpdateView):
+    model = Invitation
+    form_class = InvitationEditForm
+    template_name = "school_management/invitation_edit.html"
+    success_url = reverse_lazy("school_management:communication_list")
+
+
 class SchoolEditView(LoginRequiredMixin, UpdateView):
     model = School
     form_class = SchoolForm
     template_name = "school_management/school_edit.html"
-    success_url = reverse_lazy(
-        "school_list"
-    )
+    success_url = reverse_lazy("school_management:school_list")
 
 
 class CandidateListView(ListView):
     model = Candidate
     context_object_name = (
-        "candidates"  # The name of the variable to be used in the template
+        "candidates"  
     )
     template_name = "school_management/candidate_list.html"  # Path to the template
 
@@ -672,14 +679,15 @@ def calculate_teacher_availability(request):
     return redirect("school_management:admin_tasks")
 
 
-class ApplicationListView(ListView):
-    model = Application
-    context_object_name = "applications"
-    template_name = "school_management/applications_list.html"
+class CommunicationListView(ListView):
+    model = Communication
+    context_object_name = "communications"
+    template_name = "school_management/communications_list.html"
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        application_filter = self.request.GET.get("application_filter", "")
+        communication_filter = self.request.GET.get("communication_filter", "")
+        communication_type_filter = self.request.GET.get("communication_type_filter", "")
         substitution_filter = self.request.GET.get("substitution_filter", "")
         candidate_filter = self.request.GET.get("candidate_filter", "")
         substitution_date_filter_from = self.request.GET.get(
@@ -690,10 +698,12 @@ class ApplicationListView(ListView):
         )
         response_filter = self.request.GET.get("response_filter", "")
 
+        if communication_type_filter:
+            queryset = queryset.filter(type_id=communication_type_filter)
         if substitution_filter:
             queryset = queryset.filter(substitution_id=substitution_filter)
-        if application_filter:
-            queryset = queryset.filter(id=application_filter)
+        if communication_filter:
+            queryset = queryset.filter(id=communication_filter)
         if candidate_filter:
             queryset = queryset.filter(
                 Q(candidate__first_name__icontains=candidate_filter)
@@ -717,6 +727,7 @@ class ApplicationListView(ListView):
         context = super().get_context_data(**kwargs)
         # Add response codes to the context
         context["responses"] = CommunicationResponseType.objects.all()
+        context["types"] = CommunicationType.objects.all()
         return context
 
 
@@ -813,7 +824,7 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
 
     
     def get_success_url(self):
-        return reverse("school_management:application_list")
+        return reverse("school_management:communication_list")
 
 
 class CandidateCreateView(CreateView):
@@ -872,9 +883,7 @@ class InviteCandidatesView(FormView):
         )
         #  Ensure the request_text includes the invitation ID in the link
         if created:
-            print(123)
             link = f"{settings.BASE_URL}{reverse('school_management:invitation_accept', kwargs={'id': self.invitation.id})}"
-            print(link)
             self.invitation.request_text = texte["einladung_email"]["text"].format(
                 self.candidate.informal_salutation,
                 self.substitution.school.name,

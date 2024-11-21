@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+teach_match/templates/school_management/school_list.html
+{% block title %}Bewerbungen{% endblock title %}
+
+{% block content %}
+<div class="table-container">
+    <h2>Bewerbungen und Einladungen</h2>
+    <form method="get" action="">
+      <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Stellvertretung Nr</th>
+                <th>Datum Start Stellvertretung</th>
+                <th>Typ</th>
+                <th>Nummer</th>
+                <th>Kandidat</th>
+                <th>Datum Korrrespondenz</th>
+                <th>Antwort Datum</th>
+                <th>Antwort</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tr> <!-- Filter inputs row -->
+          <th><input type="text" name="substitution_filter" value="{{ request.GET.substitution_filter }}"></th>
+          <th>
+            <table>
+              <tr>
+                <td>Von:</td><td><input type="date" name="substitution_date_filter_from" value="{{ request.GET.substitution_date_filter_from }}"></td>
+              </tr>
+              <tr>
+                <td>Bis:</td><td><input type="date" name="substitution_date_filter_to" value="{{ request.GET.substitution_date_filter_to }}"></td>
+              </tr>
+            </table>
+          </th>
+          <th>
+            <select name="communication_type_filter">
+              <option value="">Typ</option>
+              {% for type in types %}
+                  <option value="{{ type.id }}" {% if request.GET.communication_type_filter == type.id|stringformat:"s" %}selected{% endif %}>
+                      {{ type.name }}
+                  </option>
+              {% endfor %}
+            </select>
+          </th>
+          <th><input type="text" name="application_filter" value="{{ request.GET.application_filter }}"></th>
+          <th><input type="text" name="candidate_filter" value="{{ request.GET.candidate_filter }}"></th>
+          <th><input type="text" name="application_date_filter" value="{{ request.GET.application_date_filter }}"></th>
+          <th><input type="text" name="application_response_date value="{{ request.GET.application_response_date }}"></th>
+          <th>
+            <select name="response_filter">
+              <option value="">Antwort</option>
+              {% for response in responses %}
+                  <option value="{{ response.id }}" {% if request.GET.response_filter == response.id|stringformat:"s" %}selected{% endif %}>
+                      {{ response.name }}
+                  </option>
+              {% endfor %}
+            </select>
+          </th>
+          <th>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-filter"></i>
+            </button></th>
+      </tr>
+        <tbody>
+            {% for comm in communications %}
+            <tr>
+              <td><a href="{% url 'school_management:substitution_detail' pk=comm.substitution.pk %}">{{ comm.substitution.id }}</a></td>
+              <td>{{ comm.substitution.start_date }}</td> 
+              <td>{{ comm.type }}</td> 
+              <td>
+                <a href="{% if comm.type.id == 1 %}
+                    {% url 'school_management:application_detail' pk=comm.id %}
+                  {% else %}
+                    {% url 'school_management:invitation_detail' pk=comm.id %}
+                  {% endif %}">{{ comm.id }}
+                </a>
+              </td>
+              <td>{{ comm.candidate.fullname }}</td> 
+              <td>{{ comm.request_date }}</td> 
+              <td>{{ comm.response_date}}</td> 
+              <td>{{ comm.response_type.name }}</td> 
+              <td><a href="{% if comm.type.id == 1 %}
+                  {% url 'school_management:application_edit' pk=comm.pk %}
+                {% else %}
+                {% url 'school_management:invitation_edit' pk=comm.pk %}
+                  {% endif %}" title="Bewerbung beantworten"><i class="fas fa-edit"></i></a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </form> 
+</div>  
+{% endblock %}
+
+""
