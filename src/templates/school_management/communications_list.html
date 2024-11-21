@@ -12,8 +12,7 @@ teach_match/templates/school_management/school_list.html
                 <th>Stellvertretung Nr</th>
                 <th>Datum Start Stellvertretung</th>
                 <th>Typ</th>
-                <th>Nummer</th>
-                <th>Kandidat</th>
+                <th>Kandidat*in</th>
                 <th>Datum Korrrespondenz</th>
                 <th>Antwort Datum</th>
                 <th>Antwort</th>
@@ -42,7 +41,6 @@ teach_match/templates/school_management/school_list.html
               {% endfor %}
             </select>
           </th>
-          <th><input type="text" name="application_filter" value="{{ request.GET.application_filter }}"></th>
           <th><input type="text" name="candidate_filter" value="{{ request.GET.candidate_filter }}"></th>
           <th><input type="text" name="application_date_filter" value="{{ request.GET.application_date_filter }}"></th>
           <th><input type="text" name="application_response_date value="{{ request.GET.application_response_date }}"></th>
@@ -66,13 +64,12 @@ teach_match/templates/school_management/school_list.html
             <tr>
               <td><a href="{% url 'school_management:substitution_detail' pk=comm.substitution.pk %}">{{ comm.substitution.id }}</a></td>
               <td>{{ comm.substitution.start_date }}</td> 
-              <td>{{ comm.type }}</td> 
               <td>
                 <a href="{% if comm.type.id == 1 %}
                     {% url 'school_management:application_detail' pk=comm.id %}
                   {% else %}
                     {% url 'school_management:invitation_detail' pk=comm.id %}
-                  {% endif %}">{{ comm.id }}
+                  {% endif %}">{{ comm.type }}
                 </a>
               </td>
               <td>{{ comm.candidate.fullname }}</td> 
