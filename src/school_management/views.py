@@ -885,7 +885,7 @@ class InviteCandidatesView(FormView):
             self.invitation.request_text = texte["einladung_email"]["text"].format(
                 self.candidate.informal_salutation,
                 self.substitution.school.name,
-                self.substitution.response_to_invitation_url,
+                self.invitation.response_to_invitation_url,
                 self.substitution.school.email,
                 self.substitution.school.phone_number,
                 self.author.first_last_name,
@@ -942,7 +942,7 @@ class InviteCandidatesView(FormView):
     def send_invitation_sms(self):
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_ACCOUNT_TOKEN)
         message = client.messages.create(
-            body=texte['einladung_sms'].format(self.substitution.response_to_invitation_url),
+            body=texte['einladung_sms'].format(self.invitation.response_to_invitation_url),
             from_=settings.TWILIO_PHONE_NUMBER,
             to=self.candidate.phone_number,
         )

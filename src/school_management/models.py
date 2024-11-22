@@ -629,9 +629,6 @@ class Substitution(models.Model):
     def url(self):
         return settings.BASE_URL + reverse("school_management:substitution_detail", args=[self.pk])
 
-    @property
-    def response_to_invitation_url(self):
-        return settings.BASE_URL + reverse("school_management:invitation_accept", args=[self.pk])
     
     @property
     def ref_no(self):
@@ -872,6 +869,9 @@ class Communication(models.Model):
     def subject(self):
         return f"Stellvertretung {self.substitution.id}, {self.substitution.school.name}, {self.substitution.start_date.strftime('%d.%m.%Y')}-{self.substitution.end_date.strftime('%d.%m.%Y')} {self.candidate.fullname}"
 
+    @property
+    def response_to_invitation_url(self):
+        return settings.BASE_URL + reverse("school_management:invitation_accept", args=[self.pk])
     
     def __str__(self):
         return f"{self.request_date} {self.candidate.fullname}"
@@ -909,6 +909,8 @@ class InvitationManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(type_id=CommunicationTypeEnum.EINLADUNG.value)
 
+    
+
 
 class Invitation(Communication):
     objects = InvitationManager()
@@ -916,5 +918,6 @@ class Invitation(Communication):
     class Meta:
         proxy = True
 
+    
     def __str__(self):
         return f"{self.request_date} {self.candidate.fullname}"
