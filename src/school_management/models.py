@@ -631,7 +631,7 @@ class Substitution(models.Model):
 
     @property
     def response_to_invitation_url(self):
-        return settings.BASE_URL + reverse("school_management:accept_invitation", args=[self.pk])
+        return settings.BASE_URL + reverse("school_management:invitation_accept", args=[self.pk])
     
     @property
     def ref_no(self):
