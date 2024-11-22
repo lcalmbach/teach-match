@@ -798,7 +798,7 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
     def send_sms(self, application):
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_ACCOUNT_TOKEN)
         message = client.messages.create(
-            body=application.url,
+            body=application.substitution.url,
             from_=settings.TWILIO_PHONE_NUMBER,
             to=application.candidate.phone_number,
         )
