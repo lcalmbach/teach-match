@@ -117,7 +117,6 @@ class SchoolDetailView(DetailView):
         return context
 
 
-
 class InvitationEditView(LoginRequiredMixin, UpdateView):
     model = Invitation
     form_class = InvitationEditForm
@@ -799,7 +798,7 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
     def send_sms(self, application):
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_ACCOUNT_TOKEN)
         message = client.messages.create(
-            body=application.response_sms_text,
+            body=application.url,
             from_=settings.TWILIO_PHONE_NUMBER,
             to=application.candidate.phone_number,
         )
@@ -883,11 +882,10 @@ class InviteCandidatesView(FormView):
         )
         #  Ensure the request_text includes the invitation ID in the link
         if created:
-            link = f"{settings.BASE_URL}{reverse('school_management:invitation_accept', kwargs={'id': self.invitation.id})}"
             self.invitation.request_text = texte["einladung_email"]["text"].format(
                 self.candidate.informal_salutation,
                 self.substitution.school.name,
-                link,
+                self.substitution.response_to_invitation_url,
                 self.substitution.school.email,
                 self.substitution.school.phone_number,
                 self.author.first_last_name,
@@ -927,7 +925,6 @@ class InviteCandidatesView(FormView):
         recipient_email = self.invitation.candidate.email
         subject = texte['einladung_email']['betreff'].format(self.substitution.school.name, self.substitution.id)
         body = self.invitation.request_text
-        print(body)
         # Send the email
         try:
             send_mail(
@@ -945,12 +942,12 @@ class InviteCandidatesView(FormView):
     def send_invitation_sms(self):
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_ACCOUNT_TOKEN)
         message = client.messages.create(
-            body=texte['einladung_sms'].format(self.substitution.url),
+            body=texte['einladung_sms'].format(self.substitution.response_to_invitation_url),
             from_=settings.TWILIO_PHONE_NUMBER,
             to=self.candidate.phone_number,
         )
         print(f"Message sent with SID: {message.sid}")
-        messages.success(self.request, "Deine Email wurde erfolgreich versandt.")
+        messages.success(self.request, "Einladung per SMS an {recipient_email} versandt.")
     
     def get_success_url(self):
         # Redirect to the substitution detail page
