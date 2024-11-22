@@ -219,6 +219,8 @@ class SubstitutionHelper:
         msg["Subject"] = subject
 
         # Attach the email body as HTML
+        body = body.replace("\n", "<br>")
+        print(body)
         msg.attach(MIMEText(body, "html"))
 
         # Connect to the Gmail server

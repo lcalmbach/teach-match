@@ -357,7 +357,7 @@ class SubstitutionCandidatesListView(ListView):
         if subject_filter:
             queryset = queryset.filter(subjects__icontains=subject_filter)
 
-        queryset = queryset.order_by("start_date")
+        queryset = queryset.order_by("-start_date")
         return queryset
 
 
@@ -810,7 +810,7 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
 
     def send_email(self, application):
         subject = f"Stellvertretung {application.substitution.ref_no} / {application.substitution.school.name}"
-        message = application.response_text
+        message = application.response_text.replace("\n", "<br>")
         recipient = application.candidate.email
 
         send_mail(
@@ -925,15 +925,15 @@ class InviteCandidatesView(FormView):
     def send_invitation_email(self):
         # Prepare email details
         recipient_email = self.invitation.candidate.email
-        subject = texte['einladung_email']['betreff']
+        subject = texte['einladung_email']['betreff'].format(self.substitution.school.name, self.substitution.id)
         body = self.invitation.request_text
-
+        print(body)
         # Send the email
         try:
             send_mail(
                 subject=subject,
                 message=None,  # Plain-text fallback
-                html_message=body,
+                html_message=body.replace("\n", "<br>"),
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[recipient_email],
                 fail_silently=False,
