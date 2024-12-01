@@ -64,8 +64,6 @@ from django.db.models import F, Value
 
 from .helpers import SubstitutionHelper
 
-# from django.views.generic.edit import CreateView
-
 
 class SchoolListView(ListView):
     model = School
@@ -433,9 +431,6 @@ class SubstitutionDetailView(DetailView):
 
         substitution_helper = SubstitutionHelper(substitution)
         context = super().get_context_data(**kwargs)
-        context["completed_by"] = SubstitutionCandidate.objects.filter(
-            substitution=substitution, selected_date__isnull=False
-        ).order_by("selected_date")
         context["timetable"] = substitution_helper.lessons
         context["candidates"] = SubstitutionCandidate.objects.filter(
             substitution=substitution
@@ -781,9 +776,9 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
             application = form.save(commit=False)  # Get the object without saving to the DB
             if action == "send":
                 application.response_date = timezone.now() 
-                if application.candidate.send_email:
+                if application.candidate.notify_mail_flag:
                     self.send_email(application)
-                if application.candidate.send_sms:
+                if application.candidate.notify_sms_flag:
                     self.send_sms(application)
                 # close the substitution if the response is positive
                 if application.response_type.id == CommunicationResponseTypeEnum.ZUSAGE.value:
@@ -984,18 +979,24 @@ class AcceptInvitationView(FormView):
     def form_valid(self, form):
         # Get the action (accept/decline) from the POST data
         action = self.request.POST.get("action")
+        substitution_candidate= SubstitutionCandidate.objects.get(candidate=self.invitation.candidate, substitution=self.invitation.substitution)
         if action == "accept":
             # Update the candidate's acceptance status
             self.invitation.response_date = timezone.now()
             self.invitation.response_text = form.cleaned_data["comment"]
+            self.invitation.response_type = CommunicationResponseType.objects.get(pk=CommunicationResponseTypeEnum.ZUSAGE.value)
             self.invitation.save()
-
+            # es muss nicht unbdingt einen Kadidaten-Record geben, wenn der Kandidat manuell eingeladen wurde
+            if substitution_candidate:
+                substitution_candidate.response_date = timezone.now()
+                substitution_candidate.save
             messages.success(self.request, "Vielen Dank! Du hast das Vikariat angenommen.")
         elif action == "decline":
             # Update the candidate's decline status
-            self.substitution_candidate.declined_date = timezone.now()
-            self.substitution_candidate.save()
-
+            self.invitation.response_date = timezone.now()
+            self.invitation.response_text = form.cleaned_data["comment"]
+            self.invitation.response_type = CommunicationResponseType.objects.get(pk=CommunicationResponseTypeEnum.ABSAGE.value)
+            self.invitation.save()
             messages.info(self.request, "Du hast das Vikariat abgelehnt.")
         else:
             messages.error(self.request, "Ungültige Aktion. Bitte wähle eine Option.")

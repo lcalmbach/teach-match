@@ -366,7 +366,7 @@ class Command(BaseCommand):
                         highest_ranking_candidate.substitution.start_date
                         - timedelta(days=10)
                     )
-                    highest_ranking_candidate.accepted_date = (
+                    highest_ranking_candidate.response_date = (
                         highest_ranking_candidate.substitution.start_date
                         - timedelta(days=8)
                     )

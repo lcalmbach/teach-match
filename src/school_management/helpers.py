@@ -5,7 +5,7 @@ import random
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from .models import SubstitutionCandidate, SubstitutionLesson
+from .models import SubstitutionCandidate, SubstitutionLesson, CommunicationResponseType, SubstitutionExecution
 
 
 def get_week_days(start_date, end_date):
@@ -160,21 +160,16 @@ class SubstitutionHelper:
             for c in candidates:
                 matching_half_days = self.get_matching_half_days(c)
                 if matching_half_days > 0:
-                    num_experiences = SubstitutionCandidate.objects.filter(
+                    num_experiences = SubstitutionExecution.objects.filter(
                         candidate=c, 
-                        accepted_date__isnull=False
                     ).count()
                     matching_subjects = len(
                         set(c.subjects.all()).intersection(self.subjects)
                     )
                     num_experiences_in_school = SubstitutionCandidate.objects.filter(
                         candidate=c,
-                        accepted_date__isnull=False,
                         substitution__school=self.substitution.school,
                     ).count()
-                    # num_experiences_with_class = random.randint(1, 2)
-                    # num_experiences_with_subjects = num_experiences_in_school
-
                     rating = (
                         matching_half_days / half_days * 30 if matching_half_days > 0 else 0
                     )
@@ -194,8 +189,6 @@ class SubstitutionHelper:
                         matching_subjects=matching_subjects,
                         num_experiences=num_experiences,
                         num_experiences_in_school=num_experiences_in_school,
-                        # num_experiences_with_class=num_experiences_with_class,
-                        # num_experiences_with_subjects=num_experiences_with_subjects,
                         rating=rating,
                     )
                     result.append(sc)
@@ -206,7 +199,6 @@ class SubstitutionHelper:
 
 
     def send_email(self, subject, body):
-        # Gmail credentials
         gmail_user = os.getenv("GMAIL_USER")
         gmail_password = os.getenv("GMAIL_PASSWORD")
         result = False

@@ -1,0 +1,46 @@
+category_id;name;description;short_name;order
+1;Mann;Mann;M;1
+1;Frau;Mann;F;2
+1;non binär;non binär;N;3
+2;Bestätigung;dem Kandidaten wird eine Bestätigung geschickt, dass seine Bewerbunge eingegangen ist;E;1
+2;Ablehnung;die Bewerung wird abgelehnt;N;2
+2;Annahme;die Bewerbung wird angenommen;A;3
+3;Bewerbung;eine Kandidatin bewirbt sich auf ein Vikariat;B;1
+3;Einladung;eine Kandidatin wird zu einem Vikariat eingeladen;E;2
+4;aktiv;Die Stellvertretung ist erfasst und hat begonnen;A;1
+4;abgeschlossen;Die Stellvertretung ist abgeschlossen;C;2
+4;in Arbeit;Eine Stellvertretung wird gesucht;R;3
+4;geplant;Die Stellvertretung ist erfasst und hat noch nicht begonnen;P;4
+5;Krankheit;;KRA;1
+5;Unfall;;UNF;2
+5;Schwangerschaft;;SWA;3
+5;Geburt;;GEB;4
+5;Vorsorge;;VOR;5
+5;Impfung;;IMP;6
+5;Pflege von Angehörigen;;ANG;7
+5;Militär;;MIL;8
+6;Standortleiterin;Standortleiterin;R;1
+6;Sekretariat;Sekretariat;S;2
+6;Standortleiterin Stv;Standortleiterin Stv;V;3
+7;B.A.;;;1
+7;B.Sc.;;;2
+7;Msc;;;3
+7;Diplom für Kindergartenlehrer/in:;;;4
+7;Diplom für Primarlehrer/in;;;5   
+7;Diplom für Sekundarlehrer/in I;;;6
+7;Diplom für Sekundarlehrer/in II;;;7
+7;Diplom für Berufsschullehrer/in;;;8
+7;Diplom für Gymnasiallehrer/in;;;9
+7;Sonderpädagogik-Diplom;;;10
+7;Diplom für Heilpädagogik;;;11
+8;Vormattag;Vormittag;V;1
+8;Nachmittag;Nachmittag;N;2
+8;Nachmittag;Ganzer Tag;G;3
+9;Montag;;Mo;1
+9;Dienstag;;Di;2
+9;Mittwoch;;Mi;3
+9;Donnerstag;;Do:4
+9;Freitag;;Fr;5
+10;Basel;Basel;4000;1
+10;Riehen;Riehen;4125;2
+10;Bettingen;Bettingen;4126;3

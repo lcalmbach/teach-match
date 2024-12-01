@@ -18,6 +18,18 @@ except locale.Error:
 
 from .texte import texte
 
+class CodeEnum(Enum):
+    GENDER = 1
+    COMMUNICATION_RESPONSE_TYPE = 2
+    COMMUNICATION_TYPE = 3
+    SUBSTITUTION_STATUS = 4
+    SUBSTITUTION_CAUSE = 5
+    SCHOOL_PERSON_ROLE = 6
+    CERTIFICATE = 7
+    DAYPART = 8
+    WEEEKDAY = 9
+    LOCATION = 10
+
 class SubstitutionStatusEnum(Enum):
     IN_ARBEIT = 1
     ABGESCHLOSSEN = 2
@@ -34,8 +46,8 @@ class CommunicationResponseTypeEnum(Enum):
     OFFEN = 4
 
 
-def default_communication_response_type():
-    return CommunicationResponseType.objects.get(pk=CommunicationResponseTypeEnum.OFFEN.value)
+#def default_communication_response_type():
+#    return CommunicationResponseType.objects.get(pk=CommunicationResponseTypeEnum.OFFEN.value)
 
 
 def get_cv_upload_path(instance, filename):
@@ -44,56 +56,225 @@ def get_cv_upload_path(instance, filename):
 
 def get_default_time_of_day():
     try:
-        return TimeOfDay.objects.get(pk=3).pk
-    except TimeOfDay.DoesNotExist:
+        return DayPart.objects.get(pk=3).pk
+    except DayPart.DoesNotExist:
         return None
 
 
-class CommunicationResponseType(models.Model):
-    """Application, Invitation"""
-
-    name = models.CharField(max_length=255, verbose_name="Name")
-    description = models.TextField(verbose_name="Beschreibung", blank=True)
+class Category(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Name")
+    description = models.TextField(max_length=255, verbose_name="Beschreibung", blank=True)
 
     class Meta:
-        verbose_name = "AntwortTyp"
-        verbose_name_plural = "Kommunikations Antworttypen"
+        verbose_name = "Kategorie"
+        verbose_name_plural = "Kategorien"
         ordering = ["name"]
 
     def __str__(self):
         return self.name
 
 
-class CommunicationType(models.Model):
-    """Application, Invitation"""
-
+class Code(models.Model):
+    """Code für Abwesenheitsgrund"""
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="codes")
+    short_name = models.CharField(max_length=100, verbose_name="Kürzel")
     name = models.CharField(max_length=255, verbose_name="Name")
     description = models.TextField(verbose_name="Beschreibung", blank=True)
+    order = models.IntegerField(verbose_name="Reihenfolge", default=1)
 
     class Meta:
-        verbose_name = "Kommunikationsart"
-        verbose_name_plural = "Kommunikationsarten"
-        ordering = ["name"]
+        verbose_name = "Code"
+        verbose_name_plural = "Codes"
+        ordering = ["order", "name"]
 
     def __str__(self):
         return self.name
 
+class GenderManager(models.Manager):
+    """
+    Custom manager to fetch codes specifically for the Gender category.
+    """
+    def get_queryset(self):
+        return super().get_queryset().filter(category_id=CodeEnum.GENDER.value)
 
-class SubstitutionStatus(models.Model):
-    """Status of a teacher substitution"""
 
-    name = models.CharField(max_length=255, verbose_name="Name")
-    description = models.TextField(verbose_name="Beschreibung", blank=True)
+class Gender(Code):
+    """
+    Proxy model for the Gender category.
+    """
+    objects = GenderManager()
 
     class Meta:
-        verbose_name = "Status der Stellvertretung"
-        verbose_name_plural = "Status der Stellvertretungen"
-        ordering = ["name"]
+        proxy = True
 
     def __str__(self):
-        return self.name
+        return f"Gender: {self.code} - {self.description}"
 
 
+class CommunicationResponseTypeManager(models.Manager):
+    """
+    Custom manager to fetch codes specifically for the Gender category.
+    """
+    def get_queryset(self):
+        return super().get_queryset().filter(category_id=CodeEnum.COMMUNICATION_RESPONSE_TYPE.value)
+
+
+class CommunicationResponseType(Code):
+    """
+    Proxy model for the Gender category.
+    """
+    objects = CommunicationResponseTypeManager()
+
+    class Meta:
+        proxy = True
+
+
+class CommunicationTypeManager(models.Manager):
+    """
+    Custom manager to fetch codes specifically for the Gender category.
+    """
+    def get_queryset(self):
+        return super().get_queryset().filter(category_id=CodeEnum.COMMUNICATION_TYPE.value)
+
+
+class CommunicationType(Code):
+    """
+    Proxy model for the Gender category.
+    """
+    objects = CommunicationTypeManager()
+
+    class Meta:
+        proxy = True
+
+
+class SubstitutionStatusManager(models.Manager):
+    """
+    Custom manager to fetch codes specifically for the Gender category.
+    """
+    def get_queryset(self):
+        return super().get_queryset().filter(category_id=CodeEnum.SUBSTITUTION_STATUS.value)
+
+
+class SubstitutionStatus(Code):
+    """
+    Proxy model for the Gender category.
+    """
+    objects = SubstitutionStatusManager()
+
+    class Meta:
+        proxy = True
+
+
+class SubstitutionCauseManager(models.Manager):
+    """
+    Custom manager to fetch codes specifically for the GendeCommunicationTypeManagerr category.
+    """
+    def get_queryset(self):
+        return super().get_queryset().filter(category_id=CodeEnum.SUBSTITUTION_CAUSE.value)
+
+
+class SubstitutionCause(Code):
+    """
+    Proxy model for the Gender category.
+    """
+    objects = SubstitutionCauseManager()
+
+    class Meta:
+        proxy = True
+
+
+class SchoolPersonRoleManager(models.Manager):
+    """
+    Custom manager to fetch codes specifically for the Gender category.
+    """
+    def get_queryset(self):
+        return super().get_queryset().filter(category_id=CodeEnum.SCHOOL_PERSON_ROLE.value)
+
+
+class SchoolPersonRole(Code):
+    """
+    Proxy model for the Gender category.
+    """
+    objects = SchoolPersonRoleManager()
+
+    class Meta:
+        proxy = True
+
+
+class CertificateManager(models.Manager):
+    """
+    Custom manager to fetch codes specifically for the Gender category.
+    """
+    def get_queryset(self):
+        return super().get_queryset().filter(category_id=CodeEnum.CERTIFICATE.value)
+
+
+class Certificate(Code):
+    """
+    Proxy model for the Gender category.
+    """
+    objects = CertificateManager()
+
+    class Meta:
+        proxy = True
+
+
+class DayPartManager(models.Manager):
+    """
+    Custom manager to fetch codes specifically for the Gender category.
+    """
+    def get_queryset(self):
+        return super().get_queryset().filter(category_id=CodeEnum.DAYPART.value)
+
+
+class DayPart(Code):
+    """
+    Proxy model for the Gender category.
+    """
+    objects = DayPartManager()
+
+    class Meta:
+        proxy = True
+
+
+class WeekDayManager(models.Manager):
+    """
+    Custom manager to fetch codes specifically for the Weekday.
+    """
+    def get_queryset(self):
+        return super().get_queryset().filter(category_id=CodeEnum.WEEEKDAY.value)
+
+
+class WeekDay(Code):
+    """
+    Proxy model for the Gender category.
+    """
+    objects = WeekDayManager()
+
+    class Meta:
+        proxy = True
+
+
+class LocationManager(models.Manager):
+    """
+    Custom manager to fetch codes specifically for the Location.
+    """
+    def get_queryset(self):
+        return super().get_queryset().filter(category_id=CodeEnum.LOCATION.value)
+
+
+class Location(Code):
+    """
+    Proxy model for the Gender category.
+    """
+    objects = LocationManager()
+
+    class Meta:
+        proxy = True
+
+# End of codes
+
+# Other master data not folloinwg the strict key value pair pattern
 class Qualification(models.Model):
     """Abschluss, z.B. Lehrer, Sek1, Sek2, Matura, etc."""
 
@@ -110,7 +291,8 @@ class Qualification(models.Model):
 
 class SchoolYear(models.Model):
     year_start = models.SmallIntegerField(
-        verbose_name="Jahr", default=datetime.now().year
+        verbose_name="Jahr", 
+        default=datetime.now().year
     )
     start_date = models.DateField(verbose_name="Erster Schultag")
     end_date = models.DateField(verbose_name="Letzter Schultag")
@@ -124,122 +306,25 @@ class SchoolYear(models.Model):
         return self.year_start
 
 
-class SubstitutionCause(models.Model):
-    """cause for a teacher substitution"""
-
-    name = models.CharField(max_length=255, verbose_name="Name")
-
-    class Meta:
-        verbose_name = "Code für Abwesenheitsgrund"
-        verbose_name_plural = "Codes für Abwesenheitsgrund"
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
-
-
-class SchoolPersonRole(models.Model):
-    """Schulleitung, Lehrer, etc."""
-
-    name = models.CharField(max_length=255, verbose_name="Name")
-
-    class Meta:
-        verbose_name = "Rolle in Schule"
-        verbose_name_plural = "Rollen in Schule"
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
-
-
-class Location(models.Model):
-    """Basel, Riehen, Bettingen"""
-
-    name = models.CharField(max_length=255, verbose_name="Name")
-
-    class Meta:
-        verbose_name = "Ort"
-        verbose_name_plural = "Orte"
-        ordering = ["name"]
-
-    def __str__(self):
-        return f"{self.name}"
-
-
-class Gender(models.Model):
-    """not sure if needed, not used yet for person model"""
-
-    name = models.CharField(max_length=255, verbose_name="Geschlecht")
-
-    class Meta:
-        verbose_name = "Geschlecht"
-        verbose_name_plural = "Geschlechter"
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
-
-
-class Certificate(models.Model):
-    """Lehrer, Sek1, Sek2, Matura, etc."""
-
-    name = models.CharField(max_length=255, verbose_name="Name")
-
-    class Meta:
-        verbose_name = "Abschluss"
-        verbose_name_plural = "Abschlüsse"
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
-
-
-class TimeOfDay(models.Model):
-    """AM PM"""
-
-    name = models.CharField(max_length=255, verbose_name="Tageszeit")
-
-    class Meta:
-        verbose_name = "Vormittag/Nachmittag"
-        verbose_name_plural = "Vormittag/Nachmittag"
-        ordering = ["-name"]
-
-    def __str__(self):
-        return self.name
-
-
-class DayOfWeek(models.Model):
-    """Monday, Tuesday, etc."""
-
-    name = models.CharField(max_length=255, verbose_name="Wochentag")
-    name_short = models.CharField(max_length=255, verbose_name="Kürzel")
-
-    class Meta:
-        verbose_name = "Wochentag"
-        verbose_name_plural = "Wochentage"
-        ordering = ["id"]
-
-    def __str__(self):
-        return self.name
-
-
-class Period(models.Model):
+class TimePeriod(models.Model):
     """0730-815, 0830-0915 etc."""
-
-    start_time = models.TimeField(verbose_name="Start Time")
-    end_time = models.TimeField(verbose_name="End Date")
-    time_of_day = models.ForeignKey(
-        TimeOfDay, on_delete=models.CASCADE, verbose_name="Tageszeit"
-    )
-    # day_of_week = models.ForeignKey(
-    #    DayOfWeek, on_delete=models.CASCADE, verbose_name="Wochentag"
-    # )
-
+    code = models.CharField(max_length=5, verbose_name="Code")
+    start_time = models.CharField(verbose_name="Start Time", max_length=4)
+    end_time = models.CharField(verbose_name="End Date", max_length=4)
+    day = models.ForeignKey(WeekDay, on_delete=models.CASCADE, verbose_name="Wochentag")
+    
+    
     class Meta:
         verbose_name = "Periode"
         verbose_name_plural = "Perioden"
         ordering = ["start_time"]
 
+    def time_of_day(self):
+        if self.start_time < "1200":
+            return "AM"
+        else:
+            return "PM"
+    
     def __str__(self):
         return f"{self.start_time} - {self.end_time}"
 
@@ -289,6 +374,7 @@ class School(models.Model):
     """Schule, Schulhaus, etc."""
 
     name = models.CharField(max_length=255, verbose_name="Standort")
+    code = models.CharField(max_length=10, verbose_name="Code", blank=True)
     level = models.ForeignKey(
         Level,
         on_delete=models.CASCADE,
@@ -303,9 +389,7 @@ class School(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Ort",
         related_name="locations",
-        default=1,
     )
-    plz = models.IntegerField(verbose_name="Postleitzahl", default=4000)
     email = models.EmailField(verbose_name="Email", blank=True, max_length=255)
     phone_number = models.CharField(
         verbose_name="Telefonnummer", blank=True, max_length=255
@@ -320,16 +404,32 @@ class School(models.Model):
     def __str__(self):
         return self.name
 
+class Semester(models.Model):
+    """Semester, e.g. HS2021, FS2022"""
 
+    name = models.CharField(max_length=255, verbose_name="Name")
+    start_date = models.DateField(verbose_name="Start Date")
+    end_date = models.DateField(verbose_name="End Date")
+
+    class Meta:
+        verbose_name = "Semester"
+        verbose_name_plural = "Semester"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+# Buisiness data
 class Person(models.Model):
     """teacher, deputies and managers of the school"""
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     initials = models.CharField(max_length=255, verbose_name="Kürzel", blank=True)
+    employee_number = models.CharField(max_length=12, verbose_name="Personalnummer",blank=True, null=True)
     first_name = models.CharField(max_length=255, verbose_name="Vorname")
     last_name = models.CharField(max_length=255, verbose_name="Nachname")
     email = models.EmailField(verbose_name="Email", blank=True)
-    phone_number = models.CharField(
+    mobile = models.CharField(
         max_length=20, verbose_name="Telefonnummer", blank=True
     )
     year_of_birth = models.CharField(
@@ -343,12 +443,6 @@ class Person(models.Model):
     )
     is_manager = models.BooleanField(
         verbose_name="Leitung/Administration", default=False
-    )
-    send_email = models.BooleanField(
-        verbose_name="Kommunikation mit Email erwünscht", default=True
-    )
-    send_sms = models.BooleanField(
-        verbose_name="Kommunikation mit SMS erwünscht", default=True
     )
 
     gender = models.ForeignKey(
@@ -444,22 +538,6 @@ class Person(models.Model):
         return f"{self.last_name} {self.first_name} {self.year_of_birth}"
 
 
-class Semester(models.Model):
-    """Semester, e.g. HS2021, FS2022"""
-
-    name = models.CharField(max_length=255, verbose_name="Name")
-    start_date = models.DateField(verbose_name="Start Date")
-    end_date = models.DateField(verbose_name="End Date")
-
-    class Meta:
-        verbose_name = "Semester"
-        verbose_name_plural = "Semester"
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
-
-
 class TeacherManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(is_teacher=True)
@@ -524,7 +602,6 @@ class Candidate(Person):
     class Meta:
         proxy = True
     
-
 
 class Substitution(models.Model):
     """Time frame for a teacher substitution"""
@@ -674,11 +751,8 @@ class Timetable(models.Model):
     school = models.ForeignKey(
         School, on_delete=models.CASCADE, related_name="lesson_template_schools"
     )
-    period = models.ForeignKey(
-        Period, on_delete=models.CASCADE, related_name="lesson_template_periods"
-    )
-    day = models.ForeignKey(
-        DayOfWeek, on_delete=models.CASCADE, related_name="lesson_template_days"
+    time_period = models.ForeignKey(
+        TimePeriod, on_delete=models.CASCADE, related_name="lesson_template_periods"
     )
     school_class = models.ForeignKey(
         SchoolClass,
@@ -695,7 +769,8 @@ class Timetable(models.Model):
         verbose_name_plural = "Lektion-Templates"
 
     def __str__(self):
-        return f"{self.day.name_short} {self.period} {self.subject.name}"
+        return f"{self.day.name_short} {self.time_period} {self.subject.name}"
+
 
 class SubstitutionLesson(models.Model):
     """timetable for a teacher: all periods for a week. the template is used to create the timetable"""
@@ -707,11 +782,8 @@ class SubstitutionLesson(models.Model):
     candidate = models.ForeignKey(
         Candidate, on_delete=models.CASCADE, related_name="substitution_lessons_candidates", null=True, blank=True
     )
-    period = models.ForeignKey(
-        Period, on_delete=models.CASCADE, related_name="lesson_periods"
-    )
-    day = models.ForeignKey(
-        DayOfWeek, on_delete=models.CASCADE, related_name="lesson_days"
+    time_period = models.ForeignKey(
+        TimePeriod, on_delete=models.CASCADE, related_name="lesson_periods"
     )
     subject = models.ForeignKey(
         Subject, on_delete=models.CASCADE, related_name="lesson_subjects"
@@ -764,13 +836,17 @@ class SubstitutionCandidate(models.Model):
     )
     rating = models.IntegerField(verbose_name="Bewertung", default=1)
     comments = models.TextField(verbose_name="Bemerkungen", blank=True)
-    selected = models.BooleanField(verbose_name="Ausgewählt", default=False)
     invited_date = models.DateField(
         verbose_name="Einladungsdatum", blank=True, null=True
     )
-    selected_date = models.DateField(verbose_name="Zusage", blank=True, null=True)
-    accepted_date = models.DateField(
-        verbose_name="Bestätigung am", blank=True, null=True
+    response_date = models.DateField(verbose_name="Antwort Datum", blank=True, null=True)
+    response_type = models.ForeignKey(
+        CommunicationResponseType,
+        on_delete=models.CASCADE,
+        related_name="substitution_candidate_response_types",
+        blank=True,
+        null=True,
+        #default=default_communication_response_type,
     )
     record_created_date = models.DateField(
         default=timezone.now, verbose_name="Erstellt am"
@@ -803,13 +879,13 @@ class SubstitutionExecution(models.Model):
         return f"{self.candidate.fullname} - #{self.substitution.pk}"
 
 class Vacation(models.Model):
-    """Teacher vacation"""
+    """school vacation and holidays"""
 
     name = models.CharField(max_length=100, verbose_name="Bezeichnung")
     date_from = models.DateField(verbose_name="Von", default=timezone.now)
     date_to = models.DateField(verbose_name="Bis", default=timezone.now)
-    timeofday = models.ForeignKey(
-        TimeOfDay,
+    DayPart = models.ForeignKey(
+        DayPart,
         on_delete=models.CASCADE,
         related_name="vacation_template_time_of_day",
         default=get_default_time_of_day,
@@ -823,16 +899,11 @@ class Vacation(models.Model):
         return f"{self.name} {self.date_from} - {self.date_to}"
 
 
-class VacationDay(models.Model):
+class SchoolDay(models.Model):
     """Teacher vacation"""
 
     date = models.DateField(verbose_name="Datum", default=timezone.now)
-    timeofday = models.ForeignKey(
-        TimeOfDay,
-        on_delete=models.CASCADE,
-        related_name="vacation_time_of_day",
-        default=get_default_time_of_day,
-    )
+    daypart = models.ForeignKey(DayPart, on_delete=models.CASCADE, related_name="free_day_type")
     vacation = models.ForeignKey(
         Vacation, on_delete=models.CASCADE, related_name="vacation_templates"
     )
@@ -842,6 +913,24 @@ class VacationDay(models.Model):
 
 
 class Communication(models.Model):
+    """
+    Model representing a communication between a candidate and a school in the course of a substitution process.
+    Attributes:
+        substitution (ForeignKey): Reference to the Substitution model.
+        candidate (ForeignKey): Reference to the Candidate model.
+        type (ForeignKey): Reference to the CommunicationType model.
+        request_date (DateField): Date when the request was sent. Defaults to the current date.
+        request_text (TextField): Text of the request. Optional, with a maximum length of 1000 characters.
+        response_text (TextField): Text of the response. Optional, with a maximum length of 1000 characters.
+        response_date (DateField): Date when the response was sent. Optional, defaults to the current date.
+        response_type (ForeignKey): Reference to the CommunicationResponseType model. Optional, with a default value.
+        comments (TextField): Additional comments. Optional, with a maximum length of 1000 characters.
+    Methods:
+        subject(): Returns a formatted string representing the subject of the communication.
+        response_to_invitation_url (property): Returns the URL for responding to the invitation.
+        __str__(): Returns a string representation of the communication.
+    """
+
     substitution = models.ForeignKey(
         Substitution, on_delete=models.CASCADE, related_name="substitution"
     )
@@ -861,7 +950,7 @@ class Communication(models.Model):
         related_name="communication_response_type",
         null=True,
         blank=True,
-        default=default_communication_response_type,
+        # default=default_communication_response_type,
     )
     comments = models.TextField(verbose_name="Bemerkungen", blank=True, max_length=1000)
 
@@ -905,13 +994,12 @@ class Application(Communication):
     def __str__(self):
         return f"{self.request_date} {self.candidate.fullname}"
 
+
 class InvitationManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(type_id=CommunicationTypeEnum.EINLADUNG.value)
 
     
-
-
 class Invitation(Communication):
     objects = InvitationManager()
 

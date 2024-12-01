@@ -1,97 +1,108 @@
-initials;nachname;vorname;school
-AlJ;Alt;Joscha;4
-AlR;Alvarado;Ramon;4
-AnP;Anghern;Petra;1
-BaC;Brassel;Corinne;2
-BAs;Bertschi;Astrid;2
-BCo;Bezzola;Corina;3
-BiT;Biehler;Thomas;2
-BrA;Brunner;Andrea;2
-BrB;Bronzstein;Ben;1
-BrB;Bronzstein;Ben;2
-BrG;Brönnimann;Gabriel;2
-BuB;Bührer;Brigitte;3
-CaL;Cantaluppi;Leonard;3
-CeU;Cech;Urs;3
-ChJ;Chresta;Jutta;4
-CoM;Corbo;Mariella;4
-DiB;Dickmann;Bettina;1
-DiC;Dinkelaker;Claudia;4
-DoM;Donnicola;Marco;4
-DuM;Dufner;Markus;4
-EmH;Emmenegger;Hanspeter;1
-FeR;Federer;Richard;4
-FoA;Forster;Anna Maria;3
-FrJ;Fröhlich;Joachim;3
-GaD;Gasser;Daniel;3
-GiJ;Giessler;Joachim;4
-GuG;Gusewski;Georg;4
-GüR;Güdel;Rolf;3
-GyC;Gysin;Claudia;3
-HaA;Haidorfer;Astrid;2
-HaM;Hartmann;Maja;1
-HaS;Handschin;Sabine;4
-HeC;Hestermann;Christina;3
-HeS;Herder;Steffen;2
-HuK;Huber;Kurt;1
-HuK;Huber;Kurt;3
-HuK;Huber;Kurt;4
-JeL;Jegge;Lukas;4
-KaI;Kartschmaroff;Ivan;2
-KuB;Kurto;Bekir;2
-KuJ;Kunzmann;Johannes;4
-KüS;Kümin;Stephan;2
-LaH;Lang;Herbert;1
-LaM;Landsrath;Mathias;2
-LeT;Lehmann;Tabea;4
-LiA;Liesch;Anna Katharina;2
-LiC;Link;Christina;2
-LLo;Lin;Louise;2
-LuL;Luder;Linda;4
-MeV;Meury;Valeria;1
-MoA;Mory;Andreas;3
-MRa;Meyer-Fichtlscherer;Raine;3
-MSo;Maudamey;Sophie;1
-MüB;Müller;Björn;4
-MuD;Muric;Dino;4
-NaM;Nake,;Maximilian;2
-NeC;Neumann;Christof;3
-NeD;Neiss;Daniela;1
-PaA;Pavic;Ana-Marija;3
-PaM;Pardey;Meret;1
-PaM;Pardey;Meret;3
-PeO;Pettenati;Oliveiro;2
-PeO;Pettenati;Oliveiro;4
-PeS;Petretta;Sonia;1
-PoD;Polymeras;Dimitrios;3
-PoD;Polymeras;Dimitrios;4
-PoJ;Polymeras-Schlienger;Juli;4
-PoW;Popp;Wolfgang;1
-ReR;Reiser;Ralph;1
-RSe;Ramírez;Sebastian;4
-SaS;Sabrye;Sancak;1
-SCc;Schickl;Clemens;4
-SCl;Schilling;Claudia;3
-ScM;Schaffner,;Mike;2
-ScN;Schwank-Broermann;Nico;4
-ScR;Schöpfer;Ruth;3
-SeM;Sejdiji;Mevlane;1
-SiD;Sidler;Daniel;1
-SiE;Sidler;Elisa;3
-SMa;Schwarze;Martha;1
-SMa;Schwarze;Martha;2
-SMa;Schwarze;Martha;3
-SmG;Smrekar;Gregor;1
-SmG;Smrekar;Gregor;2
-StC;Strössler;Christine;1
-StC;Strössler;Christine;3
-StC;Strössler;Christine;4
-UcH;Ucmak;Hüseyin;1
-VeS;Verna;Sabrina;2
-VoM;Vogelgsang;Michael;4
-WaJ;Wagenseil;Julia;4
-WüM;Würgler;Markus;1
-WyC;Wyler;Claude;1
-YeÖ;Yeyin;Özgür;2
-ZaL;Zaugg;Lea;4
-ZiW;Ziebold;Wolf;1
+id;name
+TR_AlJ;Alt Joscha
+TR_AlR;Alvarado Ramon
+TR_AnP;Anghern Petra
+TR_BaC;Brassel Corinne
+TR_BAs;Bertschi Astrid
+TR_BCo;Bezzola Corina
+TR_BiT;Biehler Thomas
+TR_BrA;Brunner Andrea
+TR_BrB;Bronzstein Ben
+TR_BrC;Brülisauer Christian
+TR_BrG;Brönnimann Gabriel
+TR_BrS;Brassel Samuel
+TR_BuB;Bührer Brigitte
+TR_BuM;Burr Martin
+TR_CaL;Cantaluppi Leonardo
+TR_CeU;Cech Urs
+TR_ChJ;Chresta Jutta
+TR_CoM;Corbo Mariella
+TR_DaA;Damjanov Axel
+TR_Dcl;Diez Claudia
+TR_DiB;Dickmann Bettina
+TR_DiC;Dinkelaker Claudia
+TR_DoM;Donnicola Marco
+TR_DuM;Dufner Markus
+TR_EmH;Emmenegger Hanspeter
+TR_ErU;Erdogan Umut
+TR_FeR;Federer Richard
+TR_FiU;Frei Urs
+TR_FoA;Forster Anna Maria
+TR_FrJ;Fröhlich Joachim
+TR_GaD;Gasser Daniel
+TR_GiJ;Giessler Joachim
+TR_GuG;Gusewski Georg
+TR_GüR;Güdel Rolf
+TR_GyC;Gysin Claudia
+TR_HaA;Haidorfer Astrid
+TR_HaM;Hartmann Maja
+TR_HaS;Handschin Sabine
+TR_HeC;Hestermann Christina
+TR_HeM;Herbener Martina
+TR_HeR;Helfenberger Raphael
+TR_HeS;Herder Steffen
+TR_HuA;Hübner Aruna
+TR_HuK;Huber Kurt
+TR_InD;Inag Dürket
+TR_JeL;Jegge Lukas
+TR_JoK;Jovic Konstantin
+TR_KaM;Karasova Martina
+TR_KiJ;Kirchhofer Julia
+TR_KiS;Kientz Sonja
+TR_KnS;Knill Stephan
+TR_KöV;Köster Vanessa
+TR_KuB;Kurto Bekir
+TR_KuJ;Kunzmann Johannes
+TR_KüS;Kümin Stephan
+TR_LaH;Lang Herbert
+TR_LaL;Lang Lea
+TR_LaM;Landsrath Mathias
+TR_LeT;Lehmann Tabea
+TR_LiA;Liesch Anna Katharina
+TR_LiC;Link Christina
+TR_LLo;Lin Louise
+TR_LuL;Luder Linda
+TR_MeV;Meury Valeria
+TR_MoA;Mory Andreas
+TR_MRa;Meyer-Fichtlscherer Rainer
+TR_MSo;Maudamey Sophie
+TR_MüB;Müller Björn
+TR_MuD;Muric Dino
+TR_NaM;"Nake; Maximilian"
+TR_NeC;Neumann Christof
+TR_NeD;Neiss Daniela
+TR_PaA;Pavic Ana-Marija
+TR_PaM;Pardey Meret
+TR_PeC;Petrillo Claudia
+TR_PeD;Perret David
+TR_PeO;Pettenati Oliveiro
+TR_PeS;Petretta Sonia
+TR_PiL;Pinter Lucia
+TR_PoD;Polymeras Dimitrios
+TR_PoJ;Polymeras-Schlienger Julia
+TR_PoW;Popp Wolfgang
+TR_ReR;Reiser Ralph
+TR_RSe;Ramírez Sebastian
+TR_SaS;Sabrye Sancak
+TR_SCc;Schickl Clemens
+TR_ScG;Schmid Gina
+TR_SCl;Schilling Claudia
+TR_ScM;"Schaffner; Mike"
+TR_ScN;Schwank-Broermann Nicole
+TR_ScR;Schöpfer Ruth
+TR_ScS;Schäufele Sven
+TR_SeM;Sejdiji Mevlane
+TR_SiD;Sidler Daniel
+TR_SiE;Sidler Elisa
+TR_SMa;Schwarze Martha
+TR_SmG;Smrekar Gregor
+TR_StC;Strössler Christine
+TR_UcH;Ucmak Hüseyin
+TR_VeS;Verna Sabrina
+TR_VoM;Vogelgsang Michael
+TR_WaJ;Wagenseil Julia
+TR_WüM;Würgler Markus
+TR_WyC;Wyler Claude
+TR_YeÖ;Yeyin Özgür
+TR_ZaL;Zaugg Lea
+TR_ZiW;Ziebold Wolf

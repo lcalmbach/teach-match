@@ -6,19 +6,19 @@ from .models import (
     Location,
     Gender,
     Certificate,
-    TimeOfDay,
-    DayOfWeek,
-    Period,
+    DayPart,
+    WeekDay,
+    TimePeriod,
     Level,
     Subject,
     School,
-    Person,
     Candidate,
     SchoolClass,
     Timetable,
     Vacation,
     Substitution,
     SubstitutionCandidate,
+    Teacher,
 )
 
 
@@ -44,9 +44,9 @@ admin.site.register(SchoolPersonRole)
 admin.site.register(Location)
 admin.site.register(Gender)
 admin.site.register(Certificate)
-admin.site.register(TimeOfDay)
-admin.site.register(DayOfWeek)
-admin.site.register(Period)
+admin.site.register(DayPart)
+admin.site.register(WeekDay)
+admin.site.register(TimePeriod)
 admin.site.register(Level)
 admin.site.register(Subject)
 admin.site.register(School, SchoolAdmin)
@@ -56,3 +56,4 @@ admin.site.register(Timetable)
 admin.site.register(Vacation)
 admin.site.register(Substitution)
 admin.site.register(SubstitutionCandidate)
+admin.site.register(Teacher)

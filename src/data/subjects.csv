@@ -1,25 +1,50 @@
-id;name;name_short;level_id
-1;Fach A;A;7
-2;Allgemeinbildung;AB;7
-3;Fach ABC;ABC;7
-4;Fach BM;BM;7
-5;Fach BMO;BMO;7
-6;Fach BO;BO;7
-7;Fach BT;BT;7
-8;Deutsch;D;7
-9;Deutsch als Zweitsprache;DaZ;7
-10;Gestalten;G;7
-11;Lernatelier;LA;7
-12;Fach Ly;Ly;7
-13;Mathematik;M;7
-14;Fach PA;PA;7
-15;Fach Inp;PIn;7
-16;Fach PM;PM;7
-17;Fach PO;PO;7
-18;Fach Proj;Proj;7
-19;Fach PT;PT;7
-20;Sport;Sp;7
-21;Fach U;U;7
-22;Fach WPF;WPF;7
-
-
+id,name
+SU_AB,Allgemeinbildung
+SU_ABC,ABC mit Präsenzzeit
+SU_BInf+,Betreuung Informatik mit Präsenzzeit
+SU_BM,Bildung Mensch
+SU_BMOT,Bildung gemischter Schwerpunkt
+SU_BO,Bildung Organisation
+SU_BT,Bildung Technik
+SU_Cl,Clara
+SU_D,Deutsch
+SU_DaZ,Deutsch als Zweitsprache
+SU_FF,Freifach
+SU_FK,Förderkurs
+SU_G,Gestalten
+SU_Gun,Gundeldingen
+SU_LA,Lernatelier
+SU_LB,Beratungs- und Lernbüro
+SU_Lys,Lysbüchel
+SU_M,Mathematik
+SU_NbA,Nachbetreuungsatelier
+SU_Nhz,Niederholz
+SU_PA,Praktische Arbeit
+SU_PM,Praxis Mensch
+SU_PO,Praxis Organisation
+SU_PrT,Praktikumstransfer
+SU_PT,Praxis Technik
+SU_SLvO,Schulleitung vor Ort
+SU_Sp,Sport
+SU_U,Unterricht
+SU_WBsp,Wahlpflichtfach Ballspiele
+SU_WECDL,Wahlpflichtfach ECDL
+SU_WEng,Wahlpflichtfach Englisch
+SU_WFit,Wahlpflichtfach Fitness
+SU_WFkD,Wahlpflichtfach Förderkurs Deutsch
+SU_WFrz,Wahlpflichtfach Französisch
+SU_WGst,Wahlpflichtfach Gestalten 3D
+SU_WInn,Wahlpflichtfach Innovation
+SU_WNuT,Wahlpflichtfach Natur und Technik
+SU_WPF,Wahlpflichtfach
+SU_WRuJ,Wahlpflichtfach Recht und Justiz
+SU_WSfF,Wahlpflichtfach Sport für Frauen
+SU_WSV,Wahlpflichtfach Selbstverteidigung
+SU_WTZ,Wahlpflichtfach Technisches Zeichnen/CAD
+SU_Proj,Projekt
+SU_PIn,PraInsos
+SU_A/B,Unterricht im Wochenwechsel
+SU_FQU,Fachstelle Qualität und Unterricht ohne Präsenzzeit
+SU_FSB,Fachstelle Schule-Beruf
+SU_FSQ,Fachstelle Qualität
+SU_FSS,Fachstelle Support

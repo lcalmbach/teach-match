@@ -1,0 +1,11 @@
+id;name;description
+1;GENDER;persons gender
+2;COMMUNICATION_RESPONSE_TYPE;acceptance, rejection, etc.
+3;COMMUNICATION_TYPE;application, invitation, etc.
+4;SUBSTITUTION_STATUS;occupied, in progress, done
+5;SUBSTITUTION_CAUSE;illness, vacation, etc.
+6;SCHOOL_PERSON_ROLE;teacher, principal, etc.
+7;CERTIFICATE;B.A., B.Sc., etc.
+8;DAYPART;morning, afternoon, etc.
+9;FREE_HALFDAY_TYPE;morning free, afternoon free, full day free
+10;Locations;Basel, Riehen, Bettingen

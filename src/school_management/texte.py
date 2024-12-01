@@ -22,9 +22,7 @@ Mit freundlichen Grüssen
         "betreff": "Deine Bewerbung auf eine Stellvertratung an der Schule {}, ref {}",
 
         "text": """{}
-An unserer Schule {} ist eine Stellvertretung frei, die perfekt zu deinem Profil passt. <a href="{}">Hier</a> findest du alle wichtigen Informationen zu diesem Vikariat.  
-
-Falls du Interesse hast, melde dich gerne per E-Mail ({}) oder telefonisch ({}) bei uns. Wir freuen uns auf deine Rückmeldung!
+An unserer Schule {} ist eine Stellvertretung frei, die perfekt zu deinem Profil passt. Du kannst diese Einladung <a href="{}">hier</a> annehmen oder ablehnen. Falls du noch weitere Informationen brauchst dann melde dich doch einfach per E-Mail ({}) oder telefonisch ({}) bei uns. Wir freuen uns auf deine Rückmeldung!
 
 Mit freundlichen Grüssen
 {}"""
@@ -35,7 +33,7 @@ Mit freundlichen Grüssen
 {} / {}""",
         "annahme": """Glückwunsch! Du hast die Stelle. Details: {}
 {} / {}""",
-        "absage": """Danke für Deine Bewerbung! Die Stelle ist leider schon vergeben. Infos: {}
+        "absage": """Danke für Deine Bewerbung! Die Stelle ist leider schon vergeben. Weitere Infos: {}
 {} / {}""",
     
     
