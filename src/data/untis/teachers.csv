@@ -1,0 +1,108 @@
+id,payrollnumber,surname,teacher_department_id,text,weektarget
+TR_AlJ,30084904,Alt Joscha,DP_LYS,"25 Lekt.,IP, LYS, KLP MüB, AB, DaZ, E, Neu: LA, Sp, BM",25.000
+TR_AlR,30097611,Alvarado Ramon,DP_LYS,"min. 20 Lekt, max.25 Lekt., IP, LYS, KLP VoM, AB, DaZ, LA, Sp, WPF",24.000
+TR_AnP,30096207,Anghern Petra,DP_CL,"AGS mit 14 Lekt., IP CLA, LA, M, WPF Technisches Zeichnen",8.000
+TR_BaC,30015298,Brassel Corinne,DP_GU,"KP GUN, KLP WüM, M, AB, BM, D",20.000
+TR_BAs,30097550,Bertschi Astrid,DP_CL,"19 Lekt, min. 16 Lekt, IP GUN, KLP HeS, PM, WPF E, ABC auf 2 KLP",18.000
+TR_BCo,21329605,Bezzola Corina,DP_NH,"IP NIE, G 4 Klassen oder PT 2. IP, G 3 Klassen 1. IP",16.000
+TR_BiT,30079288,Biehler Thomas,DP_CL,"Prima, KLP KP GUN Schwerpunkt BT, AB, M, Sp",20.000
+TR_BrA,30098488,Brunner Andrea,DP_LYS,"IP, LYS, LA",2.500
+TR_BrB,30092000,Bronzstein Ben,DP_CL,"min. 15 Lekt., SP CLA, KLP MaS, AB, LA, M, Sp, WPF Recht&Justiz",16.000
+TR_BrC,30015295,Brülisauer Christian,DP_GU,"25 Lekt., KP GUN, KLP, AB, BM, BO, D, M, Sp, WPF ECDL",24.000
+TR_BrG,,Brönnimann Gabriel,DP_GU,"Journalist, D, DaZ, E, AB, 60%",16.000
+TR_BrS,,Brassel Samuel,DP_LYS,,17.500
+TR_BuB,30098487,Bührer Brigitte,DP_NH,"IP, NIE, G IP1, PT IP2, MO/DI oder DI/MI, 12 Lekt.",12.000
+TR_BuM,,Burr Martin,DP_NH,"21 Lekt DaZ, AB, Sp, M, ABC",21.000
+TR_CaL,,Cantaluppi Leonardo,DP_NH,"15 Lekt , 10 DaZ, 4 AB, 1 ABC",15.000
+TR_CeU,30087826,Cech Urs,DP_NH,"IP, NIE, SiE & MRa, AB, DaZ, PM, Sp, WPF",17.000
+TR_ChJ,20533411,Chresta Jutta,DP_LYS,"IP, NIE, CoM & PoJ, 8 Lekt. DaZ, 4 Lekt. PM, 4 Lekt. LB",18.000
+TR_CoM,30013258,Corbo Mariella,DP_LYS,"22.5 Lekt., IP LYS, KLP PoJ, I105: 8 DaZ+2 AB, I106: 6 DaZ+4 PM+2 LB",17.000
+TR_DaA,30096224,Damjanov Axel,DP_CL,"GUN, 38 Std/Woche",
+TR_Dcl,30058141,Diez Claudia,DP_CL,"CLA, PA, PM, 2. Semester Sabbatical",25.000
+TR_DiB,30098483,Dickmann Bettina,DP_CL,"IP, CLA, GUN, PO, WPF G, nur am Do",6.000
+TR_DiC,30015297,Dinkelaker Claudia,DP_LYS,"18 Lekt., LYS, KLP, I101: DaZ, AB, LA, 2. Semester Sabbatical",16.000
+TR_DoM,30010374,Donnicola Marco,DP_LYS,"Alle Profile, LYS, KLP, AB, BT, G, PT, WPF ECDL & G, WB PICTS",20.000
+TR_DuM,30011999,Dufner Markus,DP_LYS,"IP, SP, CLA, NIE, LA, M, PO, WPF ECDL",14.000
+TR_EmH,30006993,Emmenegger Hanspeter,DP_CL,"SP, CLA, KLP, AB, BT, LA, M, PT",25.000
+TR_ErU,30043069,Erdogan Umut,DP_CL,"CLA, BG erhöhen",
+TR_FeR,21210713,Federer Richard,DP_CL,"PENSIONIERT, SP CLA, 4 PM Klasse MaS, Zuständigkeit Labor",5.000
+TR_FiU,,Frei Urs,DP_NH,,4.000
+TR_FoA,21889708,Forster  Anna Maria,DP_NH,"IP, NIE, KLP GüR, 10 DaZ, 4 AB",14.000
+TR_FrJ,21015201,Fröhlich  Joachim,DP_NH,"IP NIE, KLP NeC, AB, DaZ eigene Klasse & Klasse MoA",25.000
+TR_GaD,30006807,Gasser  Daniel,DP_NH,"IP, NIE, KLP MoA, AB, BT, LA, M, LB",24.000
+TR_GiJ,30019921,Giessler  Joachim,DP_LYS,"IP, LYS, KLP JeL, AB, BM, BO, DaZ, LA, Sp, WPF Sp LYS, WB Sp",22.000
+TR_GuG,30094834,Gusewski Georg,DP_LYS,"IP LYS, AB, BO, LA, WB Schulleitung",14.250
+TR_GüR,30035142,Güdel Rolf,DP_NH,"25 Lekt., IP, NIE, KLP FoA, AB, DaZ, M, WPF E (F)",25.000
+TR_GyC,30000703,Gysin Claudia,DP_NH,"IP, NIE, KLP HeC, DaZ, M, Sp",19.000
+TR_HaA,22857702,Haidorfer Astrid,DP_GU,"KP, GUN, KLP, AB, BM, D, M",20.000
+TR_HaM,23190701,Hartmann Maja,DP_CL,"Nhz, Clara -  AB, BM, LA, M, PM, PO, WPF E, ECDL, Kreativ (G&Musik), Unterstüzung Schule & Beruf",10.000
+TR_HaS,30053823,Handschin Sabine,DP_LYS,"IP, LYS, KLP, AB, DaZ, LA",21.000
+TR_HeC,22397507,Hestermann Christina,DP_NH,"IP, NIE, KLP GyC, AB, DaZ, 1. Semester Sabbatical",19.000
+TR_HeM,24083003,Herbener Martina,DP_NH,IP NIE KiJ,19.000
+TR_HeR,30097124,Helfenberger Raphael,DP_CL,"Erhöhung StL, SP, CLA, GUN, AB, M, Sp",14.250
+TR_HeS,30097620,Herder Steffen,DP_CL,"min. 20 Lekt., IP, LYS, CLA, GUN, KLP, AB, BO, DaZ, PO, Sp, WPF E, F",25.000
+TR_HuA,30092085,Hübner Aruna,DP_CL,CLA,
+TR_HuK,17266009,Huber Kurt,DP_LYS,"IP, SP, LYS, G, PT",21.000
+TR_InD,,Inag Dürket,DP_LYS,"ABC, AB, DaZ, LA, M, PM, E, Sp, Bild. Gest., Heilpädagogik",23.000
+TR_JeL,30061007,Jegge Lukas,DP_LYS,"IP, LYS, KLP  GiJ, AB, DaZ, LA oder WPF LYS",17.000
+TR_JoK,,Jovic Konstantin,DP_GU,8 Lekt. plus Zusatzvertrag 6 Sp für KuB (Sabbatical 1. Sem.),8.000
+TR_KaM,,Karasova Martina,DP_NH,,15.000
+TR_KiJ,17735416,Kirchhofer Julia,DP_NH,"NIE, max. 80%, min. 60%",
+TR_KiS,30084968,Kientz Sonja,DP_CL,"CLA, GUN, BiT, Break",25.000
+TR_KnS,30002858,Knill Stephan,DP_GU,"KP P, GUN, KLP, AB, BM, BO, BT, DaZ, D, LA, M, PM, PO, Sp, WPF E/F/ECDL",25.000
+TR_KöV,,Köster Vanessa,DP_GU,,17.000
+TR_KuB,22760709,Kurto Bekir,DP_GU,"BG Erhöhung, IP, KP, SP, Sp, WPF, Altersentlastung? Keine Rückmeldung erhalten",12.000
+TR_KuJ,30033884,Kunzmann Johannes,DP_CL,"25 Lekt., IP, KP P, GUN, KLP, AB, BM, BO, DaZ, D, LA, M, Sp",25.000
+TR_KüS,30076885,Kümin Stephan,DP_LYS,"IP, LYS, BT, G, PA, PT, WPF G",10.000
+TR_LaH,24132608,Lang Herbert,DP_CL,"SP, CLA, M, weiterhin FQU und LB",25.000
+TR_LaL,,Lang Lea,DP_CL,,4.000
+TR_LaM,30100134,Landsrath Mathias,DP_CL,"15 Lekt., IP, CLA, GUN, DaZ, evtl. KLP YeÖ/PeJ/PeO, nicht am Fr",17.000
+TR_LeT,,Lehmann Tabea,DP_LYS,,4.000
+TR_LiA,19957408,Liesch Anna Katharina,DP_GU,"20 Lekt., GUN, KLP, AB, DaZ, D, M",20.000
+TR_LiC,30091693,Link Christina,DP_GU,"17 Lekt., KP GUN, KLP LLo, AB, BM, BO, D, G, 5 Lekt. FS SB",17.000
+TR_LLo,30091692,Lin Louise,DP_GU,"15 Lekt., KP, GUN, KLP LiC, AB, BM, BO, M",15.000
+TR_LuL,,Luder Linda,DP_LYS,"8. Lektionen im 1. Semester, danach  Lektionen Lekt. von DiC (Sabbatical)",8.000
+TR_MeV,23636009,Meury Valeria,DP_CL,"SP CLA, KLP NeD, AB. BM, LA, M, PA, PM",19.000
+TR_MoA,19918313,Mory Andreas,DP_NH,"NIE, KLP GaD, AB, DaZ, D, LA, M, Sp",14.250
+TR_MRa,23684801,Meyer-Fichtlscherer Rainer,DP_NH,"IP, NIE, KLP SiE&CeU, AB, DaZ, M, PM",25.000
+TR_MSo,30022269,Maudamey Sophie,DP_CL,"25 Lekt., SP CLA, KLP BrB, AB, BM, D, LA, PM, WPF F",25.000
+TR_MüB,30015877,Müller Björn,DP_LYS,"IP, LYS, KLP AlJ, AB, BM, DaZ, D, LA, M, PM, Sp",25.000
+TR_MuD,30099844,Muric Dino,DP_LYS,"20 -25 Lekt., IP, KP, NIE, KLP PaA, AB, BM, DaZ, M, Sp, WPF E",18.000
+TR_NaM,,"Nake, Maximilian",DP_GU,"Theater, Auftrittskompetenz, LA, E, AB, DaZ, D, BG 50-100%",21.000
+TR_NeC,23637404,Neumann Christof,DP_NH,"25 Lekt., IP, NIE, KLP FrJ, 10 DaZ, 6 M, 2 Sp, 4 AB, 1 ABC",25.000
+TR_NeD,30015197,Neiss Daniela,DP_CL,"25 Lekt. = 1 Lekt. Komensation für WB, SP, CLA, KLP MeV, AB, BM, BO, D, LA, PM, Pilot, WB E",25.000
+TR_PaA,30029765,Pavic Ana-Marija,DP_NH,"IP, NIE, KLP, DaZ, LA, M",16.000
+TR_PaM,30092643,Pardey Meret,DP_NH,"15-17.5 Lekt., IP, NIE, G, PO, WPF, Mo + Di bis 11:15h, Mi-Fr VM, Do NM",18.000
+TR_PeC,30025888,Petrillo Claudia,DP_CL,keine Änderungen gewünscht,
+TR_PeD,,Perret David,DP_GU,,18.000
+TR_PeO,30100530,Pettenati Oliveiro,DP_CL,"25 Lekt., KLP, AB, BM, DaZ, D, LA, WPF E/F/I",23.000
+TR_PeS,21073805,Petretta  Sonia,DP_CL,"SP, CLA, KLP ZiW, AB, DaZ, D, LA, WPF E/F/I",22.000
+TR_PiL,,Pinter Lucia,DP_NH,,
+TR_PoD,30045714,Polymeras Dimitrios,DP_LYS,"20 Lekt., IP, LYS, M, G",18.000
+TR_PoJ,30016342,Polymeras-Schlienger Julia,DP_LYS,"19 Lekt., IP, LYS, KLP CoM, AB, BM, LA, PM",19.000
+TR_PoW,,Popp Wolfgang,DP_NH,"IP DaZ, M, AB, BO, Sport, Gestalten",25.000
+TR_ReR,30003572,Reiser  Ralph,DP_CL,"SP, CLA, KLP, AB, BO, D, LA, Sp, WPF E, NbA",25.000
+TR_RSe,30089166,Ramírez Sebastian,DP_LYS,"25 Lekt., IP, LYS, KLP SCc, AB, BM, BT, DaZ, PA, PM, PT, Sp, WPF Mint/Bsp (Di oder Do VM), WB PM/PT",25.000
+TR_SaS,30097427,Sabrye Sancak,DP_CL,"SP, CLA, KLP, Pilot, AB, BM, LA, M, PA, PM",20.000
+TR_SCc,22117105,Schickl  Clemens,DP_LYS,"IP, LYS, KLP RSe, DaZ, M, PA, WPF angewandte M",25.000
+TR_ScG,30074058,Schmid Gina,DP_CL,"CLA, LYS",
+TR_SCl,23098104,Schilling Claudia,DP_NH,"IP, NIE, KLP ScR, AB, DaZ",15.000
+TR_ScM,30096823,"Schaffner, Mike",DP_CL,"min. 4 Lekt., max. 14 Lekt., CLA, PO, PT, WPF Innovation/GenAI",10.000
+TR_ScN,30092187,Schwank-Broermann Nicole,DP_LYS,"min. 15 Lekt., max. 20 Lekt, IP, NIE, LYS, KLP, AB, BO, DaZ, LA",14.000
+TR_ScR,30010980,Schöpfer Ruth,DP_NH,"IP, NIE, KLP SCl, AB, DaZ",18.000
+TR_ScS,,Schäufele Sven,DP_CL,6 Lekt. plus Zusatzvertrag 6 Sp für KuB (Sabbatical 1. Sem.),6.000
+TR_SeM,30095819,Sejdiji Mevlane,DP_CL,"min. 6 Lekt, max. 10 Lekt, SP, KLP SiD, AB, BM, D, LA",11.000
+TR_SiD,23192003,Sidler Daniel,DP_CL,"IP, SP, CLA, KLP SeM, AB, BM, DaZ, D, G, LA, PM, WPF Portraitieren",23.000
+TR_SiE,30063534,Sidler Elisa,DP_NH,"min. 16 Lekt. max. 18 Lekt, IP, NIE, KLP MRa, AB, BM, DaZ, PM",18.000
+TR_SMa,30097615,Schwarze Martha,DP_CL,"12-16 Lekt, min. 8 Lekt, IP, CLA, NIE, LYS, G, LA, PM, WPF E",16.000
+TR_SmG,30092980,Smrekar Gregor,DP_GU,"25 Lekt, IP, NIE, KLP , AB, BM, BT, DaZ, M, PM, PO, PT, WPF E/ECDL, Labor, Chemieschrank",20.000
+TR_StC,22003002,Strössler  Christine,DP_LYS,"IP, SP, LYS, G, PO",17.000
+TR_UcH,30100950,Ucmak Hüseyin,DP_CL,"IP, SP, KLP, AB, BO, DaZ, D, LA, M, PA, PO, WPF E/ECDL/Auftrittskomp., nicht Frühlektionen!",23.000
+TR_VeS,30038027,Verna Sabrina,DP_GU,"10 Lekt, KP, KP P, AB, BM, BO, DaZ, D, LA, M, PA, PM, PO, Heilpäd?",22.000
+TR_VoM,30097537,Vogelgsang Michael,DP_LYS,"min. 18 Lekt, max. 22 Lekt, IP, LYS, KLP AlR, DaZ, M, Sp, WPF E, WB AB",21.000
+TR_WaJ,20172605,Wagenseil Julia,DP_LYS,"IP, DaZ",10.000
+TR_WüM,30087347,Würgler Markus,DP_CL,"GUN, KLP BaC, AB, BM, D, LA, M, WPF Computer/Medien/Musik/Theater",20.000
+TR_WyC,30015304,Wyler Claude,DP_CL,"25 Lekt, SP, CLA, KLP SaS, AB, BM, BO, BT, D, G, LA, M, PA, PM, PO, PT, Sp, Pilot, WB Naturlehre",25.000
+TR_YeÖ,30034633,Yeyin Özgür,DP_CL,"16 Lekt. Abmachung mit RaS, IP, CLA, LYS, AB, DaZ, LA, M, PM, Sp, WPF E/Bsp/Sp",18.000
+TR_ZaL,30091883,Zaugg Lea,DP_LYS,"12-13.5 Lekt, IP, LYS, KLP HaS/BrA, BM, 2 DaZ, 2 LA, PM, WPF Hoftag",20.000
+TR_ZiW,24450707,Ziebold  Wolf,DP_CL,"16 Lekt, SP, CLA, KLP PeS, BT, LA, M, Sp, WPF Geographie/Gesellschaft/Politik",14.000

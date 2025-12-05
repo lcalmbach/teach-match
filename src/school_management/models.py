@@ -308,6 +308,7 @@ class SchoolYear(models.Model):
 
 class TimePeriod(models.Model):
     """0730-815, 0830-0915 etc."""
+    untis_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
     code = models.CharField(max_length=5, verbose_name="Code")
     start_time = models.CharField(verbose_name="Start Time", max_length=4)
     end_time = models.CharField(verbose_name="End Date", max_length=4)
@@ -354,8 +355,9 @@ class Level(models.Model):
 
 # http://www.gewerbeschule.ch/agsbs/downloads/vk.pdf
 class Subject(models.Model):
+    
     """Mathematik, Deutsch, Englisch, etc."""
-
+    untis_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
     name = models.CharField(max_length=255, verbose_name="Name")
     name_short = models.CharField(max_length=255, verbose_name="Kürzel", blank=True)
     description = models.TextField(verbose_name="Description", blank=True)
@@ -422,7 +424,7 @@ class Semester(models.Model):
 # Buisiness data
 class Person(models.Model):
     """teacher, deputies and managers of the school"""
-
+    untis_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     initials = models.CharField(max_length=255, verbose_name="Kürzel", blank=True)
     employee_number = models.CharField(max_length=12, verbose_name="Personalnummer",blank=True, null=True)
@@ -718,6 +720,7 @@ class Substitution(models.Model):
 class SchoolClass(models.Model):
     """Klasse, e.g. 1A, 2B, etc."""
 
+    untis_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
     school = models.ForeignKey(
         School, on_delete=models.CASCADE, related_name="class_schools", default=1
     )

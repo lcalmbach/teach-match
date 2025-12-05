@@ -1,0 +1,18 @@
+id,longname
+RR_AE,Altersentlastung
+RR_KompVJ,Kompensation Vorjahr
+RR_KompLJ,Kompensation laufendes Jahr
+RR_KoVo,Konferenzvorstand
+RR_ICT,ICT Standortbetreuung
+RR_IIK,Leitung IIK (Topf 3)
+RR_Proj. I,Projekt Innovation
+RR_FS SB,Fachstelle Schule & Beruf
+RR_Pro Dig,Projekt Digitalisierung
+RR_FS QM,Fachstelle Qualitätsmanagement
+RR_FS D&I,Fachstelle Digitalität und Innovation
+RR_Saldo JL,Saldo Jahreslektionen
+RR_Koord,Sonderpädagogik Koordination
+RR_Päd StL,Pädagogische Leitung Standort
+RR_K_ECDL,Koordination ECDL
+RR_FS Sup,Fachstelle Support
+RR_Dat Ma,Datamanagement

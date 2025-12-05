@@ -1,0 +1,92 @@
+id,longname,room_department_id
+RM_C.001,Clara Multimediaraum,DP_CL
+RM_C.003,Clara Klassenzimmer,DP_CL
+RM_C.004,Clara Gestalten,DP_CL
+RM_C.005,Clara Klassenzimmer,DP_CL
+RM_C.101,Clara Gestalten Textil,DP_CL
+RM_C.103,Clara Gestalten Atelier,DP_CL
+RM_C.104,Clara Klassenzimmer,DP_CL
+RM_C.105,Clara Werken Maschinen,DP_CL
+RM_C.106,Clara Gestalten Werken Holz,DP_CL
+RM_C.107,Clara Gestalten Werken Metall,DP_CL
+RM_C.111,Clara Klassenzimmer,DP_CL
+RM_C.112,Clara Klassenzimmer,DP_CL
+RM_C.201,Clara Klassenzimmer,DP_CL
+RM_C.202,Clara Klassenzimmer,DP_CL
+RM_C.203,Clara Klassenzimmer,DP_CL
+RM_C.205,Clara Naturlehre,DP_CL
+RM_C.206,Clara Aula,DP_CL
+RM_C.207,Clara Lernbüro,DP_CL
+RM_C.210,Clara Klassenzimmer,DP_CL
+RM_C.211,Clara Klassenzimmer,DP_CL
+RM_C.H004,Clara Fotolabor,DP_CL
+RM_C.H036,Clara Sporthalle Clara,DP_CL
+RM_C.H047,Clara Essen/Theorie,DP_CL
+RM_C.H053,Clara Küche Hauswirtschaft,
+RM_E1 003,Lernbüro E1 003,DP_GU
+RM_E1 004,LAP E1 004,DP_GU
+RM_G 007,Gundeli Gestalten U1 004,DP_GU
+RM_G105,Gruppenraum,
+RM_G115A,Gundeli,DP_GU
+RM_G115B,Gundeli,DP_GU
+RM_G124,Gundeli,DP_GU
+RM_G125A,Gundeli,DP_GU
+RM_G134,Gundeli,DP_GU
+RM_G135,Gundeli,DP_GU
+RM_G146,Gundeli,DP_GU
+RM_KliTh,Klingental Turnhalle,
+RM_L DG,Lysbüchel Dachgeschoss,
+RM_L?,Lysbüchel,
+RM_L1.112,Lysbüchel,
+RM_L1.200,Lysbüchel,
+RM_L1.201,Lysbüchel,
+RM_L1.202,Lysbüchel,
+RM_L1.212,Lysbüchel,
+RM_L1.213,Lysbüchel,
+RM_L1.214,Lysbüchel,
+RM_L2.201,Lysbüchel,
+RM_L2.202,Lysbüchel,
+RM_L2.204,Lysbüchel,
+RM_L2.205,Lysbüchel,
+RM_L2.208,Lysbüchel,
+RM_L2.209,Lysbüchel,
+RM_L2.210,Lysbüchel,
+RM_L2.212,Lysbüchel,
+RM_LHof,Hof,DP_LYS
+RM_LTH1,Lysbüchel,
+RM_LTH2,Lysbüchel,
+RM_LU.207,Lysbüchel,
+RM_LU.208,Lysbüchel,
+RM_LU.210,Lysbüchel,
+RM_LU.211,Lysbüchel,
+RM_Ly TH,Lysbüchel,
+RM_Nh.02,Niederholz Werkstatt 02,DP_NH
+RM_Nh.04,Niederholz Werkstatt 04,DP_NH
+RM_Nh.05,Niederholz 05,DP_NH
+RM_Nh.06,Niedrholz 06,DP_NH
+RM_Nh.10,Niederholz 10,DP_NH
+RM_Nh.11,Praxis Mensch,DP_NH
+RM_Nh.14,Niederholz 14,DP_NH
+RM_Nh.15,Niederholz 15,DP_NH
+RM_Nh.16,Niederholz 16,DP_NH
+RM_Nh.17,Niederholz 17,DP_NH
+RM_Nh.18,Niederholz 18,DP_NH
+RM_Nh.20,Niederholz Gruppenraum,DP_NH
+RM_Nh.21,Niederholz 21,DP_NH
+RM_Nh.23,Niederholz Informatik,DP_NH
+RM_Nh.25a,Lernbüro Nhz,DP_NH
+RM_Nh.26,Niederholz 26 Gruppenraum,DP_NH
+RM_Nh.27,Niederholz 27,DP_NH
+RM_Nh.28,Niederholz 28,DP_NH
+RM_Nh.29,Niederholz 29,DP_NH
+RM_Nh.30,Niederholz 30,DP_NH
+RM_Nh.Kü,Niederholz Küche Hauswirtschaft,DP_NH
+RM_NH3,Niederholz Sporthalle 3,DP_NH
+RM_Np.1.1,Niederholz Pav 1.1,DP_NH
+RM_Np.1.2,Niederholz Pav 1.2,DP_NH
+RM_Np.1.3,Niederholz Pav 1.3,DP_NH
+RM_Np.1.5,Niederholz Pav 1.5,DP_NH
+RM_Np.2.1,Niederholz Pav 2.1,DP_NH
+RM_Np.2.2,Niederholz Gestalten Basis,DP_NH
+RM_Np.3.1,Niederholz Pav 3.1,DP_NH
+RM_Np.3.2,Niederholz Pav 3.2,DP_NH

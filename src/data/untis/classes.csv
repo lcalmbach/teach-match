@@ -1,0 +1,47 @@
+alias,class_department_id,class_room_id,id,longname,text
+,DP_LYS,,CL_E01,nN,
+,DP_LYS,,CL_E02,nN,
+,DP_LYS,,CL_E03,nN,
+,DP_GU,RM_G135,CL_F01,A. Haidorfer,Flex
+,DP_GU,RM_G115A,CL_F02,S. Verna,Flex
+,DP_GU,RM_G146,CL_F03,D. Perret,Flex
+,DP_GU,RM_G115B,CL_F04,M. Nake / V. Köster,Flex
+,DP_GU,RM_G134,CL_F05,Ch. Link / L. Lin,Flex
+,DP_GU,RM_G124,CL_F06,C. Brassel,Flex
+15,DP_NH,,CL_I101,C. Gysin / Ch. Hestermann,
+,DP_NH,,CL_I102,C. Schilling / R. Schöpfer,
+04,DP_NH,,CL_I103,A. Pavic / E. Sidler,
+12,DP_NH,,CL_I104,A.M. Forster / R. Güdel,
+,DP_NH,,CL_I105,J. Fröhlich / Ch. Neumann,
+,DP_NH,,CL_I106,D. Gasser / A. Mory,
+,DP_NH,,CL_I107,R. Meyer / U. Cech,
+,DP_NH,,CL_I108,L. Cantaluppi / M. Burr,
+,DP_NH,,CL_I109,M. Karasova/W. Popp,
+12,DP_LYS,,CL_I201,C. Dinkelaker / ?,
+11,DP_LYS,,CL_I202,C. Schickl / S. Ramirez,
+01,DP_LYS,RM_L1.214,CL_I203,J. Alt / B. Müller,
+,DP_LYS,,CL_I204,R. Alvarado / M. Vogelgsang,
+,DP_LYS,,CL_I205,M. Corbo / J. Polymeras,
+,DP_LYS,,CL_I206,L. Zaugg / D. Muric,
+,DP_LYS,,CL_I207,J. Giessler / L. Jegge,
+,DP_LYS,,CL_I208,S. Handschin / N. Broermann,
+,DP_CL,RM_C.201,CL_I209,M. Landsrath,
+,DP_CL,RM_C.210,CL_I210,A. Bertschi / S. Herder,
+,DP_CL,RM_C.005,CL_I211,O. Pettenati / J. Kunzmann,
+,DP_LYS,,CL_I212,S. Brassel / D. Inag,
+,DP_CL,RM_C.003,CL_K+01,S. Knill,KP+
+,DP_CL,RM_C.003,CL_K+02,S. Kienz / Th. Biehler,KP+
+13,DP_GU,RM_G125A,CL_K01,A. Liesch,DaZ_Klasse
+23,DP_CL,RM_C.207,CL_LB Cl,,
+17,DP_LYS,,CL_LB Ly,,
+18,DP_NH,,CL_LB Ni,,
+,DP_GU,,CL_LB_Gun,,
+11,DP_CL,RM_C.211,CL_S01,R. Reiser,
+13,DP_CL,RM_C.001,CL_S02,C. Wyler /H. Ucmak,Flex (Pilot erw.)
+03,DP_CL,RM_C.101,CL_S03,S. Sancak / M. Würgler,Pilot
+14,DP_CL,RM_C.112,CL_S04,HP. Emmenegger,
+,DP_CL,RM_C.104,CL_S05,D. Neiss / V. Meury,Pilot
+03,DP_CL,RM_C.111,CL_S06,M. Sedijii / D. Sidler,
+02,DP_CL,RM_C.202,CL_S07,S. Maudamey,
+,DP_CL,RM_C.203,CL_S08,S. Petretta / W. Ziebold,
+,DP_GU,,CL_K02,Ch. Brülisauer,DaZ-Klasse
