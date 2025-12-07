@@ -224,6 +224,27 @@ class Command(BaseCommand):
             print(e)
             return False
         return True
+    
+    def fill_subjects(self, force: bool = False):
+        """fill subjects"""
+
+        try:
+            if force:
+                Subject.objects.all().delete()
+
+            subject_df = pd.read_csv("./data/untis/subjects.csv", sep=",")
+            for index, row in subject_df.iterrows():                    
+                Subject.objects.create(
+                    name=row["longname"],
+                    name_short=row["longname"],
+                    level_id=1,
+                    untis_id=row["id"],
+                )
+            print(f"subjects created.")
+        except Exception as e:
+            print(e)
+            return False
+        return True
 
     
 
@@ -248,8 +269,14 @@ class Command(BaseCommand):
             ok = self.fill_school()
         if ok:
             ok = self.fill_timeperiods()
-        """
         if ok:
             ok = self.fill_teachers()
+        
+        if ok:
+            ok = self.fill_subjects()        
+        """
+        if ok:
+            ok = self.fill_timetable()     
+
         if not ok:
             print("An error occurred while populating the data.")    

@@ -28,7 +28,6 @@
             Stellvertretungen
           </a>
         </li>
-
         {% if request.user|is_in_group:"school-admins" %}
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'school_management:substitution_admin_list' %}active{% endif %}"

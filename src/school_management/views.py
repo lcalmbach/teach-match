@@ -233,7 +233,7 @@ class TeacherListView(ListView):
                 "teacher__id",
                 "teacher__first_name",
                 "teacher__last_name",
-                "teacher__phone_number",
+                "teacher__mobile",
                 "teacher__email",
                 "school__name",
             )

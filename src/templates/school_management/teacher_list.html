@@ -44,7 +44,7 @@
                         </a>
                     </td>
                     <td>{{ teacher.teacher__first_name }}</td>
-                    <td>{{ teacher.teacher__phone_number }}</td>
+                    <td>{{ teacher.teacher__mobile }}</td>
                     <td>{{ teacher.teacher__email}}</td>
                     <td>{{ teacher.school__name }}</td>
                     <td><a href="{% url 'school_management:teacher_edit' pk=teacher.teacher__id %}" title="Lehrkraft editieren"><i class="fas fa-edit"></i></a></td>
