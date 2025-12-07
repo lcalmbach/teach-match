@@ -29,6 +29,7 @@ class CodeEnum(Enum):
     DAYPART = 8
     WEEEKDAY = 9
     LOCATION = 10
+    SYSTEM_VARIABLE = 11
 
 class SubstitutionStatusEnum(Enum):
     IN_ARBEIT = 1
@@ -90,6 +91,28 @@ class Code(models.Model):
     def __str__(self):
         return self.name
 
+
+class SystemVariableManager(models.Manager):
+    """
+    Custom manager to fetch codes specifically for the SystemVariable category.
+    """
+    def get_queryset(self):
+        return super().get_queryset().filter(category_id=CodeEnum.SYSTEM_VARIABLE.value)
+
+
+class SystemVariable(Code):
+    """
+    Proxy model for the SystemVariable category.
+    """
+    objects = SystemVariableManager()
+
+    class Meta:
+        proxy = True
+
+    def __str__(self):
+        return f"SystemVariable: {self.name} - {self.description}"
+    
+
 class GenderManager(models.Manager):
     """
     Custom manager to fetch codes specifically for the Gender category.
@@ -108,7 +131,7 @@ class Gender(Code):
         proxy = True
 
     def __str__(self):
-        return f"Gender: {self.code} - {self.description}"
+        return f"Gender: {self.short_name} - {self.description}"
 
 
 class CommunicationResponseTypeManager(models.Manager):
@@ -425,7 +448,7 @@ class Semester(models.Model):
 class Person(models.Model):
     """teacher, deputies and managers of the school"""
     untis_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     initials = models.CharField(max_length=255, verbose_name="Kürzel", blank=True)
     employee_number = models.CharField(max_length=12, verbose_name="Personalnummer",blank=True, null=True)
     first_name = models.CharField(max_length=255, verbose_name="Vorname")
@@ -434,7 +457,7 @@ class Person(models.Model):
     mobile = models.CharField(
         max_length=20, verbose_name="Telefonnummer", blank=True
     )
-    year_of_birth = models.CharField(
+    year_of_birth = models.IntegerField(
         max_length=255, verbose_name="Jahrgang", blank=True
     )
     # cv_text = models.TextField(verbose_name="CV Text", blank=True)

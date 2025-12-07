@@ -1,3 +1,4 @@
+from multiprocessing import context
 from django.utils.timezone import now
 from django.http import HttpResponseBadRequest
 from django.forms import modelformset_factory
@@ -40,6 +41,7 @@ from .models import (
     CommunicationResponseTypeEnum,
     SubstitutionStatusEnum,
     SubstitutionExecution,
+    SystemVariable
 )
 from .forms import (
     SchoolForm,
@@ -54,6 +56,7 @@ from .forms import (
     ApplicationResponseForm,
     SubstitutionExecutionForm,
     InvitationEditForm,
+    
 )
 from django.views.generic import ListView  # Import the necessary module
 from django.urls import reverse_lazy
@@ -301,7 +304,8 @@ class SubstitutionCandidatesListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["status"] = SubstitutionStatus.objects.all()
-
+        context["contact"] = SystemVariable.objects.get(short_name='con')
+        print(context["contact"])
         context["schools"] = School.objects.all().order_by("name")
         context["subjects"] = Subject.objects.all().order_by("name")
         context["levels"] = Level.objects.all().order_by("order")
