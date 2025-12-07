@@ -109,8 +109,6 @@ class SystemVariable(Code):
     class Meta:
         proxy = True
 
-    def __str__(self):
-        return f"SystemVariable: {self.name} - {self.description}"
     
 
 class GenderManager(models.Manager):
@@ -130,8 +128,6 @@ class Gender(Code):
     class Meta:
         proxy = True
 
-    def __str__(self):
-        return f"Gender: {self.short_name} - {self.description}"
 
 
 class CommunicationResponseTypeManager(models.Manager):
@@ -457,9 +453,8 @@ class Person(models.Model):
     mobile = models.CharField(
         max_length=20, verbose_name="Telefonnummer", blank=True
     )
-    year_of_birth = models.IntegerField(
-        max_length=255, verbose_name="Jahrgang", blank=True
-    )
+    year_of_birth = models.IntegerField(verbose_name="Jahrgang", blank=True, null=True)
+    
     # cv_text = models.TextField(verbose_name="CV Text", blank=True)
     # cv_file = models.FileField(verbose_name="CV Datei", blank=True, upload_to=get_cv_upload_path)
     is_teacher = models.BooleanField(verbose_name="LehrerIn", default=False)
