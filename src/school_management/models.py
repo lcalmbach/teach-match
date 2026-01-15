@@ -2,6 +2,7 @@ import os
 import calendar
 import locale
 
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
@@ -24,7 +25,7 @@ class CodeEnum(Enum):
     COMMUNICATION_TYPE = 3
     SUBSTITUTION_STATUS = 4
     SUBSTITUTION_CAUSE = 5
-    SCHOOL_PERSON_ROLE = 6
+    SCHOOL_CustomUser_ROLE = 6
     CERTIFICATE = 7
     DAYPART = 8
     WEEEKDAY = 9
@@ -129,7 +130,6 @@ class Gender(Code):
         proxy = True
 
 
-
 class CommunicationResponseTypeManager(models.Manager):
     """
     Custom manager to fetch codes specifically for the Gender category.
@@ -207,7 +207,7 @@ class SchoolPersonRoleManager(models.Manager):
     Custom manager to fetch codes specifically for the Gender category.
     """
     def get_queryset(self):
-        return super().get_queryset().filter(category_id=CodeEnum.SCHOOL_PERSON_ROLE.value)
+        return super().get_queryset().filter(category_id=CodeEnum.SCHOOL_CustomUser_ROLE.value)
 
 
 class SchoolPersonRole(Code):
@@ -391,7 +391,7 @@ class Subject(models.Model):
         return self.name
 
 
-class School(models.Model):
+class Department(models.Model):
     """Schule, Schulhaus, etc."""
 
     name = models.CharField(max_length=255, verbose_name="Standort")
@@ -440,23 +440,71 @@ class Semester(models.Model):
     def __str__(self):
         return self.name
 
-# Buisiness data
-class Person(models.Model):
-    """teacher, deputies and managers of the school"""
+# src/school_management/models.py
+
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.db import models
+
+
+class CustomUserManager(BaseUserManager):
+    """Custom user manager where email is the unique identifier"""
+    
+    def create_user(self, email, password=None, **extra_fields):
+        """Create and save a regular user with the given email and password"""
+        if not email:
+            raise ValueError('The Email field must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+    
+    def create_superuser(self, email, password=None, **extra_fields):
+        """Create and save a superuser with the given email and password"""
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+        
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+        
+        return self.create_user(email, password, **extra_fields)
+
+
+class CustomUser(AbstractUser):
+    """
+    Custom user model that combines Django User and CustomUser attributes
+    """
+    username = models.CharField(max_length=150, blank=True, null=True)
+    
+    # CustomUser attributes
     untis_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    initials = models.CharField(max_length=255, verbose_name="Kürzel", blank=True)
-    employee_number = models.CharField(max_length=12, verbose_name="Personalnummer",blank=True, null=True)
-    first_name = models.CharField(max_length=255, verbose_name="Vorname")
-    last_name = models.CharField(max_length=255, verbose_name="Nachname")
-    email = models.EmailField(verbose_name="Email", blank=True)
+    last_name = models.CharField(max_length=150, blank=True)
+    email = models.EmailField(unique=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+    
+    # ← ADD THIS LINE - This is critical!
+    objects = CustomUserManager()
+
+    phone = models.CharField(max_length=20, blank=True)
+    gender = models.ForeignKey(
+        'Gender',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='users'
+    )
+    initials = models.CharField(max_length=10, null=True, blank=True)
     mobile = models.CharField(
         max_length=20, verbose_name="Telefonnummer", blank=True
     )
     year_of_birth = models.IntegerField(verbose_name="Jahrgang", blank=True, null=True)
+    bio = models.TextField(blank=True)
     
-    # cv_text = models.TextField(verbose_name="CV Text", blank=True)
-    # cv_file = models.FileField(verbose_name="CV Datei", blank=True, upload_to=get_cv_upload_path)
     is_teacher = models.BooleanField(verbose_name="LehrerIn", default=False)
     is_candidate = models.BooleanField(
         verbose_name="KandidatIn für Stellvertretung", default=False
@@ -465,14 +513,10 @@ class Person(models.Model):
         verbose_name="Leitung/Administration", default=False
     )
 
-    gender = models.ForeignKey(
-        Gender,
-        verbose_name="Geschlecht",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-    )
-
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     available_from_date = models.DateField(
         verbose_name="Verfügbar von", blank=True, null=True
     )
@@ -524,22 +568,24 @@ class Person(models.Model):
     )
 
     subjects = models.ManyToManyField(
-        "Subject", related_name="person_subjects", blank=True
-    )  # Many-to-many relationship
+        "Subject", related_name="customuser_subjects", blank=True
+    )
 
     @property
     def formal_salutation(self):
-        if self.gender.id == 1:
+        if self.gender and self.gender.id == 1:
             return f"Sehr geehrter Herr {self.last_name}"
-        else:
+        elif self.gender:
             return f"Sehr geehrte Frau {self.last_name}"
+        return f"Sehr geehrte/r {self.last_name}"
 
     @property
     def informal_salutation(self):
-        if self.gender.id == 1:
+        if self.gender and self.gender.id == 1:
             return f"Lieber {self.first_name}"
-        else:
+        elif self.gender:
             return f"Liebe {self.first_name}"
+        return f"Hallo {self.first_name}"
 
     @property
     def fullname(self):
@@ -550,12 +596,24 @@ class Person(models.Model):
         return f"{self.first_name} {self.last_name}"
 
     class Meta:
-        verbose_name = "Person"
-        verbose_name_plural = "Personen"
+        verbose_name = "User"
+        verbose_name_plural = "Users"
         ordering = ["last_name", "first_name"]
 
     def __str__(self):
-        return f"{self.last_name} {self.first_name} {self.year_of_birth}"
+        if self.year_of_birth:
+            return f"{self.last_name} {self.first_name} {self.year_of_birth}"
+        return f"{self.last_name} {self.first_name}"
+    
+    def get_full_name(self):
+        """Return the first_name plus the last_name, with a space in between."""
+        full_name = f"{self.first_name} {self.last_name}".strip()
+        return full_name or self.email
+    
+    def get_short_name(self):
+        """Return the short name for the user."""
+        return self.first_name or self.email
+
 
 
 class TeacherManager(models.Manager):
@@ -563,7 +621,7 @@ class TeacherManager(models.Manager):
         return super().get_queryset().filter(is_teacher=True)
 
 
-class Teacher(Person):
+class Teacher(CustomUser):
     objects = TeacherManager()
 
     class Meta:
@@ -616,7 +674,7 @@ class CandidateManager(models.Manager):
         return super().get_queryset().filter(is_candidate=True)
 
 
-class Candidate(Person):
+class Candidate(CustomUser):
     objects = CandidateManager()
 
     class Meta:
@@ -626,8 +684,8 @@ class Candidate(Person):
 class Substitution(models.Model):
     """Time frame for a teacher substitution"""
 
-    school = models.ForeignKey(
-        School,
+    department = models.ForeignKey(
+        Department,
         on_delete=models.CASCADE,
         related_name="substitution_schools",
         verbose_name="Schule",
@@ -737,20 +795,21 @@ class Substitution(models.Model):
 
 class SchoolClass(models.Model):
     """Klasse, e.g. 1A, 2B, etc."""
-
+    # alias,class_department_id,class_room_id,id,longname,text
     untis_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
-    school = models.ForeignKey(
-        School, on_delete=models.CASCADE, related_name="class_schools", default=1
+    department = models.ForeignKey(
+        Department, on_delete=models.CASCADE, related_name="class_schools", default=1
     )
     name = models.CharField(max_length=255, verbose_name="Name")
+    teacher_name = models.CharField(max_length=255, verbose_name="Lehrer", null=True, blank=True)
     year = models.IntegerField(verbose_name="Jahr", default=1)
     level = models.ForeignKey(
-        Level, on_delete=models.CASCADE, related_name="class_levels"
+        Level, on_delete=models.CASCADE, related_name="class_levels", blank=True, null=True
     )
-    # contact_person = models.ForeignKey(
-    #     Person, on_delete=models.CASCADE, related_name="class_persons"
+    # contact_CustomUser = models.ForeignKey(
+    #     CustomUser, on_delete=models.CASCADE, related_name="class_CustomUsers"
     # )
-    school_year = models.IntegerField(verbose_name="Schuljahr", default=1)
+    school_year = models.IntegerField(verbose_name="Schuljahr", default=1, blank=True, null=True)
 
     class Meta:
         verbose_name = "Klasse"
@@ -767,10 +826,10 @@ class Timetable(models.Model):
         Semester, on_delete=models.CASCADE, related_name="timetable_semesters"
     )
     teacher = models.ForeignKey(
-        Person, on_delete=models.CASCADE, related_name="lessons_template_teachers"
+        CustomUser, on_delete=models.CASCADE, related_name="lessons_template_teachers"
     )
-    school = models.ForeignKey(
-        School, on_delete=models.CASCADE, related_name="lesson_template_schools"
+    department = models.ForeignKey(
+        Department, on_delete=models.CASCADE, related_name="lesson_template_schools"
     )
     time_period = models.ForeignKey(
         TimePeriod, on_delete=models.CASCADE, related_name="lesson_template_periods"
@@ -835,9 +894,9 @@ class SubstitutionCandidate(models.Model):
         "Substitution", on_delete=models.CASCADE, related_name="substitution_candidates"
     )
     candidate = models.ForeignKey(
-        "Person",
+        "CustomUser",
         on_delete=models.CASCADE,
-        related_name="substitution_candidates_persons",
+        related_name="substitution_candidates_CustomUsers",
     )
     matching_half_days = models.IntegerField(
         verbose_name="Übereinstimmende Halbtage", default=0

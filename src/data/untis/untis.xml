@@ -281,7 +281,7 @@
       <longname>Rektorat</longname>
     </department>
     <department id="DP_LYS">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </department>
   </departments>
   <rooms>
@@ -354,7 +354,7 @@
       <room_department id="DP_CL"/>
     </room>
     <room id="RM_C.207">
-      <longname>Clara Lernbüro</longname>
+      <longname>Clara Lernbï¿½ro</longname>
       <room_department id="DP_CL"/>
     </room>
     <room id="RM_C.210">
@@ -378,10 +378,10 @@
       <room_department id="DP_CL"/>
     </room>
     <room id="RM_C.H053">
-      <longname>Clara Küche Hauswirtschaft</longname>
+      <longname>Clara Kï¿½che Hauswirtschaft</longname>
     </room>
     <room id="RM_E1 003">
-      <longname>Lernbüro E1 003</longname>
+      <longname>Lernbï¿½ro E1 003</longname>
       <room_department id="DP_GU"/>
     </room>
     <room id="RM_E1 004">
@@ -427,80 +427,80 @@
       <longname>Klingental Turnhalle</longname>
     </room>
     <room id="RM_L DG">
-      <longname>Lysbüchel Dachgeschoss</longname>
+      <longname>Lysbï¿½chel Dachgeschoss</longname>
     </room>
     <room id="RM_L?">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_L1.112">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_L1.200">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_L1.201">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_L1.202">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_L1.212">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_L1.213">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_L1.214">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_L2.201">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_L2.202">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_L2.204">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_L2.205">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_L2.208">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_L2.209">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_L2.210">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_L2.212">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_LHof">
       <longname>Hof</longname>
       <room_department id="DP_LYS"/>
     </room>
     <room id="RM_LTH1">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_LTH2">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_LU.207">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_LU.208">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_LU.210">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_LU.211">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_Ly TH">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </room>
     <room id="RM_Nh.02">
       <longname>Niederholz Werkstatt 02</longname>
@@ -559,7 +559,7 @@
       <room_department id="DP_NH"/>
     </room>
     <room id="RM_Nh.25a">
-      <longname>Lernbüro Nhz</longname>
+      <longname>Lernbï¿½ro Nhz</longname>
       <room_department id="DP_NH"/>
     </room>
     <room id="RM_Nh.26">
@@ -582,8 +582,8 @@
       <longname>Niederholz 30</longname>
       <room_department id="DP_NH"/>
     </room>
-    <room id="RM_Nh.Kü">
-      <longname>Niederholz Küche Hauswirtschaft</longname>
+    <room id="RM_Nh.Kï¿½">
+      <longname>Niederholz Kï¿½che Hauswirtschaft</longname>
       <room_department id="DP_NH"/>
     </room>
     <room id="RM_NH3">
@@ -629,10 +629,10 @@
       <longname>Allgemeinbildung</longname>
     </subject>
     <subject id="SU_ABC">
-      <longname>ABC mit Präsenzzeit</longname>
+      <longname>ABC mit Prï¿½senzzeit</longname>
     </subject>
     <subject id="SU_BInf+">
-      <longname>Betreuung Informatik mit Präsenzzeit</longname>
+      <longname>Betreuung Informatik mit Prï¿½senzzeit</longname>
     </subject>
     <subject id="SU_BM">
       <longname>Bildung Mensch</longname>
@@ -661,7 +661,7 @@
       <longname>Freifach</longname>
     </subject>
     <subject id="SU_FK">
-      <longname>Förderkurs</longname>
+      <longname>Fï¿½rderkurs</longname>
     </subject>
     <subject id="SU_G">
       <longname>Gestalten</longname>
@@ -673,10 +673,10 @@
       <longname>Lernatelier</longname>
     </subject>
     <subject id="SU_LB">
-      <longname>Beratungs- und Lernbüro</longname>
+      <longname>Beratungs- und Lernbï¿½ro</longname>
     </subject>
     <subject id="SU_Lys">
-      <longname>Lysbüchel</longname>
+      <longname>Lysbï¿½chel</longname>
     </subject>
     <subject id="SU_M">
       <longname>Mathematik</longname>
@@ -724,10 +724,10 @@
       <longname>Wahlpflichtfach Fitness</longname>
     </subject>
     <subject id="SU_WFkD">
-      <longname>Wahlpflichtfach Förderkurs Deutsch</longname>
+      <longname>Wahlpflichtfach Fï¿½rderkurs Deutsch</longname>
     </subject>
     <subject id="SU_WFrz">
-      <longname>Wahlpflichtfach Französisch</longname>
+      <longname>Wahlpflichtfach Franzï¿½sisch</longname>
     </subject>
     <subject id="SU_WGst">
       <longname>Wahlpflichtfach Gestalten 3D</longname>
@@ -745,7 +745,7 @@
       <longname>Wahlpflichtfach Recht und Justiz</longname>
     </subject>
     <subject id="SU_WSfF">
-      <longname>Wahlpflichtfach Sport für Frauen</longname>
+      <longname>Wahlpflichtfach Sport fï¿½r Frauen</longname>
     </subject>
     <subject id="SU_WSV">
       <longname>Wahlpflichtfach Selbstverteidigung</longname>
@@ -763,13 +763,13 @@
       <longname>Unterricht im Wochenwechsel</longname>
     </subject>
     <subject id="SU_FQU">
-      <longname>Fachstelle Qualität und Unterricht ohne Präsenzzeit</longname>
+      <longname>Fachstelle Qualitï¿½t und Unterricht ohne Prï¿½senzzeit</longname>
     </subject>
     <subject id="SU_FSB">
       <longname>Fachstelle Schule-Beruf</longname>
     </subject>
     <subject id="SU_FSQ">
-      <longname>Fachstelle Qualität</longname>
+      <longname>Fachstelle Qualitï¿½t</longname>
     </subject>
     <subject id="SU_FSS">
       <longname>Fachstelle Support</longname>
@@ -779,7 +779,7 @@
     <teacher id="TR_AlJ">
       <surname>Alt Joscha</surname>
       <payrollnumber>30084904</payrollnumber>
-      <text>25 Lekt.,IP, LYS, KLP MüB, AB, DaZ, E, Neu: LA, Sp, BM</text>
+      <text>25 Lekt.,IP, LYS, KLP Mï¿½B, AB, DaZ, E, Neu: LA, Sp, BM</text>
       <teacher_department id="DP_LYS"/>
       <weektarget>25.000</weektarget>
     </teacher>
@@ -800,7 +800,7 @@
     <teacher id="TR_BaC">
       <surname>Brassel Corinne</surname>
       <payrollnumber>30015298</payrollnumber>
-      <text>KP GUN, KLP WüM, M, AB, BM, D</text>
+      <text>KP GUN, KLP Wï¿½M, M, AB, BM, D</text>
       <teacher_department id="DP_GU"/>
       <weektarget>20.000</weektarget>
     </teacher>
@@ -840,14 +840,14 @@
       <weektarget>16.000</weektarget>
     </teacher>
     <teacher id="TR_BrC">
-      <surname>Brülisauer Christian</surname>
+      <surname>Brï¿½lisauer Christian</surname>
       <payrollnumber>30015295</payrollnumber>
       <text>25 Lekt., KP GUN, KLP, AB, BM, BO, D, M, Sp, WPF ECDL</text>
       <teacher_department id="DP_GU"/>
       <weektarget>24.000</weektarget>
     </teacher>
     <teacher id="TR_BrG">
-      <surname>Brönnimann Gabriel</surname>
+      <surname>Brï¿½nnimann Gabriel</surname>
       <text>Journalist, D, DaZ, E, AB, 60%</text>
       <teacher_department id="DP_GU"/>
       <weektarget>16.000</weektarget>
@@ -858,7 +858,7 @@
       <weektarget>17.500</weektarget>
     </teacher>
     <teacher id="TR_BuB">
-      <surname>Bührer Brigitte</surname>
+      <surname>Bï¿½hrer Brigitte</surname>
       <payrollnumber>30098487</payrollnumber>
       <text>IP, NIE, G IP1, PT IP2, MO/DI oder DI/MI, 12 Lekt.</text>
       <teacher_department id="DP_NH"/>
@@ -948,13 +948,13 @@
     <teacher id="TR_ErU">
       <surname>Erdogan Umut</surname>
       <payrollnumber>30043069</payrollnumber>
-      <text>CLA, BG erhöhen</text>
+      <text>CLA, BG erhï¿½hen</text>
       <teacher_department id="DP_CL"/>
     </teacher>
     <teacher id="TR_FeR">
       <surname>Federer Richard</surname>
       <payrollnumber>21210713</payrollnumber>
-      <text>PENSIONIERT, SP CLA, 4 PM Klasse MaS, Zuständigkeit Labor</text>
+      <text>PENSIONIERT, SP CLA, 4 PM Klasse MaS, Zustï¿½ndigkeit Labor</text>
       <teacher_department id="DP_CL"/>
       <weektarget>5.000</weektarget>
     </teacher>
@@ -966,12 +966,12 @@
     <teacher id="TR_FoA">
       <surname>Forster  Anna Maria</surname>
       <payrollnumber>21889708</payrollnumber>
-      <text>IP, NIE, KLP GüR, 10 DaZ, 4 AB</text>
+      <text>IP, NIE, KLP Gï¿½R, 10 DaZ, 4 AB</text>
       <teacher_department id="DP_NH"/>
       <weektarget>14.000</weektarget>
     </teacher>
     <teacher id="TR_FrJ">
-      <surname>Fröhlich  Joachim</surname>
+      <surname>Frï¿½hlich  Joachim</surname>
       <payrollnumber>21015201</payrollnumber>
       <text>IP NIE, KLP NeC, AB, DaZ eigene Klasse &amp; Klasse MoA</text>
       <teacher_department id="DP_NH"/>
@@ -998,8 +998,8 @@
       <teacher_department id="DP_LYS"/>
       <weektarget>14.250</weektarget>
     </teacher>
-    <teacher id="TR_GüR">
-      <surname>Güdel Rolf</surname>
+    <teacher id="TR_Gï¿½R">
+      <surname>Gï¿½del Rolf</surname>
       <payrollnumber>30035142</payrollnumber>
       <text>25 Lekt., IP, NIE, KLP FoA, AB, DaZ, M, WPF E (F)</text>
       <teacher_department id="DP_NH"/>
@@ -1022,7 +1022,7 @@
     <teacher id="TR_HaM">
       <surname>Hartmann Maja</surname>
       <payrollnumber>23190701</payrollnumber>
-      <text>Nhz, Clara -  AB, BM, LA, M, PM, PO, WPF E, ECDL, Kreativ (G&amp;Musik), Unterstüzung Schule &amp; Beruf</text>
+      <text>Nhz, Clara -  AB, BM, LA, M, PM, PO, WPF E, ECDL, Kreativ (G&amp;Musik), Unterstï¿½zung Schule &amp; Beruf</text>
       <teacher_department id="DP_CL"/>
       <weektarget>10.000</weektarget>
     </teacher>
@@ -1050,7 +1050,7 @@
     <teacher id="TR_HeR">
       <surname>Helfenberger Raphael</surname>
       <payrollnumber>30097124</payrollnumber>
-      <text>Erhöhung StL, SP, CLA, GUN, AB, M, Sp</text>
+      <text>Erhï¿½hung StL, SP, CLA, GUN, AB, M, Sp</text>
       <teacher_department id="DP_CL"/>
       <weektarget>14.250</weektarget>
     </teacher>
@@ -1062,7 +1062,7 @@
       <weektarget>25.000</weektarget>
     </teacher>
     <teacher id="TR_HuA">
-      <surname>Hübner Aruna</surname>
+      <surname>Hï¿½bner Aruna</surname>
       <payrollnumber>30092085</payrollnumber>
       <text>CLA</text>
       <teacher_department id="DP_CL"/>
@@ -1075,8 +1075,8 @@
       <weektarget>21.000</weektarget>
     </teacher>
     <teacher id="TR_InD">
-      <surname>Inag Dürket</surname>
-      <text>ABC, AB, DaZ, LA, M, PM, E, Sp, Bild. Gest., Heilpädagogik</text>
+      <surname>Inag Dï¿½rket</surname>
+      <text>ABC, AB, DaZ, LA, M, PM, E, Sp, Bild. Gest., Heilpï¿½dagogik</text>
       <teacher_department id="DP_LYS"/>
       <weektarget>23.000</weektarget>
     </teacher>
@@ -1089,7 +1089,7 @@
     </teacher>
     <teacher id="TR_JoK">
       <surname>Jovic Konstantin</surname>
-      <text>8 Lekt. plus Zusatzvertrag 6 Sp für KuB (Sabbatical 1. Sem.)</text>
+      <text>8 Lekt. plus Zusatzvertrag 6 Sp fï¿½r KuB (Sabbatical 1. Sem.)</text>
       <teacher_department id="DP_GU"/>
       <weektarget>8.000</weektarget>
     </teacher>
@@ -1118,15 +1118,15 @@
       <teacher_department id="DP_GU"/>
       <weektarget>25.000</weektarget>
     </teacher>
-    <teacher id="TR_KöV">
-      <surname>Köster Vanessa</surname>
+    <teacher id="TR_Kï¿½V">
+      <surname>Kï¿½ster Vanessa</surname>
       <teacher_department id="DP_GU"/>
       <weektarget>17.000</weektarget>
     </teacher>
     <teacher id="TR_KuB">
       <surname>Kurto Bekir</surname>
       <payrollnumber>22760709</payrollnumber>
-      <text>BG Erhöhung, IP, KP, SP, Sp, WPF, Altersentlastung? Keine Rückmeldung erhalten</text>
+      <text>BG Erhï¿½hung, IP, KP, SP, Sp, WPF, Altersentlastung? Keine Rï¿½ckmeldung erhalten</text>
       <teacher_department id="DP_GU"/>
       <weektarget>12.000</weektarget>
     </teacher>
@@ -1137,8 +1137,8 @@
       <teacher_department id="DP_CL"/>
       <weektarget>25.000</weektarget>
     </teacher>
-    <teacher id="TR_KüS">
-      <surname>Kümin Stephan</surname>
+    <teacher id="TR_Kï¿½S">
+      <surname>Kï¿½min Stephan</surname>
       <payrollnumber>30076885</payrollnumber>
       <text>IP, LYS, BT, G, PA, PT, WPF G</text>
       <teacher_department id="DP_LYS"/>
@@ -1159,7 +1159,7 @@
     <teacher id="TR_LaM">
       <surname>Landsrath Mathias</surname>
       <payrollnumber>30100134</payrollnumber>
-      <text>15 Lekt., IP, CLA, GUN, DaZ, evtl. KLP YeÖ/PeJ/PeO, nicht am Fr</text>
+      <text>15 Lekt., IP, CLA, GUN, DaZ, evtl. KLP Yeï¿½/PeJ/PeO, nicht am Fr</text>
       <teacher_department id="DP_CL"/>
       <weektarget>17.000</weektarget>
     </teacher>
@@ -1223,8 +1223,8 @@
       <teacher_department id="DP_CL"/>
       <weektarget>25.000</weektarget>
     </teacher>
-    <teacher id="TR_MüB">
-      <surname>Müller Björn</surname>
+    <teacher id="TR_Mï¿½B">
+      <surname>Mï¿½ller Bjï¿½rn</surname>
       <payrollnumber>30015877</payrollnumber>
       <text>IP, LYS, KLP AlJ, AB, BM, DaZ, D, LA, M, PM, Sp</text>
       <teacher_department id="DP_LYS"/>
@@ -1253,7 +1253,7 @@
     <teacher id="TR_NeD">
       <surname>Neiss Daniela</surname>
       <payrollnumber>30015197</payrollnumber>
-      <text>25 Lekt. = 1 Lekt. Komensation für WB, SP, CLA, KLP MeV, AB, BM, BO, D, LA, PM, Pilot, WB E</text>
+      <text>25 Lekt. = 1 Lekt. Komensation fï¿½r WB, SP, CLA, KLP MeV, AB, BM, BO, D, LA, PM, Pilot, WB E</text>
       <teacher_department id="DP_CL"/>
       <weektarget>25.000</weektarget>
     </teacher>
@@ -1274,7 +1274,7 @@
     <teacher id="TR_PeC">
       <surname>Petrillo Claudia</surname>
       <payrollnumber>30025888</payrollnumber>
-      <text>keine Änderungen gewünscht</text>
+      <text>keine ï¿½nderungen gewï¿½nscht</text>
       <teacher_department id="DP_CL"/>
     </teacher>
     <teacher id="TR_PeD">
@@ -1328,7 +1328,7 @@
       <weektarget>25.000</weektarget>
     </teacher>
     <teacher id="TR_RSe">
-      <surname>Ramírez Sebastian</surname>
+      <surname>Ramï¿½rez Sebastian</surname>
       <payrollnumber>30089166</payrollnumber>
       <text>25 Lekt., IP, LYS, KLP SCc, AB, BM, BT, DaZ, PA, PM, PT, Sp, WPF Mint/Bsp (Di oder Do VM), WB PM/PT</text>
       <teacher_department id="DP_LYS"/>
@@ -1376,15 +1376,15 @@
       <weektarget>14.000</weektarget>
     </teacher>
     <teacher id="TR_ScR">
-      <surname>Schöpfer Ruth</surname>
+      <surname>Schï¿½pfer Ruth</surname>
       <payrollnumber>30010980</payrollnumber>
       <text>IP, NIE, KLP SCl, AB, DaZ</text>
       <teacher_department id="DP_NH"/>
       <weektarget>18.000</weektarget>
     </teacher>
     <teacher id="TR_ScS">
-      <surname>Schäufele Sven</surname>
-      <text>6 Lekt. plus Zusatzvertrag 6 Sp für KuB (Sabbatical 1. Sem.)</text>
+      <surname>Schï¿½ufele Sven</surname>
+      <text>6 Lekt. plus Zusatzvertrag 6 Sp fï¿½r KuB (Sabbatical 1. Sem.)</text>
       <teacher_department id="DP_CL"/>
       <weektarget>6.000</weektarget>
     </teacher>
@@ -1424,23 +1424,23 @@
       <weektarget>20.000</weektarget>
     </teacher>
     <teacher id="TR_StC">
-      <surname>Strössler  Christine</surname>
+      <surname>Strï¿½ssler  Christine</surname>
       <payrollnumber>22003002</payrollnumber>
       <text>IP, SP, LYS, G, PO</text>
       <teacher_department id="DP_LYS"/>
       <weektarget>17.000</weektarget>
     </teacher>
     <teacher id="TR_UcH">
-      <surname>Ucmak Hüseyin</surname>
+      <surname>Ucmak Hï¿½seyin</surname>
       <payrollnumber>30100950</payrollnumber>
-      <text>IP, SP, KLP, AB, BO, DaZ, D, LA, M, PA, PO, WPF E/ECDL/Auftrittskomp., nicht Frühlektionen!</text>
+      <text>IP, SP, KLP, AB, BO, DaZ, D, LA, M, PA, PO, WPF E/ECDL/Auftrittskomp., nicht Frï¿½hlektionen!</text>
       <teacher_department id="DP_CL"/>
       <weektarget>23.000</weektarget>
     </teacher>
     <teacher id="TR_VeS">
       <surname>Verna Sabrina</surname>
       <payrollnumber>30038027</payrollnumber>
-      <text>10 Lekt, KP, KP P, AB, BM, BO, DaZ, D, LA, M, PA, PM, PO, Heilpäd?</text>
+      <text>10 Lekt, KP, KP P, AB, BM, BO, DaZ, D, LA, M, PA, PM, PO, Heilpï¿½d?</text>
       <teacher_department id="DP_GU"/>
       <weektarget>22.000</weektarget>
     </teacher>
@@ -1458,8 +1458,8 @@
       <teacher_department id="DP_LYS"/>
       <weektarget>10.000</weektarget>
     </teacher>
-    <teacher id="TR_WüM">
-      <surname>Würgler Markus</surname>
+    <teacher id="TR_Wï¿½M">
+      <surname>Wï¿½rgler Markus</surname>
       <payrollnumber>30087347</payrollnumber>
       <text>GUN, KLP BaC, AB, BM, D, LA, M, WPF Computer/Medien/Musik/Theater</text>
       <teacher_department id="DP_CL"/>
@@ -1472,8 +1472,8 @@
       <teacher_department id="DP_CL"/>
       <weektarget>25.000</weektarget>
     </teacher>
-    <teacher id="TR_YeÖ">
-      <surname>Yeyin Özgür</surname>
+    <teacher id="TR_Yeï¿½">
+      <surname>Yeyin ï¿½zgï¿½r</surname>
       <payrollnumber>30034633</payrollnumber>
       <text>16 Lekt. Abmachung mit RaS, IP, CLA, LYS, AB, DaZ, LA, M, PM, Sp, WPF E/Bsp/Sp</text>
       <teacher_department id="DP_CL"/>
@@ -1496,7 +1496,7 @@
   </teachers>
   <classes>
     <class id="CL_E01">
-      <longname>nN</longname>
+      <longname>Lukas Calmbach</longname>
       <class_department id="DP_LYS"/>
     </class>
     <class id="CL_E02">
@@ -1526,7 +1526,7 @@
       <class_department id="DP_GU"/>
     </class>
     <class id="CL_F04">
-      <longname>M. Nake / V. Köster</longname>
+      <longname>M. Nake / V. Kï¿½ster</longname>
       <class_room id="RM_G115B"/>
       <text>Flex</text>
       <class_department id="DP_GU"/>
@@ -1549,7 +1549,7 @@
       <class_department id="DP_NH"/>
     </class>
     <class id="CL_I102">
-      <longname>C. Schilling / R. Schöpfer</longname>
+      <longname>C. Schilling / R. Schï¿½pfer</longname>
       <class_department id="DP_NH"/>
     </class>
     <class id="CL_I103">
@@ -1558,12 +1558,12 @@
       <class_department id="DP_NH"/>
     </class>
     <class id="CL_I104">
-      <longname>A.M. Forster / R. Güdel</longname>
+      <longname>A.M. Forster / R. Gï¿½del</longname>
       <alias>12</alias>
       <class_department id="DP_NH"/>
     </class>
     <class id="CL_I105">
-      <longname>J. Fröhlich / Ch. Neumann</longname>
+      <longname>J. Frï¿½hlich / Ch. Neumann</longname>
       <class_department id="DP_NH"/>
     </class>
     <class id="CL_I106">
@@ -1593,7 +1593,7 @@
       <class_department id="DP_LYS"/>
     </class>
     <class id="CL_I203">
-      <longname>J. Alt / B. Müller</longname>
+      <longname>J. Alt / B. Mï¿½ller</longname>
       <alias>01</alias>
       <class_room id="RM_L1.214"/>
       <class_department id="DP_LYS"/>
@@ -1686,7 +1686,7 @@
       <class_department id="DP_CL"/>
     </class>
     <class id="CL_S03">
-      <longname>S. Sancak / M. Würgler</longname>
+      <longname>S. Sancak / M. Wï¿½rgler</longname>
       <alias>03</alias>
       <class_room id="RM_C.101"/>
       <text>Pilot</text>
@@ -1722,7 +1722,7 @@
       <class_department id="DP_CL"/>
     </class>
     <class id="CL_K02">
-      <longname>Ch. Brülisauer</longname>
+      <longname>Ch. Brï¿½lisauer</longname>
       <text>DaZ-Klasse</text>
       <class_department id="DP_GU"/>
     </class>
@@ -3543,7 +3543,7 @@
     <lesson id="LS_41300">
       <periods>4</periods>
       <lesson_subject id="SU_PO"/>
-      <lesson_teacher id="TR_KüS"/>
+      <lesson_teacher id="TR_Kï¿½S"/>
       <lesson_classes id="CL_S08"/>
       <teacher_value>400000</teacher_value>
       <lesson_studentgroups id="SG_PO_S08_1"/>
@@ -4559,7 +4559,7 @@
     <lesson id="LS_56201">
       <periods>4</periods>
       <lesson_subject id="SU_PT"/>
-      <lesson_teacher id="TR_KüS"/>
+      <lesson_teacher id="TR_Kï¿½S"/>
       <lesson_classes id="CL_I210"/>
       <teacher_value>400000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -4654,7 +4654,7 @@
     <lesson id="LS_57000">
       <periods>8</periods>
       <lesson_subject id="SU_DaZ"/>
-      <lesson_teacher id="TR_YeÖ"/>
+      <lesson_teacher id="TR_Yeï¿½"/>
       <lesson_classes id="CL_I209"/>
       <teacher_value>800000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -4792,7 +4792,7 @@
     <lesson id="LS_57100">
       <periods>2</periods>
       <lesson_subject id="SU_M"/>
-      <lesson_teacher id="TR_YeÖ"/>
+      <lesson_teacher id="TR_Yeï¿½"/>
       <lesson_classes id="CL_I209"/>
       <teacher_value>200000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -4819,7 +4819,7 @@
     <lesson id="LS_57200">
       <periods>2</periods>
       <lesson_subject id="SU_LA"/>
-      <lesson_teacher id="TR_YeÖ"/>
+      <lesson_teacher id="TR_Yeï¿½"/>
       <lesson_classes id="CL_I209"/>
       <teacher_value>200000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -4846,7 +4846,7 @@
     <lesson id="LS_57300">
       <periods>2</periods>
       <lesson_subject id="SU_Sp"/>
-      <lesson_teacher id="TR_YeÖ"/>
+      <lesson_teacher id="TR_Yeï¿½"/>
       <lesson_classes id="CL_I209"/>
       <teacher_value>200000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -5961,7 +5961,7 @@
     <lesson id="LS_64500">
       <periods>18</periods>
       <lesson_subject id="SU_U"/>
-      <lesson_teacher id="TR_WüM"/>
+      <lesson_teacher id="TR_Wï¿½M"/>
       <lesson_classes id="CL_S03"/>
       <teacher_value>1800000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -6387,7 +6387,7 @@
     <lesson id="LS_69300">
       <periods>2</periods>
       <lesson_subject id="SU_PIn"/>
-      <lesson_teacher id="TR_WüM"/>
+      <lesson_teacher id="TR_Wï¿½M"/>
       <lesson_classes id="CL_S03"/>
       <teacher_value>200000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -6670,7 +6670,7 @@
     <lesson id="LS_72101">
       <periods>2</periods>
       <lesson_subject id="SU_AB"/>
-      <lesson_teacher id="TR_YeÖ"/>
+      <lesson_teacher id="TR_Yeï¿½"/>
       <lesson_classes id="CL_I209"/>
       <teacher_value>200000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -7273,7 +7273,7 @@
     <lesson id="LS_27600">
       <periods>6</periods>
       <lesson_subject id="SU_M"/>
-      <lesson_teacher id="TR_GüR"/>
+      <lesson_teacher id="TR_Gï¿½R"/>
       <lesson_classes id="CL_I102"/>
       <teacher_value>600000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -7863,7 +7863,7 @@
     <lesson id="LS_29201">
       <periods>8</periods>
       <lesson_subject id="SU_DaZ"/>
-      <lesson_teacher id="TR_GüR"/>
+      <lesson_teacher id="TR_Gï¿½R"/>
       <lesson_classes id="CL_I104"/>
       <teacher_value>800000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -7973,7 +7973,7 @@
     <lesson id="LS_29400">
       <periods>6</periods>
       <lesson_subject id="SU_M"/>
-      <lesson_teacher id="TR_GüR"/>
+      <lesson_teacher id="TR_Gï¿½R"/>
       <lesson_classes id="CL_I104"/>
       <teacher_value>600000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -9908,7 +9908,7 @@
     <lesson id="LS_60000">
       <periods>2</periods>
       <lesson_subject id="SU_AB"/>
-      <lesson_teacher id="TR_GüR"/>
+      <lesson_teacher id="TR_Gï¿½R"/>
       <lesson_classes id="CL_I104"/>
       <teacher_value>200000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -10372,7 +10372,7 @@
     <lesson id="LS_72401">
       <periods>2</periods>
       <lesson_subject id="SU_DaZ"/>
-      <lesson_teacher id="TR_GüR"/>
+      <lesson_teacher id="TR_Gï¿½R"/>
       <lesson_classes id="CL_I104"/>
       <teacher_value>200000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -11289,7 +11289,7 @@
     <lesson id="LS_36400">
       <periods>4</periods>
       <lesson_subject id="SU_BM"/>
-      <lesson_teacher id="TR_KöV"/>
+      <lesson_teacher id="TR_Kï¿½V"/>
       <lesson_classes id="CL_F04"/>
       <teacher_value>400000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -11371,7 +11371,7 @@
     <lesson id="LS_36801">
       <periods>4</periods>
       <lesson_subject id="SU_Proj"/>
-      <lesson_teacher id="TR_KöV"/>
+      <lesson_teacher id="TR_Kï¿½V"/>
       <lesson_classes id="CL_F04"/>
       <teacher_value>400000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -12133,7 +12133,7 @@
     <lesson id="LS_65101">
       <periods>4</periods>
       <lesson_subject id="SU_Proj"/>
-      <lesson_teacher id="TR_KöV"/>
+      <lesson_teacher id="TR_Kï¿½V"/>
       <lesson_classes id="CL_F01"/>
       <teacher_value>400000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -12730,7 +12730,7 @@
     <lesson id="LS_66800">
       <periods>2</periods>
       <lesson_subject id="SU_LA"/>
-      <lesson_teacher id="TR_KöV"/>
+      <lesson_teacher id="TR_Kï¿½V"/>
       <lesson_classes id="CL_F04"/>
       <teacher_value>200000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -13286,7 +13286,7 @@
     <lesson id="LS_42601">
       <periods>2</periods>
       <lesson_subject id="SU_WPF"/>
-      <lesson_teacher id="TR_MüB"/>
+      <lesson_teacher id="TR_Mï¿½B"/>
       <lesson_classes id="CL_I203"/>
       <teacher_value>200000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -14161,7 +14161,7 @@
     <lesson id="LS_44801">
       <periods>2</periods>
       <lesson_subject id="SU_AB"/>
-      <lesson_teacher id="TR_MüB"/>
+      <lesson_teacher id="TR_Mï¿½B"/>
       <lesson_classes id="CL_I203"/>
       <teacher_value>200000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -14255,7 +14255,7 @@
     <lesson id="LS_45101">
       <periods>8</periods>
       <lesson_subject id="SU_DaZ"/>
-      <lesson_teacher id="TR_MüB"/>
+      <lesson_teacher id="TR_Mï¿½B"/>
       <lesson_classes id="CL_I203"/>
       <teacher_value>800000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -14324,7 +14324,7 @@
     <lesson id="LS_45200">
       <periods>2</periods>
       <lesson_subject id="SU_LA"/>
-      <lesson_teacher id="TR_MüB"/>
+      <lesson_teacher id="TR_Mï¿½B"/>
       <lesson_classes id="CL_I203"/>
       <teacher_value>200000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -14351,7 +14351,7 @@
     <lesson id="LS_45300">
       <periods>2</periods>
       <lesson_subject id="SU_Sp"/>
-      <lesson_teacher id="TR_MüB"/>
+      <lesson_teacher id="TR_Mï¿½B"/>
       <lesson_classes id="CL_I203"/>
       <teacher_value>200000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -14378,7 +14378,7 @@
     <lesson id="LS_45400">
       <periods>4</periods>
       <lesson_subject id="SU_M"/>
-      <lesson_teacher id="TR_MüB"/>
+      <lesson_teacher id="TR_Mï¿½B"/>
       <lesson_classes id="CL_I203"/>
       <teacher_value>400000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -16534,7 +16534,7 @@
     <lesson id="LS_71601">
       <periods>4</periods>
       <lesson_subject id="SU_PM"/>
-      <lesson_teacher id="TR_MüB"/>
+      <lesson_teacher id="TR_Mï¿½B"/>
       <lesson_classes id="CL_I203"/>
       <teacher_value>400000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
@@ -17608,7 +17608,7 @@
     <lesson id="LS_77600">
       <periods>4</periods>
       <lesson_subject id="SU_PT"/>
-      <lesson_teacher id="TR_KüS"/>
+      <lesson_teacher id="TR_Kï¿½S"/>
       <teacher_value>400000</teacher_value>
       <effectivebegindate>20250811</effectivebegindate>
       <effectiveenddate>20260626</effectiveenddate>
@@ -19208,7 +19208,7 @@
       <value>0.070</value>
     </reduction>
     <reduction id="RD_30">
-      <reduction_teacher>TR_GüR</reduction_teacher>
+      <reduction_teacher>TR_Gï¿½R</reduction_teacher>
       <reduction_reason>RR_KompVJ</reduction_reason>
       <value>-1.160</value>
     </reduction>
@@ -19358,7 +19358,7 @@
       <value>1.000</value>
     </reduction>
     <reduction id="RD_66">
-      <reduction_teacher>TR_MüB</reduction_teacher>
+      <reduction_teacher>TR_Mï¿½B</reduction_teacher>
       <reduction_reason>RR_KompVJ</reduction_reason>
       <value>0.500</value>
     </reduction>
@@ -19468,7 +19468,7 @@
       <value>6.500</value>
     </reduction>
     <reduction id="RD_88">
-      <reduction_teacher>TR_YeÖ</reduction_teacher>
+      <reduction_teacher>TR_Yeï¿½</reduction_teacher>
       <reduction_reason>RR_KompVJ</reduction_reason>
       <value>0.500</value>
     </reduction>
@@ -19478,24 +19478,24 @@
       <value>-0.240</value>
     </reduction>
     <reduction id="RD_90">
-      <reduction_teacher>TR_YeÖ</reduction_teacher>
+      <reduction_teacher>TR_Yeï¿½</reduction_teacher>
       <value>2.000</value>
       <text>unbezahlte Entlastung</text>
     </reduction>
     <reduction id="RD_91">
-      <reduction_teacher>TR_YeÖ</reduction_teacher>
+      <reduction_teacher>TR_Yeï¿½</reduction_teacher>
       <value>0.190</value>
       <text>Umwandlung Ferienkonto 7.61</text>
     </reduction>
     <reduction id="RD_92">
-      <reduction_teacher>TR_YeÖ</reduction_teacher>
+      <reduction_teacher>TR_Yeï¿½</reduction_teacher>
       <value>0.500</value>
       <text>Umwandlung DAG 2019 20 Lekt.</text>
     </reduction>
     <reduction id="RD_93">
-      <reduction_teacher>TR_YeÖ</reduction_teacher>
+      <reduction_teacher>TR_Yeï¿½</reduction_teacher>
       <value>0.000</value>
-      <text>Umwandlung DAG 2024 (Bezug ab Okt 24 möglich, Anzahl Lekt. noch nicht bekannt)</text>
+      <text>Umwandlung DAG 2024 (Bezug ab Okt 24 mï¿½glich, Anzahl Lekt. noch nicht bekannt)</text>
     </reduction>
     <reduction id="RD_94">
       <reduction_teacher>TR_GaD</reduction_teacher>
@@ -19508,7 +19508,7 @@
       <value>3.000</value>
     </reduction>
     <reduction id="RD_96">
-      <reduction_teacher>TR_YeÖ</reduction_teacher>
+      <reduction_teacher>TR_Yeï¿½</reduction_teacher>
       <value>0.040</value>
       <text>Umwandlung Ferienkonto 1.4</text>
     </reduction>
@@ -19528,12 +19528,12 @@
       <value>-1.070</value>
     </reduction>
     <reduction id="RD_102">
-      <reduction_teacher>TR_WüM</reduction_teacher>
+      <reduction_teacher>TR_Wï¿½M</reduction_teacher>
       <reduction_reason>RR_AE</reduction_reason>
       <value>1.000</value>
     </reduction>
     <reduction id="RD_103">
-      <reduction_teacher>TR_KöV</reduction_teacher>
+      <reduction_teacher>TR_Kï¿½V</reduction_teacher>
       <reduction_reason>RR_ICT</reduction_reason>
       <value>2.000</value>
     </reduction>
@@ -19582,19 +19582,19 @@
       <longname>Projekt Digitalisierung</longname>
     </reduction_reason>
     <reduction_reason id="RR_FS QM">
-      <longname>Fachstelle Qualitätsmanagement</longname>
+      <longname>Fachstelle Qualitï¿½tsmanagement</longname>
     </reduction_reason>
     <reduction_reason id="RR_FS D&amp;I">
-      <longname>Fachstelle Digitalität und Innovation</longname>
+      <longname>Fachstelle Digitalitï¿½t und Innovation</longname>
     </reduction_reason>
     <reduction_reason id="RR_Saldo JL">
       <longname>Saldo Jahreslektionen</longname>
     </reduction_reason>
     <reduction_reason id="RR_Koord">
-      <longname>Sonderpädagogik Koordination</longname>
+      <longname>Sonderpï¿½dagogik Koordination</longname>
     </reduction_reason>
-    <reduction_reason id="RR_Päd StL">
-      <longname>Pädagogische Leitung Standort</longname>
+    <reduction_reason id="RR_Pï¿½d StL">
+      <longname>Pï¿½dagogische Leitung Standort</longname>
     </reduction_reason>
     <reduction_reason id="RR_K_ECDL">
       <longname>Koordination ECDL</longname>

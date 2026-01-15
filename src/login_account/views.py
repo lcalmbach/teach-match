@@ -11,7 +11,7 @@ from login_account.forms import LoginForm
 from django.contrib.auth import login
 from .forms import TeacherForm, CandidateForm
 
-from school_management.models import Person
+from school_management.models import CustomUser
 
 
 def user_login(request):
@@ -22,7 +22,7 @@ def user_login(request):
             user = authenticate(
                 request, username=data["username"], password=data["password"]
             )
-            person = Person.objects.get(user=user)
+            person = CustomUser.objects.get(user=user)
             if user is not None:
                 if user.is_active:
                     login(request, user)
@@ -42,10 +42,10 @@ def user_login(request):
 def user_logout(request):
     user = request.user
     try:
-        person = Person.objects.get(user=user)
+        person = CustomUser.objects.get(user=user)
         logout(request)
         messages.info(request, f"Auf Wiedersehen {person.first_name}.")
-    except Person.DoesNotExist:
+    except person.DoesNotExist:
         logout(request)
         messages.info(request, f"Auf Wiedersehen.")
     return redirect("index")
@@ -56,8 +56,8 @@ def user_profile_old(request):
     print(request.method)
     user = request.user
     try:
-        person = Person.objects.get(user=user)
-    except Person.DoesNotExist:
+        person = CustomUser.objects.get(user=user)
+    except person.DoesNotExist:
         messages.error(request, "Profile not found.")
         return redirect("some_error_page")  # Handle the error appropriately
 
@@ -112,8 +112,8 @@ def user_profile(request):
     print(request.method)
     user = request.user
     try:
-        person = Person.objects.get(user=user)
-    except Person.DoesNotExist:
+        person = CustomUser.objects.get(user=user)
+    except person.DoesNotExist:
         messages.error(request, "Profile not found.")
         return redirect("some_error_page")  # Handle the error appropriately
 

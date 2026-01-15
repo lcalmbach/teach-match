@@ -6,7 +6,7 @@ from .models import (
     SubstitutionStatus, SubstitutionCause, SchoolPersonRole,
     Certificate, DayPart, WeekDay, Location,
     Qualification, SchoolYear, TimePeriod, Level, Subject,
-    School, Semester, Person, Teacher, Candidate,
+    Department, Semester, CustomUser, Teacher, Candidate,
     Substitution, SchoolClass, Timetable, SubstitutionLesson,
     SubstitutionCandidate, SubstitutionExecution,
     Vacation, SchoolDay, Communication, Application, Invitation
@@ -126,8 +126,8 @@ class SubjectAdmin(admin.ModelAdmin):
     ordering = ('name',)
 
 
-@admin.register(School)
-class SchoolAdmin(admin.ModelAdmin):
+@admin.register(Department)
+class DepartmentAdmin(admin.ModelAdmin):
     list_display = ('name', 'code', 'level', 'location', 'email', 'phone_number')
     list_filter = ('level', 'location')
     search_fields = ('name', 'code', 'email')
@@ -152,7 +152,7 @@ class SemesterAdmin(admin.ModelAdmin):
 
 # ============= Business Data - People =============
 
-@admin.register(Person)
+@admin.register(CustomUser)
 class PersonAdmin(admin.ModelAdmin):
     list_display = ('last_name', 'first_name', 'email', 'mobile', 'is_teacher', 'is_candidate', 'is_manager')
     list_filter = ('is_teacher', 'is_candidate', 'is_manager', 'gender')
@@ -206,15 +206,15 @@ class CandidateAdmin(admin.ModelAdmin):
 
 @admin.register(Substitution)
 class SubstitutionAdmin(admin.ModelAdmin):
-    list_display = ('ref_no', 'school', 'teacher', 'start_date', 'end_date', 'status', 'created_timestamp')
-    list_filter = ('status', 'school', 'start_date', 'cause')
+    list_display = ('ref_no', 'department', 'teacher', 'start_date', 'end_date', 'status', 'created_timestamp')
+    list_filter = ('status', 'department', 'start_date', 'cause')
     search_fields = ('teacher__first_name', 'teacher__last_name', 'school__name')
     date_hierarchy = 'start_date'
     readonly_fields = ('created_timestamp', 'ref_no', 'url')
     
     fieldsets = (
         ('Grundinformationen', {
-            'fields': ('school', 'teacher', 'start_date', 'end_date', 'cause', 'status')
+            'fields': ('department', 'teacher', 'start_date', 'end_date', 'cause', 'status')
         }),
         ('Details', {
             'fields': ('minimum_qualification', 'partial_substitution_possible', 
@@ -239,22 +239,22 @@ class SubstitutionAdmin(admin.ModelAdmin):
 
 @admin.register(SchoolClass)
 class SchoolClassAdmin(admin.ModelAdmin):
-    list_display = ('name', 'school', 'level', 'year', 'school_year')
-    list_filter = ('school', 'level', 'school_year')
+    list_display = ('name', 'department', 'level', 'year', 'school_year')
+    list_filter = ('department', 'level', 'school_year')
     search_fields = ('name',)
 
 
 @admin.register(Timetable)
 class TimetableAdmin(admin.ModelAdmin):
-    list_display = ('teacher', 'school', 'time_period', 'school_class', 'subject', 'semester')
-    list_filter = ('school', 'semester', 'subject')
+    list_display = ('teacher', 'department', 'time_period', 'school_class', 'subject', 'semester')
+    list_filter = ('department', 'semester', 'subject')
     search_fields = ('teacher__first_name', 'teacher__last_name', 'school_class__name')
 
 
 @admin.register(SubstitutionLesson)
 class SubstitutionLessonAdmin(admin.ModelAdmin):
     list_display = ('substitution', 'time_period', 'school_class', 'subject', 'candidate')
-    list_filter = ('substitution__school', 'subject')
+    list_filter = ('substitution__department', 'subject')
     search_fields = ('substitution__id', 'school_class__name')
 
 

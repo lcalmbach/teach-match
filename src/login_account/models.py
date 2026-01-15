@@ -2,15 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.conf import settings 
 
 
 class Profile(models.Model):
     user = models.OneToOneField(
-        User,
+        settings.AUTH_USER_MODEL,  # Changed from 'auth.User'
         on_delete=models.CASCADE,
-        verbose_name="Benutzername",
-        help_text="Der Benutzer, dem dieses Profil gehört.",
-        related_name="profile",
+        related_name='login_profile'
     )
     bio = models.TextField(
         max_length=500,

@@ -1,10 +1,10 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User, Group
-from .models import Person
+from .models import CustomUser
 
 
-@receiver(post_save, sender=Person)
+@receiver(post_save, sender=CustomUser)
 def create_user_for_person(sender, instance, created, **kwargs):
     if created and not instance.user:
         # Create a User object

@@ -171,3 +171,4 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default=None)
 if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
     raise ValueError("EMAIL_HOST_USER and EMAIL_HOST_PASSWORD must be set!")
 DEFAULT_FROM_EMAIL = "lukas.calmbach@bs.ch"
+AUTH_USER_MODEL = 'school_management.CustomUser'

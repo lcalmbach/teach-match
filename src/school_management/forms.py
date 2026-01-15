@@ -2,8 +2,8 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Fieldset, Field, Submit
 from django import forms
 from .models import (
-    School,
-    Person,
+    Department,
+    CustomUser,
     Substitution,
     Teacher,
     Invitation,
@@ -15,9 +15,9 @@ class StarRatingWidget(forms.RadioSelect):
     """Custom widget to render star rating."""
     template_name = 'widgets/star_rating.html'
 
-class SchoolForm(forms.ModelForm):
+class DepartmentForm(forms.ModelForm):
     class Meta:
-        model = School
+        model = Department
         fields = "__all__"
 
 
@@ -205,7 +205,7 @@ class CandidateForm(forms.ModelForm):
         self.fields["subjects"].widget.attrs.update(size="20")
 
     class Meta:
-        model = Person
+        model = CustomUser
         fields = [
             "first_name",
             "last_name",

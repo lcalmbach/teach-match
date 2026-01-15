@@ -21,8 +21,8 @@ from .texte import texte
 from twilio.rest import Client
 
 from .models import (
-    School,
-    Person,
+    Department,
+    CustomUser,
     Teacher,
     Candidate,
     Substitution,
@@ -44,7 +44,7 @@ from .models import (
     SystemVariable
 )
 from .forms import (
-    SchoolForm,
+    DepartmentForm,
     CandidateForm,
     SubstitutionCreateForm,
     SubstitutionEditForm,
@@ -69,7 +69,7 @@ from .helpers import SubstitutionHelper
 
 
 class SchoolListView(ListView):
-    model = School
+    model = Department
     context_object_name = (
         "schools"  # The name of the variable to be used in the template
     )
@@ -101,7 +101,7 @@ class SchoolListView(ListView):
 
 
 class SchoolDetailView(DetailView):
-    model = School
+    model = Department
     template_name = "school_management/school_detail.html"
     context_object_name = "school"
 
@@ -109,9 +109,9 @@ class SchoolDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         school = context["school"]
         # Filter SchoolPerson by school and role ID
-        # context["school_teachers"] = school.school_persons.filter(is_teacher=True)
-        context["school_classes"] = school.class_schools.filter(school=school)
-        context["substitutions"] = school.substitution_schools.filter(school=school)
+        # context["school_teachers"] = Department.school_persons.filter(is_teacher=True)
+        context["school_classes"] = Department.class_schools.filter(school=school)
+        context["substitutions"] = Department.substitution_schools.filter(school=school)
         lessons = Timetable.objects.filter(school=school)
         teachers = [l.teacher for l in lessons]
         context["teachers"] = list(set(teachers))
@@ -126,8 +126,8 @@ class InvitationEditView(LoginRequiredMixin, UpdateView):
 
 
 class SchoolEditView(LoginRequiredMixin, UpdateView):
-    model = School
-    form_class = SchoolForm
+    model = Department
+    form_class = DepartmentForm
     template_name = "school_management/school_edit.html"
     success_url = reverse_lazy("school_management:school_list")
 
@@ -300,13 +300,13 @@ class SubstitutionCandidatesListView(ListView):
         "school_management/substitution_candidates_list.html"  # Path to the template
     )
     success_url = reverse_lazy("school_management/substitution_candidates_list")
+    print(123)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["status"] = SubstitutionStatus.objects.all()
         context["contact"] = SystemVariable.objects.get(short_name='con')
-        print(context["contact"])
-        context["schools"] = School.objects.all().order_by("name")
+        context["schools"] = Department.objects.all().order_by("name")
         context["subjects"] = Subject.objects.all().order_by("name")
         context["levels"] = Level.objects.all().order_by("order")
         return context
@@ -348,7 +348,7 @@ class SubstitutionCandidatesListView(ListView):
         yesterday = timezone.now() - timedelta(days=1)
         queryset = queryset.filter(status_id=1, end_date__gt=yesterday)
         if school_filter:
-            queryset = queryset.filter(school_id=school_filter)
+            queryset = queryset.filter(department_id=school_filter)
         if level_filter:
             queryset = queryset.filter(levels__icontains=level_filter)
         if date_from_filter:
@@ -376,7 +376,7 @@ class SubstitutionAdminListView(ListView):
         context["status"] = (
             SubstitutionStatus.objects.all()
         )  # Pass all locations to the template
-        context["schools"] = School.objects.all()  # Pass all locations to the template
+        context["schools"] = Department.objects.all()  # Pass all locations to the template
         return context
 
     def get_queryset(self):
@@ -559,7 +559,7 @@ class ApplicationCreateView(View):
         if form.is_valid():
             substitution_id = request.POST.getlist("substitution")[0] 
             substitution = get_object_or_404(Substitution, id=substitution_id)
-            candidate = get_object_or_404(Person, user=request.user)
+            candidate = get_object_or_404(CustomUser, user=request.user)
             application_type = get_object_or_404(CommunicationType, id=1)
 
             # Create the Application instance
@@ -577,7 +577,7 @@ class ApplicationCreateView(View):
             action = request.POST.get("action")
             if action == "apply":
                 # Send email logic here
-                subject = f"Bewerbung für Vertretung {substitution_id} ({application.substitution.school.name}, {application.substitution.start_date} - {application.substitution.end_date}, Vertretung von {application.substitution.teacher.fullname})"
+                subject = f"Bewerbung für Vertretung {substitution_id} ({application.substitution.Department.name}, {application.substitution.start_date} - {application.substitution.end_date}, Vertretung von {application.substitution.teacher.fullname})"
                 message = application.request_text
                 message += f'<br><br><a href="{settings.BASE_URL}/school_management/candidates/{candidate.id}/">{candidate.fullname}</a>'
                 message += f'Link: <a href="{settings.BASE_URL}/school_management/application/{application.id}/edit/">Bewerbung bearbeiten</a>'
@@ -598,7 +598,7 @@ class ApplicationCreateView(View):
         
 
     def get(self, request, *args, **kwargs):
-        candidate = get_object_or_404(Person, user=request.user)
+        candidate = get_object_or_404(CustomUser, user=request.user)
         
         substitution_id = kwargs.get("id")
         substitution = get_object_or_404(
@@ -756,7 +756,7 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
     
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
-        current_user_name = Person.objects.get(user=self.request.user).first_last_name
+        current_user_name = CustomUser.objects.get(user=self.request.user).first_last_name
         context = super().get_context_data(**kwargs)
         application = self.object
         school = application.substitution.school
@@ -764,9 +764,9 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
         greeting = f"{application.candidate.informal_salutation}\n"
         link = f'{settings.BASE_URL}{reverse("school_management:application_detail", args=[application.pk])}'
         context["antworten"] = {
-            "bestaetigung": texte['antwort_email']['bestaetigung'].format(greeting, link, current_user_name, school.name),
-            "absage": texte['antwort_email']['absage'].format(greeting, current_user_name, school.name),
-            "annahme": texte['antwort_email']['annahme'].format(greeting, school.phone_number, school.email, link, current_user_name, school.name),
+            "bestaetigung": texte['antwort_email']['bestaetigung'].format(greeting, link, current_user_name, Department.name),
+            "absage": texte['antwort_email']['absage'].format(greeting, current_user_name, Department.name),
+            "annahme": texte['antwort_email']['annahme'].format(greeting, Department.phone_number, Department.email, link, current_user_name, Department.name),
         }
 
         return context
@@ -807,7 +807,7 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
 
 
     def send_email(self, application):
-        subject = f"Stellvertretung {application.substitution.ref_no} / {application.substitution.school.name}"
+        subject = f"Stellvertretung {application.substitution.ref_no} / {application.substitution.Department.name}"
         message = application.response_text.replace("\n", "<br>")
         recipient = application.candidate.email
 
@@ -826,7 +826,7 @@ class ApplicationEditView(LoginRequiredMixin, UpdateView):
 
 
 class CandidateCreateView(CreateView):
-    model = Person
+    model = CustomUser
     fields = [
         "first_name",
         "last_name",
@@ -847,7 +847,7 @@ class CandidateCreateView(CreateView):
 
 
 class CandidateDeleteView(DeleteView):
-    model = Person
+    model = CustomUser
     template_name = "school_management/candidate_confirm_delete.html"
     success_url = reverse_lazy(
         "school_management:candidate_list"
@@ -865,7 +865,7 @@ class InviteCandidatesView(FormView):
     def dispatch(self, request, *args, **kwargs):
         # Initialize instance variables for candidate and substitution
         self.selected_candidate = get_object_or_404(SubstitutionCandidate, id=self.kwargs["id"])
-        self.author = get_object_or_404(Person, user=request.user)
+        self.author = get_object_or_404(CustomUser, user=request.user)
         self.substitution = self.selected_candidate.substitution
         self.candidate = self.selected_candidate.candidate
         return super().dispatch(request, *args, **kwargs)
@@ -883,10 +883,10 @@ class InviteCandidatesView(FormView):
         if created:
             self.invitation.request_text = texte["einladung_email"]["text"].format(
                 self.candidate.informal_salutation,
-                self.substitution.school.name,
+                self.substitution.Department.name,
                 self.invitation.response_to_invitation_url,
-                self.substitution.school.email,
-                self.substitution.school.phone_number,
+                self.substitution.Department.email,
+                self.substitution.Department.phone_number,
                 self.author.first_last_name,
             )
             self.invitation.save()
@@ -922,7 +922,7 @@ class InviteCandidatesView(FormView):
     def send_invitation_email(self):
         # Prepare email details
         recipient_email = self.invitation.candidate.email
-        subject = texte['einladung_email']['betreff'].format(self.substitution.school.name, self.substitution.id)
+        subject = texte['einladung_email']['betreff'].format(self.substitution.Department.name, self.substitution.id)
         body = self.invitation.request_text
         # Send the email
         try:
